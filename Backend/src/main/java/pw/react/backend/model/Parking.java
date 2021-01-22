@@ -28,14 +28,8 @@ public class Parking implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.ALL, optional = false)
-    //@ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id", referencedColumnName = "id")
-   // @OnDelete(action = OnDeleteAction.CASCADE)
-
-    // @Column(name = "address")
-    // @OneToOne(cascade = CascadeType.ALL)
-    // @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
 
     @Column(name = "spotsTotal")

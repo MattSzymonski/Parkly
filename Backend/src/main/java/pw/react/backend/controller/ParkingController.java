@@ -60,23 +60,7 @@ public class ParkingController {
     public ResponseEntity<String> createParkings(@RequestHeader HttpHeaders headers, @RequestBody List<Parking> parkings) { // In arguments are things that will be required to send in post request
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
-            
-            List<Parking> result = new ArrayList<Parking>();
-
-            for (Parking parking : parkings) {
-
-                Address address = addressService.addAddress(parking.getAddress());
-                if (address != null) {
-                    parking.setAddress(address);
-                }
-                
-                result.add(repository.save(parking));
-            }
-
-            //List<Parking> result = repository.saveAll(parkings);
-
-
-
+            List<Parking> result = repository.saveAll(parkings);
             return ResponseEntity.ok(result.stream().map(c -> String.valueOf(c.getId())).collect(joining(",")));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Request is unauthorized");
@@ -93,9 +77,6 @@ public class ParkingController {
 
     @DeleteMapping(path = "/{parkingId}")
     public ResponseEntity<String> deleteParking(@RequestHeader HttpHeaders headers, @PathVariable Long parkingId) {
-
-        logger.info("Id for thec company is {}", parkingId);
-
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
             boolean deleted = parkingService.deleteParking(parkingId);
