@@ -28,7 +28,7 @@ public class Parking implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.PERSIST) // Do not destroy address entry
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
 
@@ -38,8 +38,9 @@ public class Parking implements Serializable {
     @Column(name = "spotsTaken")
     private int spotsTaken;
 
-    @Column(name = "ownerId")
-    private long ownerId;
+    @ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.PERSIST) // Do not destroy address entry
+    @JoinColumn(name = "parkingOwner_id", referencedColumnName = "id")
+    private ParkingOwner parkingOwner;
 
     @Column(name = "addedDateTime")
     @JsonDeserialize(using = JsonDateDeserializer.class) // For data decoding

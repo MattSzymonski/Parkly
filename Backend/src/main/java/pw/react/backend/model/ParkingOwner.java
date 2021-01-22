@@ -34,8 +34,7 @@ public class ParkingOwner implements Serializable {
     @Column(name = "companyName")
     private String companyName;
 
-    // @Column(name = "address")
-    // @OneToOne(cascade = CascadeType.ALL)
-    // @JoinColumn(name = "address_id", referencedColumnName = "id")
-    // private Address address;
+    @ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.PERSIST) // Do not destroy address entry
+    @JoinColumn(name = "address_id", referencedColumnName = "id")
+    private Address address;
 }

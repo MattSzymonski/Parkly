@@ -11,8 +11,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pw.react.backend.appException.UnauthorizedException;
 import pw.react.backend.dao.ParkingRepository;
+import pw.react.backend.dao.ParkingOwnerRepository;
 import pw.react.backend.model.Address;
 import pw.react.backend.model.Parking;
+import pw.react.backend.model.ParkingOwner;
 import pw.react.backend.service.*;
 import pw.react.backend.web.UploadFileResponse;
 
@@ -30,37 +32,65 @@ public class ParkingController {
 
     private final Logger logger = LoggerFactory.getLogger(ParkingController.class);
 
+    
+
+
+
+
     private final ParkingRepository repository;
     private final SecurityProvider securityService;
     private final ParkingService parkingService;
     private AddressService addressService;
+    private ParkingOwnerService parkingOwnerService;
 
     @Autowired
     public ParkingController(ParkingRepository repository, SecurityProvider securityService, ParkingService companyService, AddressService addressService) {
         this.repository = repository;
         this.securityService = securityService;
-        this.parkingService = companyService;   
+        this.parkingService = companyService; 
     }
 
     @Autowired
-    public void setCompanyLogoService(AddressService addressService) {
+    public void setAddressService(AddressService addressService) {
         this.addressService = addressService;
     }
 
+    @Autowired
+    public void setParkingOwnerService(ParkingOwnerService parkingOwnerService) {
+        this.parkingOwnerService = parkingOwnerService;
+    }
+
     private void logHeaders(@RequestHeader HttpHeaders headers) {
-        logger.info("Controller request headers {}",
-                headers.entrySet()
-                        .stream()
-                        .map(entry -> String.format("%s->[%s]", entry.getKey(), String.join(",", entry.getValue())))
-                        .collect(joining(","))
-        );
+        // logger.info("Controller request headers {}",
+        //         headers.entrySet()
+        //                 .stream()
+        //                 .map(entry -> String.format("%s->[%s]", entry.getKey(), String.join(",", entry.getValue())))
+        //                 .collect(joining(","))
+        // );
     }
 
     @PostMapping(path = "")
     public ResponseEntity<String> createParkings(@RequestHeader HttpHeaders headers, @RequestBody List<Parking> parkings) { // In arguments are things that will be required to send in post request
+        logger.info("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
-            List<Parking> result = repository.saveAll(parkings);
+
+            List<Parking> result = new ArrayList<Parking>();
+
+            for (Parking parking : parkings) {
+                Address address = addressService.addAddress(parking.getAddress()); // Use already existing address if it exists in db
+                if (address != null) {
+                    parking.setAddress(address);
+                }
+
+                ParkingOwner parkingOwner = parkingOwnerService.addParkingOwner(parking.getParkingOwner()); // Use already existing parking owner if it exists in db
+                if (parkingOwner != null) {
+                    parking.setParkingOwner(parkingOwner);
+                }
+
+                result.add(repository.save(parking));
+            }
+
             return ResponseEntity.ok(result.stream().map(c -> String.valueOf(c.getId())).collect(joining(",")));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Request is unauthorized");
@@ -77,6 +107,9 @@ public class ParkingController {
 
     @DeleteMapping(path = "/{parkingId}")
     public ResponseEntity<String> deleteParking(@RequestHeader HttpHeaders headers, @PathVariable Long parkingId) {
+
+        logger.info("Id for thec company is {}", parkingId);
+
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
             boolean deleted = parkingService.deleteParking(parkingId);

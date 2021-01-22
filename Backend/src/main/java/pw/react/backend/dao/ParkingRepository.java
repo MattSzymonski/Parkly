@@ -10,7 +10,6 @@ public interface ParkingRepository extends JpaRepository<Parking, Long> {
     Optional<Parking> findByIdAndAddressId(Long id, Long addressId);
 
 
-	
 
     //void deleteByParkingId(long parkingId);
 }
