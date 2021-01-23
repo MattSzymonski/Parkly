@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pw.react.backend.dao.ParkingRepository;
 import pw.react.backend.model.Parking;
+
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -14,7 +16,8 @@ public class ParkingService implements ParkingMainService {
 
     private ParkingRepository repository;
 
-    ParkingService() { /*Needed only for initializing spy in unit tests*/}
+    ParkingService() {
+        /* Needed only for initializing spy in unit tests */}
 
     @Autowired
     ParkingService(ParkingRepository repository) {
@@ -46,5 +49,13 @@ public class ParkingService implements ParkingMainService {
     @Override
     public Optional<Parking> findById(long parkingId) {
         return repository.findById(parkingId);
+    }
+
+    @Override
+    public List<Parking> findAll(String nameKeyword, Integer spotsTotalKeyword) {
+        if (nameKeyword != null) {
+            return repository.findAll(nameKeyword, spotsTotalKeyword);
+        }
+        return repository.findAll();
     }
 }

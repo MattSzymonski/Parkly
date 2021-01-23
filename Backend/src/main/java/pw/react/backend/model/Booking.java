@@ -24,6 +24,9 @@ public class Booking implements Serializable {
     //public static Booking EMPTY = new Booking();
     //public static Booking EMPTY = new Booking();
 
+
+
+
     @Id    
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
@@ -46,11 +49,30 @@ public class Booking implements Serializable {
     private LocalDateTime endDateTime;
 
 
+
+    // public Long getBooklyUserId() {
+	// 	return id;
+    // }
+
+    // public Long getParkingId() {
+	// 	return parking.getId();
+    // }
+    
+    // public LocalDateTime getStartDateTime() {
+	// 	return startDateTime;
+    // }
+
+    // public LocalDateTime getEndDateTime() {
+	// 	return endDateTime;
+    // }
+
     public Booking(long booklyBookingId, Optional<Parking> parking,  LocalDateTime startDateTime, LocalDateTime endDateTime) {
         this.booklyUserId = booklyBookingId;
         this.parking = parking.get();
         this.startDateTime= startDateTime;
         this.endDateTime = endDateTime;
     }
-   
+   public Booking() {
+
+    }
 }

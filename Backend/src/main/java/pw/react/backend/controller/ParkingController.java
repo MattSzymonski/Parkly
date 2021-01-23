@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -91,14 +92,24 @@ public class ParkingController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Request is unauthorized");
     }
 
+
     @GetMapping(path = "")
-    public ResponseEntity<Collection<Parking>> getAllParkings(@RequestHeader HttpHeaders headers) {
+    public ResponseEntity<Collection<Parking>> getAllParkings(@RequestHeader HttpHeaders headers, @Param("name") String name, @Param("ownerCompanyName") String ownerCompanyName, @Param("spotsTotal") Integer spotsTotal) {
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
-            return ResponseEntity.ok(repository.findAll());
+            return ResponseEntity.ok(parkingService.findAll(name, spotsTotal));   
         }
         throw new UnauthorizedException("Request is unauthorized");
     }
+
+    // @GetMapping(path = "")
+    // public ResponseEntity<Collection<Parking>> getAllParkings(@RequestHeader HttpHeaders headers) {
+    //     logHeaders(headers);
+    //     if (securityService.isAuthorized(headers)) {
+    //         return ResponseEntity.ok(repository.findAll());
+    //     }
+    //     throw new UnauthorizedException("Request is unauthorized");
+    // }
 
     @DeleteMapping(path = "/{parkingId}")
     public ResponseEntity<String> deleteParking(@RequestHeader HttpHeaders headers, @PathVariable Long parkingId) {

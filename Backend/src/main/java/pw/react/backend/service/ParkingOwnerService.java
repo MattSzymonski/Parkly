@@ -40,18 +40,6 @@ public class ParkingOwnerService implements ParkingOwnerMainService {
         } 
         repository.findByCompanyName(parkingOwner.getCompanyName()).ifPresent(parkingOwnerInTable -> parkingOwner.setId(parkingOwnerInTable.getId()));
 
-
-        
-        // repository.findByCompanyName(parkingOwner.getCompanyName()).ifPresentOrElse(
-        //     parkingOwnerInTable -> parkingOwner.setId(parkingOwnerInTable.getId()),  // If found then just save new parking owner but with same id as old one (override)
-        //     () -> { // If not found then new parking owner entry will be created so check if there may be the same address is needed
-        //         Address address = addressService.addAddress(parkingOwner.getAddress()); // Find same address
-        //         if (address != null) { 
-        //             parkingOwner.setAddress(address); // If same address found then just save new address but with same id as old one (override)
-        //         } 
-        //     }
-        // ); 
-
         return repository.save(parkingOwner);
     }
 }
