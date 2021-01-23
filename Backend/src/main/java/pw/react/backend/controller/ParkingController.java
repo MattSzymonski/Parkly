@@ -32,11 +32,6 @@ public class ParkingController {
 
     private final Logger logger = LoggerFactory.getLogger(ParkingController.class);
 
-    
-
-
-
-
     private final ParkingRepository repository;
     private final SecurityProvider securityService;
     private final ParkingService parkingService;
@@ -44,10 +39,10 @@ public class ParkingController {
     private ParkingOwnerService parkingOwnerService;
 
     @Autowired
-    public ParkingController(ParkingRepository repository, SecurityProvider securityService, ParkingService companyService, AddressService addressService) {
+    public ParkingController(ParkingRepository repository, SecurityProvider securityService, ParkingService parkingService, AddressService addressService) {
         this.repository = repository;
         this.securityService = securityService;
-        this.parkingService = companyService; 
+        this.parkingService = parkingService; 
     }
 
     @Autowired
@@ -61,12 +56,12 @@ public class ParkingController {
     }
 
     private void logHeaders(@RequestHeader HttpHeaders headers) {
-        // logger.info("Controller request headers {}",
-        //         headers.entrySet()
-        //                 .stream()
-        //                 .map(entry -> String.format("%s->[%s]", entry.getKey(), String.join(",", entry.getValue())))
-        //                 .collect(joining(","))
-        // );
+        logger.info("Controller request headers {}",
+                headers.entrySet()
+                        .stream()
+                        .map(entry -> String.format("%s->[%s]", entry.getKey(), String.join(",", entry.getValue())))
+                        .collect(joining(","))
+        );
     }
 
     @PostMapping(path = "")
@@ -107,9 +102,6 @@ public class ParkingController {
 
     @DeleteMapping(path = "/{parkingId}")
     public ResponseEntity<String> deleteParking(@RequestHeader HttpHeaders headers, @PathVariable Long parkingId) {
-
-        logger.info("Id for thec company is {}", parkingId);
-
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
             boolean deleted = parkingService.deleteParking(parkingId);

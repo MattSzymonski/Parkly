@@ -10,6 +10,8 @@ import pw.react.backend.utils.JsonDateSerializer;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Optional;
+
 
 @Entity
 @Table(name = "booking")  // Generate table in database with fields below
@@ -19,7 +21,8 @@ public class Booking implements Serializable {
 
     private static final long serialVersionUID = -6783504532088859179L;
 
-    public static Booking EMPTY = new Booking();
+    //public static Booking EMPTY = new Booking();
+    //public static Booking EMPTY = new Booking();
 
     @Id    
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -28,10 +31,9 @@ public class Booking implements Serializable {
     @Column(name = "booklyUserId")
     private long booklyUserId;
 
-    // @Column(name = "parking")
-    // @OneToOne(cascade = CascadeType.ALL)
-    // @JoinColumn(name = "parking_id", referencedColumnName = "id")
-    // private Parking parking;
+    @ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.PERSIST) // Do not destroy address entry
+    @JoinColumn(name = "parking_id", referencedColumnName = "id")
+    private Parking parking;
 
     @Column(name = "startDateTime")
     @JsonDeserialize(using = JsonDateDeserializer.class) // For data decoding
@@ -43,4 +45,12 @@ public class Booking implements Serializable {
     @JsonSerialize(using = JsonDateSerializer.class) // For data encoding
     private LocalDateTime endDateTime;
 
+
+    public Booking(long booklyBookingId, Optional<Parking> parking,  LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        this.booklyUserId = booklyBookingId;
+        this.parking = parking.get();
+        this.startDateTime= startDateTime;
+        this.endDateTime = endDateTime;
+    }
+   
 }
