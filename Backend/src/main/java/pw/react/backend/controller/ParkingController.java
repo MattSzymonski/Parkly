@@ -3,8 +3,12 @@ package pw.react.backend.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +24,9 @@ import pw.react.backend.service.*;
 import pw.react.backend.web.UploadFileResponse;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ArrayList;
 
 import static java.util.stream.Collectors.joining;
@@ -38,6 +44,8 @@ public class ParkingController {
     private final ParkingService parkingService;
     private AddressService addressService;
     private ParkingOwnerService parkingOwnerService;
+
+    private Integer DEFAULT_PAGE_SIZE = 3;
 
     @Autowired
     public ParkingController(ParkingRepository repository, SecurityService securityService, ParkingService parkingService, AddressService addressService) {
@@ -94,10 +102,34 @@ public class ParkingController {
 
 
     @GetMapping(path = "")
-    public ResponseEntity<Collection<Parking>> getAllParkings(@RequestHeader HttpHeaders headers, @Param("name") String name, @Param("ownerCompanyName") String ownerCompanyName, @Param("spotsTotal") Integer spotsTotal) {
+    public ResponseEntity<Map<String, Object>> getAllParkings(
+        @RequestHeader HttpHeaders headers, 
+        @RequestParam(required = false) String name, 
+        @RequestParam(required = false) Integer spotsTotal, 
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "3") int pageSize
+    ){
         logHeaders(headers);
-        if (securityService.isAuthorized(headers)) {
-            return ResponseEntity.ok(parkingService.findAll(name, spotsTotal));   
+        if (securityService.isAuthorized(headers)) 
+        {
+                List<Parking> parkings = new ArrayList<Parking>();
+                Pageable paging = PageRequest.of(page, pageSize);
+                Map<String, Object> response = new HashMap<>();
+                Page<Parking> pageParkings = parkingService.findAll(name, spotsTotal, paging);
+                parkings = pageParkings.getContent();
+                           
+                response.put("parkings", parkings);
+                response.put("currentPage", pageParkings.getNumber());
+                response.put("totalItems", pageParkings.getTotalElements());
+                response.put("totalPages", pageParkings.getTotalPages());
+        
+                return new ResponseEntity<>(response, HttpStatus.OK);
+
+
+            // Pageable pageable = PageRequest.of(page != null ? page : 0, pageSize != null ? pageSize : DEFAULT_PAGE_SIZE);
+            // logger.info("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxaaaaaaxxxxxxxx");
+            // logger.info(String.valueOf(pageable.getPageSize()));
+            // return ResponseEntity.ok(parkingService.findAll("BC", 120, pageable));   
         }
         throw new UnauthorizedException("Request is unauthorized");
     }

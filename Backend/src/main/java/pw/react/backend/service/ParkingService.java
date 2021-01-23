@@ -3,12 +3,15 @@ package pw.react.backend.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pw.react.backend.dao.ParkingRepository;
 import pw.react.backend.model.Parking;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 
 @Service
 public class ParkingService implements ParkingMainService {
@@ -52,10 +55,11 @@ public class ParkingService implements ParkingMainService {
     }
 
     @Override
-    public List<Parking> findAll(String nameKeyword, Integer spotsTotalKeyword) {
-        if (nameKeyword != null) {
-            return repository.findAll(nameKeyword, spotsTotalKeyword);
-        }
-        return repository.findAll();
+    public Page<Parking> findAll(String nameKeyword, Integer spotsTotalKeyword, Pageable pageable) {
+        return repository.findAll(nameKeyword, spotsTotalKeyword, pageable);
+        // if (nameKeyword != null) {
+            
+        // }
+        // return repository.findAll();
     }
 }
