@@ -29,4 +29,11 @@ public class ParkingControllerExceptionHelper {
         return new ResponseEntity<>(new ExceptionDetails(HttpStatus.UNAUTHORIZED, ex.getMessage()), HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(value = { LoginFailedException.class })
+    public ResponseEntity<ExceptionDetails> handleLoginFailedException(LoginFailedException ex) {
+        logger.error("Invalid Input Exception: {}", ex.getMessage());
+        return new ResponseEntity<>(new ExceptionDetails(HttpStatus.UNAUTHORIZED, ex.getMessage()), HttpStatus.UNAUTHORIZED);
+    }
+
+
 }

@@ -38,14 +38,14 @@ public class BookingController {
 
     private final BookingRepository repository;
     private final BookingService bookingService;
-    private final SecurityProvider securityService;
+    private final SecurityService securityService;
 
     // private final ParkingService parkingService;
     // private AddressService addressService;
     // private ParkingOwnerService parkingOwnerService;
 
     @Autowired
-    public BookingController(BookingRepository repository, SecurityProvider securityService, BookingService bookingService) {
+    public BookingController(BookingRepository repository, SecurityService securityService, BookingService bookingService) {
         this.repository = repository;
         this.securityService = securityService;
         this.bookingService = bookingService; 

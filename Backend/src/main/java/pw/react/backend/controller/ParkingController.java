@@ -34,13 +34,13 @@ public class ParkingController {
     private final Logger logger = LoggerFactory.getLogger(ParkingController.class);
 
     private final ParkingRepository repository;
-    private final SecurityProvider securityService;
+    private final SecurityService securityService;
     private final ParkingService parkingService;
     private AddressService addressService;
     private ParkingOwnerService parkingOwnerService;
 
     @Autowired
-    public ParkingController(ParkingRepository repository, SecurityProvider securityService, ParkingService parkingService, AddressService addressService) {
+    public ParkingController(ParkingRepository repository, SecurityService securityService, ParkingService parkingService, AddressService addressService) {
         this.repository = repository;
         this.securityService = securityService;
         this.parkingService = parkingService; 
