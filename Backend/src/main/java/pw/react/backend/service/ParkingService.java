@@ -28,38 +28,41 @@ public class ParkingService implements ParkingMainService {
     }
 
     @Override
-    public Parking updateParking(Long id, Parking updatedCompany) {
+    public Page<Parking> findAll(String nameKeyword, Integer spotsTotalKeyword, Pageable pageable) {
+        return repository.findAll(nameKeyword, spotsTotalKeyword, pageable);
+    }
+
+    @Override
+    public Parking findById(long parkingId) {
+        return repository.findById(parkingId).orElseGet(() -> Parking.EMPTY);
+
+        //Optional<Parking> parking = repository.findById(parkingId);
+        //return parking.isPresent() ? parking.get() : null;
+    }
+
+    @Override
+    public Parking updateParkingById(Long parkingId, Parking updatedParking) {
         Parking result = Parking.EMPTY;
-        if (repository.existsById(id)) {
-            updatedCompany.setId(id);
-            result = repository.save(updatedCompany);
-            logger.info("Company with id {} updated.", id);
+        if (repository.existsById(parkingId)) {
+            updatedParking.setId(parkingId);
+            result = repository.save(updatedParking);
+            logger.info("Parking with id {} updated.", parkingId);
         }
         return result;
     }
 
     @Override
-    public boolean deleteParking(Long companyId) {
+    public boolean deleteParkingById(Long parkingId) {
         boolean result = false;
-        if (repository.existsById(companyId)) {
-            repository.deleteById(companyId);
-            logger.info("Company with id {} deleted.", companyId);
+        if (repository.existsById(parkingId)) {
+            repository.deleteById(parkingId);
+            logger.info("Parking with id {} deleted.", parkingId);
             result = true;
         }
         return result;
     }
 
-    @Override
-    public Optional<Parking> findById(long parkingId) {
-        return repository.findById(parkingId);
-    }
-
-    @Override
-    public Page<Parking> findAll(String nameKeyword, Integer spotsTotalKeyword, Pageable pageable) {
-        return repository.findAll(nameKeyword, spotsTotalKeyword, pageable);
-        // if (nameKeyword != null) {
-            
-        // }
-        // return repository.findAll();
-    }
+	public Parking addParking(Parking parking) {
+		return repository.save(parking);
+	}
 }

@@ -39,17 +39,13 @@ public class ParkingController {
 
     private final Logger logger = LoggerFactory.getLogger(ParkingController.class);
 
-    private final ParkingRepository repository;
     private final SecurityService securityService;
     private final ParkingService parkingService;
     private AddressService addressService;
     private ParkingOwnerService parkingOwnerService;
 
-    private Integer DEFAULT_PAGE_SIZE = 3;
-
     @Autowired
-    public ParkingController(ParkingRepository repository, SecurityService securityService, ParkingService parkingService, AddressService addressService) {
-        this.repository = repository;
+    public ParkingController(SecurityService securityService, ParkingService parkingService, AddressService addressService) {
         this.securityService = securityService;
         this.parkingService = parkingService; 
     }
@@ -75,7 +71,6 @@ public class ParkingController {
 
     @PostMapping(path = "")
     public ResponseEntity<String> createParkings(@RequestHeader HttpHeaders headers, @RequestBody List<Parking> parkings) { // In arguments are things that will be required to send in post request
-        logger.info("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
 
@@ -92,7 +87,7 @@ public class ParkingController {
                     parking.setParkingOwner(parkingOwner);
                 }
 
-                result.add(repository.save(parking));
+                result.add(parkingService.addParking(parking));
             }
 
             return ResponseEntity.ok(result.stream().map(c -> String.valueOf(c.getId())).collect(joining(",")));
@@ -124,30 +119,26 @@ public class ParkingController {
                 response.put("totalPages", pageParkings.getTotalPages());
         
                 return new ResponseEntity<>(response, HttpStatus.OK);
-
-
-            // Pageable pageable = PageRequest.of(page != null ? page : 0, pageSize != null ? pageSize : DEFAULT_PAGE_SIZE);
-            // logger.info("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxaaaaaaxxxxxxxx");
-            // logger.info(String.valueOf(pageable.getPageSize()));
-            // return ResponseEntity.ok(parkingService.findAll("BC", 120, pageable));   
         }
         throw new UnauthorizedException("Request is unauthorized");
     }
 
-    // @GetMapping(path = "")
-    // public ResponseEntity<Collection<Parking>> getAllParkings(@RequestHeader HttpHeaders headers) {
-    //     logHeaders(headers);
-    //     if (securityService.isAuthorized(headers)) {
-    //         return ResponseEntity.ok(repository.findAll());
-    //     }
-    //     throw new UnauthorizedException("Request is unauthorized");
-    // }
+
+    @GetMapping(path = "/{parkingId}")
+    public ResponseEntity<Parking> getParkingById(@RequestHeader HttpHeaders headers, @PathVariable Long parkingId) {
+        logHeaders(headers);
+        if (securityService.isAuthorized(headers)) {
+            //return ResponseEntity.ok(repository.findById(parkingId).orElseGet(() -> Parking.EMPTY));
+            return ResponseEntity.ok(parkingService.findById(parkingId));
+        }
+        throw new UnauthorizedException("Request is unauthorized");
+    }
 
     @DeleteMapping(path = "/{parkingId}")
     public ResponseEntity<String> deleteParking(@RequestHeader HttpHeaders headers, @PathVariable Long parkingId) {
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
-            boolean deleted = parkingService.deleteParking(parkingId);
+            boolean deleted = parkingService.deleteParkingById(parkingId);
             if (!deleted) {
                 return ResponseEntity.badRequest().body(String.format("Parking with id %s does not exists", parkingId));
             }

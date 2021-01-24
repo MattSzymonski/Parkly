@@ -66,9 +66,9 @@ public class Booking implements Serializable {
 	// 	return endDateTime;
     // }
 
-    public Booking(long booklyBookingId, Optional<Parking> parking,  LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    public Booking(long booklyBookingId, Parking parking, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         this.booklyUserId = booklyBookingId;
-        this.parking = parking.get();
+        this.parking = parking;
         this.startDateTime= startDateTime;
         this.endDateTime = endDateTime;
     }
