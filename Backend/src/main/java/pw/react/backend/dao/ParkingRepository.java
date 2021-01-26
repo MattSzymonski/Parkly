@@ -23,7 +23,10 @@ public interface ParkingRepository extends JpaRepository<Parking, Long> {
     //public List<Parking> findAll(@Param("name") String name, @Param("spotsTotal")Integer spotsTotal, Pageable pageable);
 
     @Query(value = "SELECT p FROM Parking p WHERE (:name is null or p.name LIKE %:name%) AND (:spotsTotal is null or p.spotsTotal = :spotsTotal)")
-    public Page<Parking> findAll(@Param("name") String name, @Param("spotsTotal")Integer spotsTotal, Pageable pageable);
+    public Page<Parking> findAll(
+        @Param("name") String name, 
+        @Param("spotsTotal")Integer spotsTotal, 
+        Pageable pageable);
 
 
     //List<Parking> findByNameContaining(String name, Pageable pageable);

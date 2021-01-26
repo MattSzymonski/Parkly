@@ -1,6 +1,6 @@
 package pw.react.backend.service;
 
-import pw.react.backend.model.BooklyBooking;
+import pw.react.backend.model.bookly.BooklyBooking;
 import pw.react.backend.model.Parking;
 
 import java.util.List;
@@ -10,7 +10,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface ParkingMainService { 
-    Page<Parking> findAll(String nameKeyword, Integer spotsTotalKeyword, Pageable pageable);
+    Page<Parking> findAll(
+        String nameKeyword, 
+        Integer spotsTotalKeyword, 
+        Pageable pageable);
     Parking findById(long parkingId);
     Parking updateParkingById(Long parkingId, Parking updatedParking);
     boolean deleteParkingById(Long parkingId);

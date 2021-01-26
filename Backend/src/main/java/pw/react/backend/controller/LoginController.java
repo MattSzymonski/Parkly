@@ -29,12 +29,14 @@ import static java.util.stream.Collectors.joining;
 
 
 
+
 @RestController
 @RequestMapping(path = "/login")
 public class LoginController {
 
     private final Logger logger = LoggerFactory.getLogger(ParkingController.class);
     private final SecurityService securityService;
+
 
     @Autowired
     public LoginController(SecurityService securityService) {

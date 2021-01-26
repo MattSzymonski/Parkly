@@ -12,7 +12,7 @@ import pw.react.backend.dao.AddressRepository;
 import pw.react.backend.dao.BookingRepository;
 import pw.react.backend.model.Address;
 import pw.react.backend.model.Booking;
-import pw.react.backend.model.BooklyBooking;
+import pw.react.backend.model.bookly.BooklyBooking;
 
 import java.io.IOException;
 import java.time.LocalDateTime;

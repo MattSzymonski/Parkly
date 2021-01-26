@@ -3,30 +3,25 @@ package pw.react.backend.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pw.react.backend.appException.UnauthorizedException;
-import pw.react.backend.dao.ParkingRepository;
 import pw.react.backend.dao.BookingRepository;
 import pw.react.backend.model.Booking;
-import pw.react.backend.dao.ParkingOwnerRepository;
-import pw.react.backend.model.Address;
-import pw.react.backend.model.Parking;
-import pw.react.backend.model.ParkingOwner;
 import pw.react.backend.service.*;
-import pw.react.backend.model.BooklyBooking;
-import pw.react.backend.model.BooklyBooking1;
-import pw.react.backend.web.UploadFileResponse;
+import pw.react.backend.model.bookly.BooklyBooking;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Map;
 
 import static java.util.stream.Collectors.joining;
+
+import java.util.ArrayList;
 
 
 
@@ -36,30 +31,14 @@ public class BookingController {
 
     private final Logger logger = LoggerFactory.getLogger(ParkingController.class);
 
-    private final BookingRepository repository;
     private final BookingService bookingService;
     private final SecurityService securityService;
 
-    // private final ParkingService parkingService;
-    // private AddressService addressService;
-    // private ParkingOwnerService parkingOwnerService;
-
     @Autowired
     public BookingController(BookingRepository repository, SecurityService securityService, BookingService bookingService) {
-        this.repository = repository;
         this.securityService = securityService;
         this.bookingService = bookingService; 
     }
-
-    // @Autowired
-    // public void setAddressService(AddressService addressService) {
-    //     this.addressService = addressService;
-    // }
-
-    // @Autowired
-    // public void setParkingOwnerService(ParkingOwnerService parkingOwnerService) {
-    //     this.parkingOwnerService = parkingOwnerService;
-    // }
 
     private void logHeaders(@RequestHeader HttpHeaders headers) {
         logger.info("Controller request headers {}",
@@ -70,15 +49,60 @@ public class BookingController {
         );
     }
 
-    @PostMapping(path = "") // For Bookly
-    public ResponseEntity<String> createBookings(@RequestHeader HttpHeaders headers, @RequestBody List<BooklyBooking> booklyBookings) { 
+    @PostMapping(path = "") // For Bookly to create bookings
+    public ResponseEntity<String> createBooking(@RequestHeader HttpHeaders headers, @RequestBody BooklyBooking booklyBooking) { 
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
-            List<Booking> result = repository.saveAll(bookingService.convertToBookings(booklyBookings));
-            return ResponseEntity.ok(result.stream().map(c -> String.valueOf(c.getId())).collect(joining(",")));
+            String result = String.valueOf(bookingService.addBooking(booklyBooking).getId());
+            return result != null ? ResponseEntity.ok(result) : ResponseEntity.badRequest().body(String.format("Parking with id %s does not exists", booklyBooking.getParkingId()));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Request is unauthorized");
     }
+
+    @GetMapping(path = "")
+    public ResponseEntity<Map<String, Object>> getAllBookings(
+        @RequestHeader HttpHeaders headers, 
+        //@RequestParam(required = false) String name, 
+        //@RequestParam(required = false) Integer spotsTotal, 
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "5") int pageSize
+    ){
+        logHeaders(headers);
+        if (securityService.isAuthorized(headers)) 
+        {
+                List<Booking> bookings = new ArrayList<Booking>();
+                Pageable paging = PageRequest.of(page, pageSize);
+                Map<String, Object> response = new HashMap<>();
+                Page<Booking> pageBookings = bookingService.findAll(
+                    //name, 
+                    //spotsTotal,
+                    paging);
+                bookings = pageBookings.getContent();
+                           
+                response.put("bookings", bookings);
+                response.put("currentPage", pageBookings.getNumber());
+                response.put("totalItems", pageBookings.getTotalElements());
+                response.put("totalPages", pageBookings.getTotalPages());
+        
+                return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        throw new UnauthorizedException("Request is unauthorized");
+    }
+
+
+    @DeleteMapping(path = "/{bookingId}")
+    public ResponseEntity<String> deleteBooking(@RequestHeader HttpHeaders headers, @PathVariable Long bookingId) {
+        logHeaders(headers);
+        if (securityService.isAuthorized(headers)) {
+            boolean deleted = bookingService.deleteBookingById(bookingId);
+            if (!deleted) {
+                return ResponseEntity.badRequest().body(String.format("Booking with id %s does not exists", bookingId));
+            }
+            return ResponseEntity.ok(String.format("Booking with id %s deleted", bookingId));
+        }
+        throw new UnauthorizedException("Request is unauthorized");
+    }
+
 
     // @GetMapping(path = "")
     // public ResponseEntity<Collection<String>> getAllBookings(@RequestHeader HttpHeaders headers) {
@@ -95,14 +119,14 @@ public class BookingController {
     //     throw new UnauthorizedException("Request is unauthorized");
     // }
 
-    @GetMapping(path = "") // For Parkly
-    public ResponseEntity<Collection<Booking>> getAllBookings(@RequestHeader HttpHeaders headers) {
-        logHeaders(headers);
-        if (securityService.isAuthorized(headers)) {
-            return ResponseEntity.ok(repository.findAll());
-        }
-        throw new UnauthorizedException("Request is unauthorized");
-    }
+    // @GetMapping(path = "") // For Parkly
+    // public ResponseEntity<Collection<Booking>> getAllBookings(@RequestHeader HttpHeaders headers) {
+    //     logHeaders(headers);
+    //     if (securityService.isAuthorized(headers)) {
+    //         return ResponseEntity.ok(repository.findAll());
+    //     }
+    //     throw new UnauthorizedException("Request is unauthorized");
+    // }
 
     // @GetMapping(path = "/xxx") // For 
     // public ResponseEntity<Collection<BooklyBooking1>> getAllBooklyBookings(@RequestHeader HttpHeaders headers) {

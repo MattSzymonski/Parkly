@@ -70,27 +70,23 @@ public class ParkingController {
     }
 
     @PostMapping(path = "")
-    public ResponseEntity<String> createParkings(@RequestHeader HttpHeaders headers, @RequestBody List<Parking> parkings) { // In arguments are things that will be required to send in post request
+    public ResponseEntity<String> createParkings(@RequestHeader HttpHeaders headers, @RequestBody Parking parking) { // In arguments are things that will be required to send in post request
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
 
-            List<Parking> result = new ArrayList<Parking>();
-
-            for (Parking parking : parkings) {
-                Address address = addressService.addAddress(parking.getAddress()); // Use already existing address if it exists in db
-                if (address != null) {
-                    parking.setAddress(address);
-                }
-
-                ParkingOwner parkingOwner = parkingOwnerService.addParkingOwner(parking.getParkingOwner()); // Use already existing parking owner if it exists in db
-                if (parkingOwner != null) {
-                    parking.setParkingOwner(parkingOwner);
-                }
-
-                result.add(parkingService.addParking(parking));
+            Address address = addressService.addAddress(parking.getAddress()); // Use already existing address if it exists in db
+            if (address != null) {
+                parking.setAddress(address);
             }
 
-            return ResponseEntity.ok(result.stream().map(c -> String.valueOf(c.getId())).collect(joining(",")));
+            ParkingOwner parkingOwner = parkingOwnerService.addParkingOwner(parking.getParkingOwner()); // Use already existing parking owner if it exists in db
+            if (parkingOwner != null) {
+                parking.setParkingOwner(parkingOwner);
+            }
+
+            String result = String.valueOf(parkingService.addParking(parking).getId());
+
+            return ResponseEntity.ok(result);
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Request is unauthorized");
     }
@@ -102,7 +98,7 @@ public class ParkingController {
         @RequestParam(required = false) String name, 
         @RequestParam(required = false) Integer spotsTotal, 
         @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "3") int pageSize
+        @RequestParam(defaultValue = "5") int pageSize
     ){
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) 
@@ -110,7 +106,10 @@ public class ParkingController {
                 List<Parking> parkings = new ArrayList<Parking>();
                 Pageable paging = PageRequest.of(page, pageSize);
                 Map<String, Object> response = new HashMap<>();
-                Page<Parking> pageParkings = parkingService.findAll(name, spotsTotal, paging);
+                Page<Parking> pageParkings = parkingService.findAll(
+                    name, 
+                    spotsTotal, 
+                    paging);
                 parkings = pageParkings.getContent();
                            
                 response.put("parkings", parkings);
@@ -147,3 +146,4 @@ public class ParkingController {
         throw new UnauthorizedException("Request is unauthorized");
     }
 }
+
