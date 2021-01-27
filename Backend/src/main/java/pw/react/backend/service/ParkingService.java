@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pw.react.backend.dao.ParkingRepository;
-import pw.react.backend.model.Parking;
+import pw.react.backend.model.data.Parking;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,19 +29,21 @@ public class ParkingService implements ParkingMainService {
 
     @Override
     public Page<Parking> findAll(
-        String nameKeyword,
-        Integer spotsTotalKeyword,
+        String name,
+        Integer spotsTotal,
+        String companyName,
         Pageable pageable
     ) {
         return repository.findAll(
-            nameKeyword, 
-            spotsTotalKeyword,
+            name, 
+            spotsTotal,
+            companyName,
             pageable);
     }
 
     @Override
     public Parking findById(long parkingId) {
-        return repository.findById(parkingId).orElseGet(() -> Parking.EMPTY);
+        return repository.findById(parkingId).orElseGet(() -> null);
     }
 
     @Override

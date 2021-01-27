@@ -12,9 +12,12 @@ import pw.react.backend.appException.InvalidFileException;
 import pw.react.backend.appException.ResourceNotFoundException;
 import pw.react.backend.dao.AddressRepository;
 import pw.react.backend.dao.BookingRepository;
-import pw.react.backend.model.Address;
-import pw.react.backend.model.Booking;
+import pw.react.backend.model.data.Address;
+import pw.react.backend.model.data.Booking;
+import pw.react.backend.model.data.Parking;
+import pw.react.backend.model.BookingDetailDTO;
 import pw.react.backend.model.bookly.BooklyBooking;
+import pw.react.backend.model.bookly.BooklyUser;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,6 +25,8 @@ import java.util.List;
 
 @Service
 public class BookingService implements BookingMainService {
+
+    private final Logger logger = LoggerFactory.getLogger(AddressService.class);
 
     private final BookingRepository repository;
     private ParkingService parkingService;
@@ -38,24 +43,23 @@ public class BookingService implements BookingMainService {
 
     @Override
     public Booking addBooking(BooklyBooking booklyBooking) {
-        if (parkingService.findById(booklyBooking.getParkingId()) == null) {
+        Parking parking = parkingService.findById(booklyBooking.getParkingId());
+        if (parking == null) {
             return null;
         }
-        return repository
-                .save(new Booking(booklyBooking.getUserId(), parkingService.findById(booklyBooking.getParkingId()),
-                        booklyBooking.getStartDateTime(), booklyBooking.getEndDateTime()));
+
+        return repository.save(Booking.createBooking(booklyBooking, parking));
     }
 
     @Override
-    public Page<Booking> findAll(
-        //String nameKeyword,
-        //Integer spotsTotalKeyword,
-        Pageable pageable
-    ) {
-        return repository.findAll(
-            //nameKeyword, 
-            //spotsTotalKeyword,
-            pageable);
+    public Page<Booking> findAll(Long parkingId,
+            // String name,
+            // Integer spotsTotal,
+            Pageable pageable) {
+        return repository.findAll(parkingId,
+                // name,
+                // spotsTotal,
+                pageable);
     }
 
     @Override
@@ -66,6 +70,27 @@ public class BookingService implements BookingMainService {
             result = true;
         }
         return result;
+    }
+
+    @Override
+    public Booking findById(long bookingId) {
+        return repository.findById(bookingId).orElseGet(() -> null);
+    }
+
+    @Override
+    public BookingDetailDTO createBookingDetailedDTO(Booking booking) {
+        
+        // TODO: fetch user data from Bookly !!!!!!!!!!
+        // If failed to fetch then return null
+
+        BooklyUser booklyUser = new BooklyUser(); // Mock user
+        booklyUser.setFirstName(booking.getUserFirstName()); // This is not needed because first name is saved in booking already
+        booklyUser.setLastName(booking.getUserLastName());  // This is not needed because last name is saved in booking already
+        booklyUser.setPhoneNumber("MOCK_PHONE");
+        booklyUser.setEmailAddress("MOCK_EMAIL_ADDRESS");
+        booklyUser.setRegistrationPlates("MOCK_REGISTRATION_PLATES");
+
+        return BookingDetailDTO.createBookingDetailDTO(booking, booklyUser);
     }
 }
 

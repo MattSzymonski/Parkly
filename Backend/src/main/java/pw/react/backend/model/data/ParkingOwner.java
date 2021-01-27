@@ -1,4 +1,4 @@
-package pw.react.backend.model;
+package pw.react.backend.model.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

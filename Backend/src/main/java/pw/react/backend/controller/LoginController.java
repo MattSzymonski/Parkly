@@ -13,9 +13,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pw.react.backend.appException.UnauthorizedException;
 import pw.react.backend.dao.ParkingRepository;
 import pw.react.backend.dao.ParkingOwnerRepository;
-import pw.react.backend.model.Address;
-import pw.react.backend.model.Parking;
-import pw.react.backend.model.ParkingOwner;
+import pw.react.backend.model.data.Address;
+import pw.react.backend.model.data.Parking;
+import pw.react.backend.model.data.ParkingOwner;
 import pw.react.backend.service.*;
 import pw.react.backend.web.UploadFileResponse;
 

@@ -9,9 +9,9 @@ import org.springframework.web.multipart.MultipartFile;
 import pw.react.backend.appException.InvalidFileException;
 import pw.react.backend.appException.ResourceNotFoundException;
 import pw.react.backend.dao.AddressRepository;
-import pw.react.backend.model.Address;
+import pw.react.backend.model.data.Address;
 import pw.react.backend.dao.ParkingOwnerRepository;
-import pw.react.backend.model.ParkingOwner;
+import pw.react.backend.model.data.ParkingOwner;
 
 import java.io.IOException;
 

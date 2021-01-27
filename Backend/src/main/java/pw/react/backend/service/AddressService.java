@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import pw.react.backend.appException.InvalidFileException;
 import pw.react.backend.appException.ResourceNotFoundException;
 import pw.react.backend.dao.AddressRepository;
-import pw.react.backend.model.Address;
+import pw.react.backend.model.data.Address;
 
 import java.io.IOException;
 

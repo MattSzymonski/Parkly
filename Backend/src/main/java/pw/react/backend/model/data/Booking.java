@@ -1,9 +1,10 @@
-package pw.react.backend.model;
+package pw.react.backend.model.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
+import pw.react.backend.model.bookly.BooklyBooking;
 import pw.react.backend.utils.JsonDateDeserializer;
 import pw.react.backend.utils.JsonDateSerializer;
 
@@ -31,8 +32,14 @@ public class Booking implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(name = "booklyUserId")
-    private long booklyUserId;
+    @Column(name = "userId")
+    private long userId;
+
+    @Column(name = "userFirstName")
+    private String userFirstName;
+
+    @Column(name = "userLastName")
+    private String userLastName;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.PERSIST) // Do not destroy address entry
     @JoinColumn(name = "parking_id", referencedColumnName = "id")
@@ -41,7 +48,7 @@ public class Booking implements Serializable {
     @Column(name = "startDateTime")
     @JsonDeserialize(using = JsonDateDeserializer.class) // For data decoding
     @JsonSerialize(using = JsonDateSerializer.class) // For data encoding
-    private LocalDateTime startDateTime;
+	public LocalDateTime startDateTime;
 
     @Column(name = "endDateTime")
     @JsonDeserialize(using = JsonDateDeserializer.class) // For data decoding
@@ -50,29 +57,19 @@ public class Booking implements Serializable {
 
 
 
-    // public Long getBooklyUserId() {
-	// 	return id;
-    // }
+    public Booking() { }
 
-    // public Long getParkingId() {
-	// 	return parking.getId();
-    // }
-    
-    // public LocalDateTime getStartDateTime() {
-	// 	return startDateTime;
-    // }
+    public static Booking createBooking(BooklyBooking booklyBooking, Parking parking) {
+        Booking booking = new Booking();
+        
+        booking.userId = booklyBooking.getUserId();
+        booking.userFirstName = booklyBooking.getUserFirstName();
+        booking.userLastName = booklyBooking.getUserLastName();
+        booking.parking = parking;
+        booking.startDateTime= booklyBooking.getStartDateTime();
+        booking.endDateTime = booklyBooking.getEndDateTime();
 
-    // public LocalDateTime getEndDateTime() {
-	// 	return endDateTime;
-    // }
-
-    public Booking(long booklyBookingId, Parking parking, LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        this.booklyUserId = booklyBookingId;
-        this.parking = parking;
-        this.startDateTime= startDateTime;
-        this.endDateTime = endDateTime;
+        return booking;
     }
-   public Booking() {
-
-    }
+   
 }

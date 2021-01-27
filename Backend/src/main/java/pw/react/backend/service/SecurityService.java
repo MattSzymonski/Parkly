@@ -5,7 +5,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import pw.react.backend.dao.ParklyUserRepository;
 import pw.react.backend.model.Credentials;
-import pw.react.backend.model.ParklyUser;
+import pw.react.backend.model.data.ParklyUser;
 import java.util.Optional;
 
 

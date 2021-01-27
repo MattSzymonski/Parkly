@@ -3,9 +3,8 @@ package pw.react.backend.dao;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import pw.react.backend.model.Booking;
-import pw.react.backend.model.BooklyBooking1;
-import pw.react.backend.model.ParklyUser;
+import pw.react.backend.model.data.Booking;
+import pw.react.backend.model.data.ParklyUser;
 
 import java.time.LocalDateTime;
 import java.util.List;

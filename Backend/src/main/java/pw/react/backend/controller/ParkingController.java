@@ -17,9 +17,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pw.react.backend.appException.UnauthorizedException;
 import pw.react.backend.dao.ParkingRepository;
 import pw.react.backend.dao.ParkingOwnerRepository;
-import pw.react.backend.model.Address;
-import pw.react.backend.model.Parking;
-import pw.react.backend.model.ParkingOwner;
+import pw.react.backend.model.ParkingDTO;
+import pw.react.backend.model.data.Address;
+import pw.react.backend.model.data.Parking;
+import pw.react.backend.model.data.ParkingOwner;
 import pw.react.backend.service.*;
 import pw.react.backend.web.UploadFileResponse;
 
@@ -95,23 +96,28 @@ public class ParkingController {
     @GetMapping(path = "")
     public ResponseEntity<Map<String, Object>> getAllParkings(
         @RequestHeader HttpHeaders headers, 
-        @RequestParam(required = false) String name, 
+        @RequestParam(required = false) String name,
         @RequestParam(required = false) Integer spotsTotal, 
+        @RequestParam(required = false) String companyName, 
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "5") int pageSize
     ){
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) 
         {
-                List<Parking> parkings = new ArrayList<Parking>();
+                List<ParkingDTO> parkings = new ArrayList<ParkingDTO>();
                 Pageable paging = PageRequest.of(page, pageSize);
                 Map<String, Object> response = new HashMap<>();
                 Page<Parking> pageParkings = parkingService.findAll(
                     name, 
                     spotsTotal, 
+                    companyName,
                     paging);
-                parkings = pageParkings.getContent();
-                           
+
+                for (Parking parking : pageParkings) {
+                    parkings.add(ParkingDTO.CreateParkingDTO(parking));
+                }
+                
                 response.put("parkings", parkings);
                 response.put("currentPage", pageParkings.getNumber());
                 response.put("totalItems", pageParkings.getTotalElements());
@@ -127,8 +133,11 @@ public class ParkingController {
     public ResponseEntity<Parking> getParkingById(@RequestHeader HttpHeaders headers, @PathVariable Long parkingId) {
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
+            Parking parking = parkingService.findById(parkingId);
+            return parking != null ? ResponseEntity.ok(parking) : ResponseEntity.badRequest().body(Parking.EMPTY);
+            //return parking != null ? ResponseEntity.ok(parking) : ResponseEntity.badRequest().body(String.format("Parking with id %s does not exists", parkingId));
             //return ResponseEntity.ok(repository.findById(parkingId).orElseGet(() -> Parking.EMPTY));
-            return ResponseEntity.ok(parkingService.findById(parkingId));
+            //return ResponseEntity.ok(parkingService.findById(parkingId));
         }
         throw new UnauthorizedException("Request is unauthorized");
     }
