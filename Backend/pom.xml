@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>pw.react</groupId>
-	<artifactId>pw-2020-backend-starter</artifactId>
+	<artifactId>parkly-backend-application</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>sample-backend</name>
-	<description>Starter for the labs</description>
+	<name>parkly-backend-application</name>
+	<description>Parkly backend application</description>
 
 	<properties>
 		<java.version>11</java.version>
