@@ -6,25 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import io.swagger.annotations.ApiOperation;
 import pw.react.backend.appException.UnauthorizedException;
-import pw.react.backend.dao.ParkingRepository;
-import pw.react.backend.dao.ParkingOwnerRepository;
 import pw.react.backend.model.ParkingDTO;
 import pw.react.backend.model.data.Address;
 import pw.react.backend.model.data.Parking;
 import pw.react.backend.model.data.ParkingOwner;
 import pw.react.backend.service.*;
-import pw.react.backend.web.UploadFileResponse;
-
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,7 +83,7 @@ public class ParkingController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Request is unauthorized");
     }
 
-
+    @ApiOperation(value = "XXXXXXXX")
     @GetMapping(path = "")
     public ResponseEntity<Map<String, Object>> getAllParkings(
         @RequestHeader HttpHeaders headers, 

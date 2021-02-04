@@ -6,6 +6,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import pw.react.backend.service.HttpClient;
 import pw.react.backend.web.Quote;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.spi.DocumentationType;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,4 +27,7 @@ class SampleBackendApplicationTests {
 		final Quote quote = httpService.consume("");
 		assertThat(quote).isNotNull();
 	}
+
+
+
 }

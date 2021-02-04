@@ -15,9 +15,6 @@ import pw.react.backend.service.*;
 import pw.react.backend.model.BookingDTO;
 import pw.react.backend.model.BookingDetailDTO;
 import pw.react.backend.model.bookly.BooklyBooking;
-import pw.react.backend.model.BookingDetailDTO;
-
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

@@ -3,25 +3,9 @@ package pw.react.backend.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import pw.react.backend.appException.UnauthorizedException;
-import pw.react.backend.dao.ParkingRepository;
-import pw.react.backend.dao.ParkingOwnerRepository;
-import pw.react.backend.model.data.Address;
-import pw.react.backend.model.data.Parking;
-import pw.react.backend.model.data.ParkingOwner;
 import pw.react.backend.service.*;
-import pw.react.backend.web.UploadFileResponse;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.ArrayList;
 
 import pw.react.backend.model.Credentials;
 import static java.util.stream.Collectors.joining;
