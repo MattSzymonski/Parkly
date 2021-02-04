@@ -3,10 +3,13 @@ package pw.react.backend;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
 @SpringBootApplication
-public class SampleBackendApplication {
+//@EnableSwagger2
+public class ParklyBackendApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SampleBackendApplication.class, args);
+		SpringApplication.run(ParklyBackendApplication.class, args);
 	}
 }
