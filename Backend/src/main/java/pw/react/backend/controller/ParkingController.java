@@ -74,6 +74,10 @@ public class ParkingController {
     public ResponseEntity<String> createParkings(@RequestHeader HttpHeaders headers, @RequestBody Parking parking) { // In arguments are things that will be required to send in post request
         if (securityService.isAuthorized(headers)) {
 
+            if (parkingService.findById(parking.getId()) != null) {
+                throw new InvalidRequestException(String.format("Cannot add new parking. Parking with id %s already exists", parking.getId()));
+            }
+
             Address address = addressService.add(parking.getAddress()); // Use already existing address if it exists in db
             if (address != null) {
                 parking.setAddress(address);
@@ -84,11 +88,13 @@ public class ParkingController {
                 parking.setParkingOwner(parkingOwner);
             }
 
+            parking.setAddedDateTime(null);
             String result = String.valueOf(parkingService.add(parking).getId());
 
             return ResponseEntity.ok(result);
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Request is unauthorized");
+
+        throw new UnauthorizedException("Request is unauthorized");
     }
 
     @PutMapping(path = "/p/parkings/{parkingId}")
