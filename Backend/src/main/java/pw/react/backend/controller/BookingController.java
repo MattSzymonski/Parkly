@@ -26,7 +26,7 @@ import java.util.ArrayList;
 
 
 @RestController
-@RequestMapping(path = "/bookings")
+//@RequestMapping(path = "/bookings")
 public class BookingController {
 
     private final Logger logger = LoggerFactory.getLogger(ParkingController.class);
@@ -49,22 +49,10 @@ public class BookingController {
         );
     }
 
-    @PostMapping(path = "") // For Bookly to create bookings
-    public ResponseEntity<String> createBooking(@RequestHeader HttpHeaders headers, @RequestBody BooklyBooking booklyBooking) { 
-        logHeaders(headers);
-        if (securityService.isAuthorized(headers)) {
-
-            Booking result = bookingService.addBooking(booklyBooking);
-            return result != null ? ResponseEntity.ok(String.valueOf(result.getId())) : ResponseEntity.badRequest().body(String.format("Parking with id %s does not exists", booklyBooking.getParkingId()));
-        }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Request is unauthorized");
-    }
-
-    @GetMapping(path = "")
+    @GetMapping(path = "/p/bookings")
     public ResponseEntity<Map<String, Object>> getAllBookings(
         @RequestHeader HttpHeaders headers, 
         @RequestParam(required = false) Long parkingId, 
-        //@RequestParam(required = false) Integer spotsTotal, 
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "5") int pageSize
     ){
@@ -77,11 +65,10 @@ public class BookingController {
                 Page<Booking> pageBookings = bookingService.findAll(
                     parkingId,
                     //name, 
-                    //spotsTotal,
                     paging);
 
                 for (Booking booking : pageBookings) {
-                    bookings.add(BookingDTO.createBookingDTO(booking));
+                    bookings.add(new BookingDTO(booking));
                 }
                            
                 response.put("bookings", bookings);
@@ -95,7 +82,7 @@ public class BookingController {
     }
 
 
-    @GetMapping(path = "/{bookingId}")
+    @GetMapping(path = "/p/bookings/{bookingId}")
     public ResponseEntity<BookingDetailDTO> getBookingById(@RequestHeader HttpHeaders headers, @PathVariable Long bookingId) {
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
@@ -113,7 +100,7 @@ public class BookingController {
     }
 
 
-    @DeleteMapping(path = "/{bookingId}")
+    @DeleteMapping(path = "/p/bookings/{bookingId}")
     public ResponseEntity<String> deleteBooking(@RequestHeader HttpHeaders headers, @PathVariable Long bookingId) {
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
@@ -127,51 +114,66 @@ public class BookingController {
     }
 
 
+    // ---------- Bookly API ----------
 
+    @GetMapping(path = "/b/bookings")
+    public ResponseEntity<Map<String, Object>> getAllBookingsBookly(
+        @RequestHeader HttpHeaders headers, 
+        @RequestParam(required = true) String apiKey, 
+        @RequestParam(required = false) Long parkingId, 
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "5") int pageSize
+    ){
+        if (securityService.isAuthorized(apiKey)) // Bookly autorization is done using apiKey passed as parameter
+        {
+                List<BookingDTO> bookings = new ArrayList<BookingDTO>();
+                Pageable paging = PageRequest.of(page, pageSize);
+                Map<String, Object> response = new HashMap<>();
+                Page<Booking> pageBookings = bookingService.findAll(
+                    parkingId,
+                    //name, 
+                    paging);
 
-    // @GetMapping(path = "")
-    // public ResponseEntity<Collection<String>> getAllBookings(@RequestHeader HttpHeaders headers) {
-    //     logHeaders(headers);
-    //     if (securityService.isAuthorized(headers)) {
-    //         List<Booking> cb = repository.findAll();
-           
+                for (Booking booking : pageBookings) {
+                    bookings.add(new BookingDTO(booking));
+                }
+                           
+                response.put("bookings", bookings);
+                response.put("currentPage", pageBookings.getNumber());
+                response.put("totalItems", pageBookings.getTotalElements());
+                response.put("totalPages", pageBookings.getTotalPages());
+        
+                return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        throw new UnauthorizedException("Request is unauthorized");
+    }
 
-    //         //yyyyyyyyyyyyyyyyyyyy
+    @PostMapping(path = "/b/bookings") 
+    public ResponseEntity<String> createBookingBookly( 
+        @RequestHeader HttpHeaders headers, 
+        @RequestParam(required = true) String apiKey,
+        @RequestBody BooklyBooking booklyBooking
+    ){ 
+        if (securityService.isAuthorized(apiKey)) { // Bookly autorization is done using apiKey passed as parameter
+            Booking result = bookingService.addBooking(booklyBooking);
+            return result != null ? ResponseEntity.ok(String.valueOf(result.getId())) : ResponseEntity.badRequest().body(String.format("Parking with id %s does not exists", booklyBooking.getParkingId()));
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Request is unauthorized");
+    }
 
-
-    //         return ResponseEntity.ok(repository.findAll());
-    //     }
-    //     throw new UnauthorizedException("Request is unauthorized");
-    // }
-
-    // @GetMapping(path = "") // For Parkly
-    // public ResponseEntity<Collection<Booking>> getAllBookings(@RequestHeader HttpHeaders headers) {
-    //     logHeaders(headers);
-    //     if (securityService.isAuthorized(headers)) {
-    //         return ResponseEntity.ok(repository.findAll());
-    //     }
-    //     throw new UnauthorizedException("Request is unauthorized");
-    // }
-
-    // @GetMapping(path = "/xxx") // For 
-    // public ResponseEntity<Collection<BooklyBooking1>> getAllBooklyBookings(@RequestHeader HttpHeaders headers) {
-    //     logHeaders(headers);
-    //     if (securityService.isAuthorized(headers)) {
-    //         return ResponseEntity.ok(repository.findAllWithCustomObject());
-    //     }
-    //     throw new UnauthorizedException("Request is unauthorized");
-    // }
-
-    // @DeleteMapping(path = "/{parkingId}")
-    // public ResponseEntity<String> deleteParking(@RequestHeader HttpHeaders headers, @PathVariable Long parkingId) {
-    //     logHeaders(headers);
-    //     if (securityService.isAuthorized(headers)) {
-    //         boolean deleted = parkingService.deleteParking(parkingId);
-    //         if (!deleted) {
-    //             return ResponseEntity.badRequest().body(String.format("Parking with id %s does not exists", parkingId));
-    //         }
-    //         return ResponseEntity.ok(String.format("Parking with id %s deleted", parkingId));
-    //     }
-    //     throw new UnauthorizedException("Request is unauthorized");
-    // }
+    @DeleteMapping(path = "/b/bookings/{bookingId}")
+    public ResponseEntity<String> deleteBookingBookly(
+        @RequestHeader HttpHeaders headers, 
+        @RequestParam(required = true) String apiKey,
+        @PathVariable Long bookingId
+    ){
+        if (securityService.isAuthorized(apiKey)) {
+            boolean deleted = bookingService.deleteBookingById(bookingId);
+            if (!deleted) {
+                return ResponseEntity.badRequest().body(String.format("Booking with id %s does not exists", bookingId));
+            }
+            return ResponseEntity.ok(String.format("Booking with id %s deleted", bookingId));
+        }
+        throw new UnauthorizedException("Request is unauthorized");
+    }
 }

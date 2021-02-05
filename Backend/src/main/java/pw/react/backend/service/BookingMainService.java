@@ -1,7 +1,5 @@
 package pw.react.backend.service;
 
-import java.util.List;
-
 import pw.react.backend.model.data.Booking;
 import pw.react.backend.model.BookingDetailDTO;
 import pw.react.backend.model.bookly.BooklyBooking;

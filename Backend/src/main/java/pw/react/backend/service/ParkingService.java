@@ -7,10 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pw.react.backend.dao.ParkingRepository;
 import pw.react.backend.model.data.Parking;
-
-import java.util.List;
-import java.util.Optional;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 
 @Service
@@ -30,13 +26,11 @@ public class ParkingService implements ParkingMainService {
     @Override
     public Page<Parking> findAll(
         String name,
-        Integer spotsTotal,
         String companyName,
         Pageable pageable
     ) {
         return repository.findAll(
             name, 
-            spotsTotal,
             companyName,
             pageable);
     }

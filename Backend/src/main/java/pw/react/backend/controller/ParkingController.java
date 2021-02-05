@@ -26,7 +26,6 @@ import static java.util.stream.Collectors.joining;
 
 
 @RestController
-@RequestMapping(path = "/parkings")
 public class ParkingController {
 
     private final Logger logger = LoggerFactory.getLogger(ParkingController.class);
@@ -61,7 +60,7 @@ public class ParkingController {
         );
     }
 
-    @PostMapping(path = "")
+    @PostMapping(path = "/p/parkings")
     public ResponseEntity<String> createParkings(@RequestHeader HttpHeaders headers, @RequestBody Parking parking) { // In arguments are things that will be required to send in post request
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
@@ -83,8 +82,7 @@ public class ParkingController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Request is unauthorized");
     }
 
-    @ApiOperation(value = "XXXXXXXX")
-    @GetMapping(path = "")
+    @GetMapping(path = "/p/parkings")
     public ResponseEntity<Map<String, Object>> getAllParkings(
         @RequestHeader HttpHeaders headers, 
         @RequestParam(required = false) String name,
@@ -100,13 +98,12 @@ public class ParkingController {
                 Pageable paging = PageRequest.of(page, pageSize);
                 Map<String, Object> response = new HashMap<>();
                 Page<Parking> pageParkings = parkingService.findAll(
-                    name, 
-                    spotsTotal, 
+                    name,  
                     companyName,
                     paging);
 
                 for (Parking parking : pageParkings) {
-                    parkings.add(ParkingDTO.CreateParkingDTO(parking));
+                    parkings.add(new ParkingDTO(parking));
                 }
                 
                 response.put("parkings", parkings);
@@ -120,7 +117,7 @@ public class ParkingController {
     }
 
 
-    @GetMapping(path = "/{parkingId}")
+    @GetMapping(path = "/p/parkings/{parkingId}")
     public ResponseEntity<Parking> getParkingById(@RequestHeader HttpHeaders headers, @PathVariable Long parkingId) {
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
@@ -133,7 +130,7 @@ public class ParkingController {
         throw new UnauthorizedException("Request is unauthorized");
     }
 
-    @DeleteMapping(path = "/{parkingId}")
+    @DeleteMapping(path = "/p/parkings/{parkingId}")
     public ResponseEntity<String> deleteParking(@RequestHeader HttpHeaders headers, @PathVariable Long parkingId) {
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
@@ -145,5 +142,59 @@ public class ParkingController {
         }
         throw new UnauthorizedException("Request is unauthorized");
     }
+
+
+    // ---------- Bookly API ----------
+
+    @GetMapping(path = "/b/parkings")
+    public ResponseEntity<Map<String, Object>> getAllParkingsBookly(
+        @RequestHeader HttpHeaders headers, 
+        @RequestParam(required = true) String apiKey, 
+        @RequestParam(required = false) String name,
+        @RequestParam(required = false) Integer spotsTotal, 
+        @RequestParam(required = false) String companyName, 
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "5") int pageSize
+    ){
+        if (securityService.isAuthorized(apiKey)) {// Bookly autorization is done using apiKey passed as parameter 
+                List<ParkingDTO> parkings = new ArrayList<ParkingDTO>();
+                Pageable paging = PageRequest.of(page, pageSize);
+                Map<String, Object> response = new HashMap<>();
+                Page<Parking> pageParkings = parkingService.findAll(
+                    name,  
+                    companyName,
+                    paging);
+
+                for (Parking parking : pageParkings) {
+                    parkings.add(new ParkingDTO(parking));
+                }
+                
+                response.put("parkings", parkings);
+                response.put("currentPage", pageParkings.getNumber());
+                response.put("totalItems", pageParkings.getTotalElements());
+                response.put("totalPages", pageParkings.getTotalPages());
+        
+                return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        throw new UnauthorizedException("Request is unauthorized");
+    }
+
+    @GetMapping(path = "/b/parkings/{parkingId}")
+    public ResponseEntity<Parking> getParkingByIdBookly(  
+        @RequestHeader HttpHeaders headers,
+        @RequestParam(required = true) String apiKey, 
+        @PathVariable Long parkingId
+    ){
+        if (securityService.isAuthorized(apiKey)) { // Bookly autorization is done using apiKey passed as parameter
+            Parking parking = parkingService.findById(parkingId);
+            return parking != null ? ResponseEntity.ok(parking) : ResponseEntity.badRequest().body(Parking.EMPTY);
+            //return parking != null ? ResponseEntity.ok(parking) : ResponseEntity.badRequest().body(String.format("Parking with id %s does not exists", parkingId));
+            //return ResponseEntity.ok(repository.findById(parkingId).orElseGet(() -> Parking.EMPTY));
+            //return ResponseEntity.ok(parkingService.findById(parkingId));
+        }
+        throw new UnauthorizedException("Request is unauthorized");
+    }
+
+
 }
 

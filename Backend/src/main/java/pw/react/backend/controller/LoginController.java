@@ -15,7 +15,6 @@ import static java.util.stream.Collectors.joining;
 
 
 @RestController
-@RequestMapping(path = "/login")
 public class LoginController {
 
     private final Logger logger = LoggerFactory.getLogger(ParkingController.class);
@@ -36,7 +35,7 @@ public class LoginController {
         );
     }
 
-    @PostMapping(path = "") // For Flatly frontend
+    @PostMapping(path = "/p/login") // For Flatly frontend
     public ResponseEntity<String> login(@RequestHeader HttpHeaders headers, @RequestBody Credentials credentials) { 
         logHeaders(headers);
 

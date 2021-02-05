@@ -1,15 +1,13 @@
 package pw.react.backend.model.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import pw.react.backend.utils.JsonDateDeserializer;
-import pw.react.backend.utils.JsonDateSerializer;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+
 
 @Entity
 @Table(name = "parkingOwner")  // Generate table in database with fields below
@@ -23,18 +21,23 @@ public class ParkingOwner implements Serializable {
 
     @Id    
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @ApiModelProperty(position = 1)
     private long id;
 
     @Column(name = "firstName")
+    @ApiModelProperty(position = 2)
     private String firstName;
 
     @Column(name = "lastName")
+    @ApiModelProperty(position = 3)
     private String lastName;
 
     @Column(name = "companyName")
+    @ApiModelProperty(position = 4)
     private String companyName;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.PERSIST) // Do not destroy address entry
     @JoinColumn(name = "address_id", referencedColumnName = "id")
+    @ApiModelProperty(position = 5)
     private Address address;
 }

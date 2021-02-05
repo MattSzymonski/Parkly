@@ -1,5 +1,6 @@
 package pw.react.backend.model;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import pw.react.backend.model.data.Address;
@@ -8,26 +9,30 @@ import pw.react.backend.model.data.Parking;
 
 public class ParkingDTO { // This object represents one entry in parking list. It is send to Parkly frontend and Bookly backend
     
+    @ApiModelProperty(position = 1)
     @Getter @Setter private long id; // Parking id
+
+    @ApiModelProperty(position = 2)
     @Getter @Setter private String name;
-    @Getter @Setter private Integer spotsTaken;
+
+    @ApiModelProperty(position = 3)
+    @Getter @Setter private Integer spotsTaken; // Taken in given time interval
+
+    @ApiModelProperty(position = 4)
     @Getter @Setter private Integer spotsTotal;
+
+    @ApiModelProperty(position = 5)
     @Getter @Setter private String ownerCompanyName;
+
+    @ApiModelProperty(position = 6)
     @Getter @Setter private Address address;
 
-    public ParkingDTO() {
-    }
-
-    public static ParkingDTO CreateParkingDTO(Parking parking) {
-        ParkingDTO parkingDTO = new ParkingDTO();
-
-        parkingDTO.id = parking.getId();
-        parkingDTO.name = parking.getName();
-        parkingDTO.spotsTaken = parking.getSpotsTaken();
-        parkingDTO.spotsTotal = parking.getSpotsTotal();
-        parkingDTO.ownerCompanyName = parking.getParkingOwner().getCompanyName();
-        parkingDTO.address = parking.getAddress();
-
-        return parkingDTO;
+    public ParkingDTO(Parking parking){
+        this.id = parking.getId();
+        this.name = parking.getName();
+        this.spotsTaken = 0;
+        this.spotsTotal = parking.getSpotsTotal();  
+        this.ownerCompanyName = parking.getParkingOwner().getCompanyName();
+        this.address = parking.getAddress();
     }
 }

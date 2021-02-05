@@ -6,22 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
-import pw.react.backend.appException.InvalidFileException;
-import pw.react.backend.appException.ResourceNotFoundException;
-import pw.react.backend.dao.AddressRepository;
 import pw.react.backend.dao.BookingRepository;
-import pw.react.backend.model.data.Address;
 import pw.react.backend.model.data.Booking;
 import pw.react.backend.model.data.Parking;
 import pw.react.backend.model.BookingDetailDTO;
 import pw.react.backend.model.bookly.BooklyBooking;
 import pw.react.backend.model.bookly.BooklyUser;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class BookingService implements BookingMainService {
@@ -48,7 +38,7 @@ public class BookingService implements BookingMainService {
             return null;
         }
 
-        return repository.save(Booking.createBooking(booklyBooking, parking));
+        return repository.save(new Booking(booklyBooking, parking));
     }
 
     @Override
@@ -90,7 +80,7 @@ public class BookingService implements BookingMainService {
         booklyUser.setEmailAddress("MOCK_EMAIL_ADDRESS");
         booklyUser.setRegistrationPlates("MOCK_REGISTRATION_PLATES");
 
-        return BookingDetailDTO.createBookingDetailDTO(booking, booklyUser);
+        return new BookingDetailDTO(booking, booklyUser);
     }
 }
 

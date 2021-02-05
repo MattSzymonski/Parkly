@@ -23,6 +23,16 @@ public class SecurityService implements SecurityMainService {
     }
 
     @Override
+    public boolean isAuthorized(HttpHeaders headers) {
+        return isAuthenticated(headers);
+    }
+
+    @Override
+    public boolean isAuthorized(String apiKey) {
+        return isAuthenticated(apiKey);
+    }
+
+    @Override
     public boolean isAuthenticated(HttpHeaders headers) {
         if (headers == null) {
             return false;
@@ -31,8 +41,11 @@ public class SecurityService implements SecurityMainService {
     }
 
     @Override
-    public boolean isAuthorized(HttpHeaders headers) {
-        return isAuthenticated(headers);
+    public boolean isAuthenticated(String apiKey) {
+        if (apiKey == null) {
+            return false;
+        }
+        return repository.findBySecurityToken(apiKey).isPresent();
     }
 
     @Override
