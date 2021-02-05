@@ -18,13 +18,10 @@ import pw.react.backend.model.data.Address;
 import pw.react.backend.model.data.Parking;
 import pw.react.backend.model.data.ParkingOwner;
 import pw.react.backend.service.*;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.ArrayList;
 
 import static java.util.stream.Collectors.joining;
-import java.util.Optional;
 
 
 @RestController

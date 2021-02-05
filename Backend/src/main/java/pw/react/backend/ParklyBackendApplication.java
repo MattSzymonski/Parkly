@@ -1,6 +1,6 @@
 package pw.react.backend;
 
-import com.google.common.base.Predicates;
+//import com.google.common.base.Predicates;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,46 +26,47 @@ public class ParklyBackendApplication {
 		return new Docket(DocumentationType.SWAGGER_2)
 				.groupName("Parkly Whole API")
 				.select()
-				.paths(
-					Predicates.or(
-						PathSelectors.ant("/p/login/**"), 
-						PathSelectors.ant("/p/bookings/**"), 
-						PathSelectors.ant("/b/bookings/**"), 
-						PathSelectors.ant("/p/parkings/**"), 
-						PathSelectors.ant("/b/parkings/**")
-					)
+				.paths(PathSelectors.any()
+					// Predicates.or(
+					// 	PathSelectors.ant("/p/login/**"), 
+					// 	PathSelectors.ant("/p/bookings/**"), 
+					// 	PathSelectors.ant("/b/bookings/**"), 
+					// 	PathSelectors.ant("/p/parkings/**"), 
+					// 	PathSelectors.ant("/b/parkings/**")
+					// )
 				)
 				.build().apiInfo(createApiInfo());//.ignoredParameterTypes(Address.class, BooklyBooking.class, Parking.class, ParkingOwner.class);
 	}
 
-	@Bean
-	public Docket swaggerExternalApi() {
-		return new Docket(DocumentationType.SWAGGER_2)
-				.groupName("Parkly External API")
-				.select()
-				.paths(
-					Predicates.or(
-						PathSelectors.ant("/b/bookings/**"), 
-						PathSelectors.ant("/b/parkings/**")
-					)
-				)
-				.build().apiInfo(createApiInfo());//.ignoredParameterTypes(Address.class, BooklyBooking.class, Parking.class, ParkingOwner.class);
-	}
+	// @Bean
+	// public Docket swaggerExternalApi() {
+	// 	return new Docket(DocumentationType.SWAGGER_2)
+	// 			.groupName("Parkly External API")
+	// 			.select()
+	// 			.paths(
+	// 				// Predicates.or(
+	// 				// 	PathSelectors.ant("/b/bookings/**"), 
+	// 				// 	PathSelectors.ant("/b/parkings/**")
+	// 				// )
+	// 			)
+				
+	// 			.build().apiInfo(createApiInfo()).useDefaultResponseMessages(false);//.ignoredParameterTypes(Address.class, BooklyBooking.class, Parking.class, ParkingOwner.class);
+	// }
 
-	@Bean
-	public Docket swaggerInternalApi() {
-		return new Docket(DocumentationType.SWAGGER_2)
-				.groupName("Parkly Internal API")
-				.select()
-				.paths(
-					Predicates.or(
-						PathSelectors.ant("/p/login/**"), 
-						PathSelectors.ant("/p/bookings/**"), 
-						PathSelectors.ant("/p/parkings/**")
-					)
-				)
-				.build().apiInfo(createApiInfo());//.ignoredParameterTypes(Address.class, BooklyBooking.class, Parking.class, ParkingOwner.class);
-	}
+	// @Bean
+	// public Docket swaggerInternalApi() {
+	// 	return new Docket(DocumentationType.SWAGGER_2)
+	// 			.groupName("Parkly Internal API")
+	// 			.select()
+	// 			.paths(
+	// 				// Predicates.or(
+	// 				// 	PathSelectors.ant("/p/login/**"), 
+	// 				// 	PathSelectors.ant("/p/bookings/**"), 
+	// 				// 	PathSelectors.ant("/p/parkings/**")
+	// 				// )
+	// 			)
+	// 			.build().apiInfo(createApiInfo());//.ignoredParameterTypes(Address.class, BooklyBooking.class, Parking.class, ParkingOwner.class);
+	// }
 
 	private ApiInfo createApiInfo() {
 
