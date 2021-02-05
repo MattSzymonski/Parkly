@@ -35,5 +35,12 @@ public class ParkingControllerExceptionHelper {
         return new ResponseEntity<>(new ExceptionDetails(HttpStatus.UNAUTHORIZED, ex.getMessage()), HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(value = { InvalidRequestException.class })
+    public ResponseEntity<ExceptionDetails> handleInvalidRequestException(InvalidRequestException ex) {
+        logger.error("Invalid Input Exception: {}", ex.getMessage());
+        return new ResponseEntity<>(new ExceptionDetails(HttpStatus.BAD_REQUEST, ex.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+    
 
 }

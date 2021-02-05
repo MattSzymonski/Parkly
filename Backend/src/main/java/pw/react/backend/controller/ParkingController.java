@@ -11,6 +11,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import io.swagger.annotations.ApiOperation;
+
+import io.swagger.annotations.ExampleProperty;
+import io.swagger.models.Response;
+import io.swagger.annotations.Example;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Authorization;
+import pw.react.backend.appException.InvalidRequestException;
 import pw.react.backend.appException.UnauthorizedException;
 import pw.react.backend.model.ParkingDTO;
 import pw.react.backend.model.PageDTO;
@@ -64,32 +72,75 @@ public class ParkingController {
 
     @PostMapping(path = "/p/parkings")
     public ResponseEntity<String> createParkings(@RequestHeader HttpHeaders headers, @RequestBody Parking parking) { // In arguments are things that will be required to send in post request
-        logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
 
-            Address address = addressService.addAddress(parking.getAddress()); // Use already existing address if it exists in db
+            Address address = addressService.add(parking.getAddress()); // Use already existing address if it exists in db
             if (address != null) {
                 parking.setAddress(address);
             }
 
-            ParkingOwner parkingOwner = parkingOwnerService.addParkingOwner(parking.getParkingOwner()); // Use already existing parking owner if it exists in db
+            ParkingOwner parkingOwner = parkingOwnerService.add(parking.getParkingOwner(), true); // Use already existing parking owner if it exists in db
             if (parkingOwner != null) {
                 parking.setParkingOwner(parkingOwner);
             }
 
-            String result = String.valueOf(parkingService.addParking(parking).getId());
+            String result = String.valueOf(parkingService.add(parking).getId());
 
             return ResponseEntity.ok(result);
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Request is unauthorized");
     }
 
+    @PutMapping(path = "/p/parkings/{parkingId}")
+    public ResponseEntity<Parking> putParkingById(
+        @RequestHeader HttpHeaders headers, 
+        @PathVariable Long parkingId, 
+        @RequestBody Parking updatedParking,
+        @RequestParam(required = true) boolean createNewOwner //If true then new owner entry will be created and parking will point to it. If false then data of current owner will be modified
+    ){
+        if (securityService.isAuthorized(headers)) {
+
+            Address address = addressService.add(updatedParking.getAddress()); // Use already existing address if it exists in db
+            if (address != null) {
+                updatedParking.setAddress(address);
+            }
+
+            if (createNewOwner) // Create new parking owner for this parking and leave original one intact
+            {
+                ParkingOwner parkingOwner = parkingOwnerService.add(updatedParking.getParkingOwner(), false);
+                if(parkingOwner == null) {
+                    throw new InvalidRequestException(String.format("Cannot create new parking owner. Company with name %s already exists", updatedParking.getParkingOwner().getCompanyName()));
+                }
+                updatedParking.setParkingOwner(parkingOwner);
+            }
+            else // Use already existing parking owner if it exists in db, if no then create new one
+            {
+                ParkingOwner parkingOwner = parkingOwnerService.add(updatedParking.getParkingOwner(), true); 
+                if (parkingOwner != null) {
+                    updatedParking.setParkingOwner(parkingOwner);
+                }
+            }
+            
+            Parking parking = parkingService.updateById(parkingId, updatedParking);
+            
+            return parking != null ? ResponseEntity.ok(parking) : ResponseEntity.badRequest().body(Parking.EMPTY);
+        }
+        throw new UnauthorizedException("Request is unauthorized");
+    }
+
+
     @GetMapping(path = "/p/parkings")
     public ResponseEntity<PageDTO<ParkingDTO>> getAllParkings(
         @RequestHeader HttpHeaders headers, 
+
+        @RequestParam(required = false) Long id,
         @RequestParam(required = false) String name,
-        @RequestParam(required = false) Integer spotsTotal, 
-        @RequestParam(required = false) String companyName, 
+        @RequestParam(required = false) Integer minimumSpotsTotal,
+        @RequestParam(required = false) String companyName,
+        @RequestParam(required = false) String country,
+        @RequestParam(required = false) String town,
+        @RequestParam(required = false) String streetName,
+
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "5") int pageSize
     ){
@@ -99,8 +150,13 @@ public class ParkingController {
                 List<ParkingDTO> parkings = new ArrayList<ParkingDTO>();
                 Pageable paging = PageRequest.of(page, pageSize);
                 Page<Parking> pageParkings = parkingService.findAll(
+                    id,
                     name,  
+                    minimumSpotsTotal,
                     companyName,
+                    country,
+                    town,
+                    streetName,
                     paging);
 
                 for (Parking parking : pageParkings) {
@@ -126,13 +182,15 @@ public class ParkingController {
         throw new UnauthorizedException("Request is unauthorized");
     }
 
+
     @DeleteMapping(path = "/p/parkings/{parkingId}")
     public ResponseEntity<String> deleteParking(@RequestHeader HttpHeaders headers, @PathVariable Long parkingId) {
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
-            boolean deleted = parkingService.deleteParkingById(parkingId);
+            boolean deleted = parkingService.deleteById(parkingId);
             if (!deleted) {
-                return ResponseEntity.badRequest().body(String.format("Parking with id %s does not exists", parkingId));
+
+                throw new InvalidRequestException(String.format("Parking with id %s does not exists", parkingId));
             }
             return ResponseEntity.ok(String.format("Parking with id %s deleted", parkingId));
         }
@@ -145,10 +203,16 @@ public class ParkingController {
     @GetMapping(path = "/b/parkings")
     public ResponseEntity<PageDTO<ParkingDTO>> getAllParkingsBookly(
         @RequestHeader HttpHeaders headers, 
-        @RequestParam(required = true) String apiKey, 
+        @RequestParam(required = true) String apiKey,
+
+        @RequestParam(required = false) Long id,
         @RequestParam(required = false) String name,
-        @RequestParam(required = false) Integer spotsTotal, 
-        @RequestParam(required = false) String companyName, 
+        @RequestParam(required = false) Integer minimumSpotsTotal,
+        @RequestParam(required = false) String companyName,
+        @RequestParam(required = false) String country,
+        @RequestParam(required = false) String town,
+        @RequestParam(required = false) String streetName,
+
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "5") int pageSize
     ){
@@ -156,8 +220,13 @@ public class ParkingController {
                 List<ParkingDTO> parkings = new ArrayList<ParkingDTO>();
                 Pageable paging = PageRequest.of(page, pageSize);
                 Page<Parking> pageParkings = parkingService.findAll(
+                    id,
                     name,  
+                    minimumSpotsTotal,
                     companyName,
+                    country,
+                    town,
+                    streetName,
                     paging);
 
                 for (Parking parking : pageParkings) {

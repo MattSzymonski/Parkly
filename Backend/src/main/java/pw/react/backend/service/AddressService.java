@@ -21,7 +21,7 @@ public class AddressService implements AddressMainService {
     }
 
     @Override
-    public Address addAddress(Address address) {  
+    public Address add(Address address) {  
         repository.findByCountryAndTownAndStreetNameAndStreetNumber(address.getCountry(), address.getTown(), address.getStreetName(), address.getStreetNumber()).ifPresent(addressInTable -> address.setId(addressInTable.getId())); 
         return repository.save(address);
     }

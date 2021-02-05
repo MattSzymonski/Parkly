@@ -64,7 +64,7 @@ public class Booking implements Serializable {
     @ApiModelProperty(position = 7)
     private LocalDateTime endDateTime;
 
-
+    public Booking() {}
 
     public Booking(BooklyBooking booklyBooking, Parking parking) {
         this.userId = booklyBooking.getUserId();

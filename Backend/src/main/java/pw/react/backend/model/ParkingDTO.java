@@ -1,5 +1,7 @@
 package pw.react.backend.model;
 
+import java.time.LocalDateTime;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,6 +29,9 @@ public class ParkingDTO { // This object represents one entry in parking list. I
     @ApiModelProperty(position = 6)
     @Getter @Setter private Address address;
 
+    @ApiModelProperty(position = 7)
+    @Getter @Setter private LocalDateTime addedDateTime;
+
     public ParkingDTO(Parking parking){
         this.id = parking.getId();
         this.name = parking.getName();
@@ -34,5 +39,6 @@ public class ParkingDTO { // This object represents one entry in parking list. I
         this.spotsTotal = parking.getSpotsTotal();  
         this.ownerCompanyName = parking.getParkingOwner().getCompanyName();
         this.address = parking.getAddress();
+        this.addedDateTime = parking.getAddedDateTime();
     }
 }

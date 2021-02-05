@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import pw.react.backend.appException.UnauthorizedException;
@@ -22,6 +23,7 @@ import pw.react.backend.model.PageDTO;
 
 import static java.util.stream.Collectors.joining;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 
@@ -53,7 +55,16 @@ public class BookingController {
     @GetMapping(path = "/p/bookings")
     public ResponseEntity<PageDTO<BookingDTO>> getAllBookings(
         @RequestHeader HttpHeaders headers, 
-        @RequestParam(required = false) Long parkingId, 
+
+        @RequestParam(required = false) Long id,
+        @RequestParam(required = false) Long userId,
+        @RequestParam(required = false) String userFirstName,
+        @RequestParam(required = false) String userLastName,
+        @RequestParam(required = false) Long parkingId,
+        @RequestParam(required = false) String parkingName,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDateTime,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDateTime,
+
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "5") int pageSize
     ){
@@ -63,8 +74,14 @@ public class BookingController {
                 List<BookingDTO> bookings = new ArrayList<BookingDTO>();
                 Pageable paging = PageRequest.of(page, pageSize);
                 Page<Booking> pageBookings = bookingService.findAll(
+                    id,
+                    userId,
+                    userFirstName,
+                    userLastName,
                     parkingId,
-                    //name, 
+                    parkingName,
+                    startDateTime,
+                    endDateTime,
                     paging);
 
                 for (Booking booking : pageBookings) {
@@ -99,7 +116,7 @@ public class BookingController {
     public ResponseEntity<String> deleteBooking(@RequestHeader HttpHeaders headers, @PathVariable Long bookingId) {
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
-            boolean deleted = bookingService.deleteBookingById(bookingId);
+            boolean deleted = bookingService.deleteById(bookingId);
             if (!deleted) {
                 return ResponseEntity.badRequest().body(String.format("Booking with id %s does not exists", bookingId));
             }
@@ -115,7 +132,16 @@ public class BookingController {
     public ResponseEntity<PageDTO<BookingDTO>> getAllBookingsBookly(
         @RequestHeader HttpHeaders headers, 
         @RequestParam(required = true) String apiKey, 
-        @RequestParam(required = false) Long parkingId, 
+
+        @RequestParam(required = false) Long id,
+        @RequestParam(required = false) Long userId,
+        @RequestParam(required = false) String userFirstName,
+        @RequestParam(required = false) String userLastName,
+        @RequestParam(required = false) Long parkingId,
+        @RequestParam(required = false) String parkingName,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDateTime,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDateTime,
+
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "5") int pageSize
     ){
@@ -124,8 +150,14 @@ public class BookingController {
                 List<BookingDTO> bookings = new ArrayList<BookingDTO>();
                 Pageable paging = PageRequest.of(page, pageSize);
                 Page<Booking> pageBookings = bookingService.findAll(
+                    id,
+                    userId,
+                    userFirstName,
+                    userLastName,
                     parkingId,
-                    //name, 
+                    parkingName,
+                    startDateTime,
+                    endDateTime,
                     paging);
 
                 for (Booking booking : pageBookings) {
@@ -145,10 +177,10 @@ public class BookingController {
         @RequestBody BooklyBooking booklyBooking
     ){ 
         if (securityService.isAuthorized(apiKey)) { // Bookly autorization is done using apiKey passed as parameter
-            Booking result = bookingService.addBooking(booklyBooking);
+            Booking result = bookingService.add(booklyBooking);
             return result != null ? ResponseEntity.ok(String.valueOf(result.getId())) : ResponseEntity.badRequest().body(String.format("Parking with id %s does not exists", booklyBooking.getParkingId()));
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Request is unauthorized");
+        throw new UnauthorizedException("Request is unauthorized");
     }
 
     @DeleteMapping(path = "/b/bookings/{bookingId}")
@@ -158,7 +190,7 @@ public class BookingController {
         @PathVariable Long bookingId
     ){
         if (securityService.isAuthorized(apiKey)) {
-            boolean deleted = bookingService.deleteBookingById(bookingId);
+            boolean deleted = bookingService.deleteById(bookingId);
             if (!deleted) {
                 return ResponseEntity.badRequest().body(String.format("Booking with id %s does not exists", bookingId));
             }

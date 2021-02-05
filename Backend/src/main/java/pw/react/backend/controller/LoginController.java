@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import pw.react.backend.service.*;
-
+import pw.react.backend.appException.LoginFailedException;
 import pw.react.backend.model.Credentials;
 import static java.util.stream.Collectors.joining;
 
@@ -44,7 +44,7 @@ public class LoginController {
             return ResponseEntity.ok(securityToken);
         }
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Wrong login or password");
+        throw new LoginFailedException(String.format("Wrong login or password"));
     }
 
 }

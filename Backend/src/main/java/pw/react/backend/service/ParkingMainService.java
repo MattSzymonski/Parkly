@@ -7,11 +7,16 @@ import org.springframework.data.domain.Pageable;
 
 public interface ParkingMainService { 
     Page<Parking> findAll(
-        String name, 
+        Long id,
+        String name,
+        Integer minimumSpotsTotal,
         String companyName,
+        String country,
+        String town,
+        String streetName,
         Pageable pageable);
     Parking findById(long parkingId);
-    Parking updateParkingById(Long parkingId, Parking updatedParking);
-    boolean deleteParkingById(Long parkingId);
-    Parking addParking(Parking parking);
+    Parking updateById(Long parkingId, Parking updatedParking);
+    boolean deleteById(Long parkingId);
+    Parking add(Parking parking);
 }

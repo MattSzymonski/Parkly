@@ -14,12 +14,24 @@ public interface ParkingRepository extends JpaRepository<Parking, Long> {
     Optional<Parking> findByIdAndAddressId(Long id, Long addressId);
 
     public String findAllQuery = "SELECT p FROM Parking p WHERE"
-    + "(:name is null or p.name LIKE %:name%)"
-    + "AND (:companyName is null or p.parkingOwner.companyName = :companyName)";
+    + "(:id is null or p.id = :id)"
+    + "AND (:name is null or p.name LIKE %:name%)"
+    + "AND (:minimumSpotsTotal is null or p.spotsTotal >= :minimumSpotsTotal)"
+    + "AND (:companyName is null or p.parkingOwner.companyName LIKE %:companyName%)"
+    + "AND (:country is null or p.address.country LIKE %:country%)"
+    + "AND (:town is null or p.address.town LIKE %:town%)"
+    + "AND (:streetName is null or p.address.streetName LIKE %:streetName%)";
+    // Add finding parkings with free spots in given time interval to this query
 
     @Query(value = findAllQuery)
     public Page<Parking> findAll(
-        @Param("name") String name, 
+        @Param("id") Long id,
+        @Param("name") String name,
+        @Param("minimumSpotsTotal") Integer minimumSpotsTotal,
         @Param("companyName") String companyName,
+        @Param("country") String country,
+        @Param("town") String town,
+        @Param("streetName") String streetName,
         Pageable pageable);
 }
+

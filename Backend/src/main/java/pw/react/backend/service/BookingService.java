@@ -1,5 +1,7 @@
 package pw.react.backend.service;
 
+import java.time.LocalDateTime;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +34,7 @@ public class BookingService implements BookingMainService {
     }
 
     @Override
-    public Booking addBooking(BooklyBooking booklyBooking) {
+    public Booking add(BooklyBooking booklyBooking) {
         Parking parking = parkingService.findById(booklyBooking.getParkingId());
         if (parking == null) {
             return null;
@@ -42,18 +44,30 @@ public class BookingService implements BookingMainService {
     }
 
     @Override
-    public Page<Booking> findAll(Long parkingId,
-            // String name,
-            // Integer spotsTotal,
+    public Page<Booking> findAll(
+            Long id,
+            Long userId,
+            String userFirstName, 
+            String userLastName, 
+            Long parkingId, 
+            String parkingName, 
+            LocalDateTime startDateTime, 
+            LocalDateTime endDateTime, 
             Pageable pageable) {
-        return repository.findAll(parkingId,
-                // name,
-                // spotsTotal,
+        return repository.findAll(
+                id,
+                userId,
+                userFirstName,
+                userLastName,
+                parkingId,
+                parkingName,
+                startDateTime,
+                endDateTime,
                 pageable);
     }
 
     @Override
-    public boolean deleteBookingById(Long bookingId) {
+    public boolean deleteById(Long bookingId) {
         boolean result = false;
         if (repository.existsById(bookingId)) {
             repository.deleteById(bookingId);

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import pw.react.backend.utils.JsonDateDeserializer;
@@ -49,6 +51,7 @@ public class Parking implements Serializable {
     @Column(name = "addedDateTime")
     @JsonDeserialize(using = JsonDateDeserializer.class) // For data decoding
     @JsonSerialize(using = JsonDateSerializer.class) // For data encoding
+    @CreationTimestamp
     @ApiModelProperty(position = 6)
     private LocalDateTime addedDateTime;
 }

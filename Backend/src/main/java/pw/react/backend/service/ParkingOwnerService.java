@@ -23,13 +23,22 @@ public class ParkingOwnerService implements ParkingOwnerMainService {
     }
 
     @Override
-    public ParkingOwner addParkingOwner(ParkingOwner parkingOwner) {
+    public ParkingOwner add(ParkingOwner parkingOwner, boolean reuseIfExists) {
         
-        Address address = addressService.addAddress(parkingOwner.getAddress()); // Find same address
+        Address address = addressService.add(parkingOwner.getAddress()); // Find same address
         if (address != null) { 
             parkingOwner.setAddress(address); // If same address found then just save new address but with same id as old one (override)
         } 
-        repository.findByCompanyName(parkingOwner.getCompanyName()).ifPresent(parkingOwnerInTable -> parkingOwner.setId(parkingOwnerInTable.getId()));
+
+        if (reuseIfExists) { // Check if company with this name exits, if true then do not crete new one
+            repository.findByCompanyName(parkingOwner.getCompanyName()).ifPresent(parkingOwnerInTable -> parkingOwner.setId(parkingOwnerInTable.getId()));
+        }
+        else
+        {
+            if (repository.findByCompanyName(parkingOwner.getCompanyName()).isPresent()) { // Cannot create new owner with same name
+                return null;
+            }
+        }
 
         return repository.save(parkingOwner);
     }
