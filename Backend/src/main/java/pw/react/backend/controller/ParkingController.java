@@ -8,10 +8,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import io.swagger.annotations.ApiOperation;
 import pw.react.backend.appException.UnauthorizedException;
 import pw.react.backend.model.ParkingDTO;
+import pw.react.backend.model.PageDTO;
 import pw.react.backend.model.data.Address;
 import pw.react.backend.model.data.Parking;
 import pw.react.backend.model.data.ParkingOwner;
@@ -22,7 +24,7 @@ import java.util.Map;
 import java.util.ArrayList;
 
 import static java.util.stream.Collectors.joining;
-
+import java.util.Optional;
 
 
 @RestController
@@ -83,7 +85,7 @@ public class ParkingController {
     }
 
     @GetMapping(path = "/p/parkings")
-    public ResponseEntity<Map<String, Object>> getAllParkings(
+    public ResponseEntity<PageDTO<ParkingDTO>> getAllParkings(
         @RequestHeader HttpHeaders headers, 
         @RequestParam(required = false) String name,
         @RequestParam(required = false) Integer spotsTotal, 
@@ -96,7 +98,6 @@ public class ParkingController {
         {
                 List<ParkingDTO> parkings = new ArrayList<ParkingDTO>();
                 Pageable paging = PageRequest.of(page, pageSize);
-                Map<String, Object> response = new HashMap<>();
                 Page<Parking> pageParkings = parkingService.findAll(
                     name,  
                     companyName,
@@ -106,16 +107,11 @@ public class ParkingController {
                     parkings.add(new ParkingDTO(parking));
                 }
                 
-                response.put("parkings", parkings);
-                response.put("currentPage", pageParkings.getNumber());
-                response.put("totalItems", pageParkings.getTotalElements());
-                response.put("totalPages", pageParkings.getTotalPages());
-        
-                return new ResponseEntity<>(response, HttpStatus.OK);
+                PageDTO<ParkingDTO> parkingsPageDTO = new PageDTO<ParkingDTO>(pageParkings.getNumber(), parkings, pageParkings.getTotalElements(),pageParkings.getTotalPages());
+                return ResponseEntity.ok(parkingsPageDTO);
         }
         throw new UnauthorizedException("Request is unauthorized");
     }
-
 
     @GetMapping(path = "/p/parkings/{parkingId}")
     public ResponseEntity<Parking> getParkingById(@RequestHeader HttpHeaders headers, @PathVariable Long parkingId) {
@@ -147,7 +143,7 @@ public class ParkingController {
     // ---------- Bookly API ----------
 
     @GetMapping(path = "/b/parkings")
-    public ResponseEntity<Map<String, Object>> getAllParkingsBookly(
+    public ResponseEntity<PageDTO<ParkingDTO>> getAllParkingsBookly(
         @RequestHeader HttpHeaders headers, 
         @RequestParam(required = true) String apiKey, 
         @RequestParam(required = false) String name,
@@ -159,7 +155,6 @@ public class ParkingController {
         if (securityService.isAuthorized(apiKey)) {// Bookly autorization is done using apiKey passed as parameter 
                 List<ParkingDTO> parkings = new ArrayList<ParkingDTO>();
                 Pageable paging = PageRequest.of(page, pageSize);
-                Map<String, Object> response = new HashMap<>();
                 Page<Parking> pageParkings = parkingService.findAll(
                     name,  
                     companyName,
@@ -168,13 +163,9 @@ public class ParkingController {
                 for (Parking parking : pageParkings) {
                     parkings.add(new ParkingDTO(parking));
                 }
-                
-                response.put("parkings", parkings);
-                response.put("currentPage", pageParkings.getNumber());
-                response.put("totalItems", pageParkings.getTotalElements());
-                response.put("totalPages", pageParkings.getTotalPages());
         
-                return new ResponseEntity<>(response, HttpStatus.OK);
+                PageDTO<ParkingDTO> parkingsPageDTO = new PageDTO<ParkingDTO>(pageParkings.getNumber(), parkings, pageParkings.getTotalElements(),pageParkings.getTotalPages());
+                return ResponseEntity.ok(parkingsPageDTO);
         }
         throw new UnauthorizedException("Request is unauthorized");
     }

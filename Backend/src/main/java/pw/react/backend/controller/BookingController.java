@@ -18,6 +18,7 @@ import pw.react.backend.model.bookly.BooklyBooking;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import pw.react.backend.model.PageDTO;
 
 import static java.util.stream.Collectors.joining;
 
@@ -50,7 +51,7 @@ public class BookingController {
     }
 
     @GetMapping(path = "/p/bookings")
-    public ResponseEntity<Map<String, Object>> getAllBookings(
+    public ResponseEntity<PageDTO<BookingDTO>> getAllBookings(
         @RequestHeader HttpHeaders headers, 
         @RequestParam(required = false) Long parkingId, 
         @RequestParam(defaultValue = "0") int page,
@@ -61,7 +62,6 @@ public class BookingController {
         {
                 List<BookingDTO> bookings = new ArrayList<BookingDTO>();
                 Pageable paging = PageRequest.of(page, pageSize);
-                Map<String, Object> response = new HashMap<>();
                 Page<Booking> pageBookings = bookingService.findAll(
                     parkingId,
                     //name, 
@@ -70,13 +70,8 @@ public class BookingController {
                 for (Booking booking : pageBookings) {
                     bookings.add(new BookingDTO(booking));
                 }
-                           
-                response.put("bookings", bookings);
-                response.put("currentPage", pageBookings.getNumber());
-                response.put("totalItems", pageBookings.getTotalElements());
-                response.put("totalPages", pageBookings.getTotalPages());
-        
-                return new ResponseEntity<>(response, HttpStatus.OK);
+                PageDTO<BookingDTO> bookingsPageDTO = new PageDTO<BookingDTO>(pageBookings.getNumber(), bookings, pageBookings.getTotalElements(),pageBookings.getTotalPages());
+                return ResponseEntity.ok(bookingsPageDTO);
         }
         throw new UnauthorizedException("Request is unauthorized");
     }
@@ -117,7 +112,7 @@ public class BookingController {
     // ---------- Bookly API ----------
 
     @GetMapping(path = "/b/bookings")
-    public ResponseEntity<Map<String, Object>> getAllBookingsBookly(
+    public ResponseEntity<PageDTO<BookingDTO>> getAllBookingsBookly(
         @RequestHeader HttpHeaders headers, 
         @RequestParam(required = true) String apiKey, 
         @RequestParam(required = false) Long parkingId, 
@@ -128,7 +123,6 @@ public class BookingController {
         {
                 List<BookingDTO> bookings = new ArrayList<BookingDTO>();
                 Pageable paging = PageRequest.of(page, pageSize);
-                Map<String, Object> response = new HashMap<>();
                 Page<Booking> pageBookings = bookingService.findAll(
                     parkingId,
                     //name, 
@@ -137,13 +131,9 @@ public class BookingController {
                 for (Booking booking : pageBookings) {
                     bookings.add(new BookingDTO(booking));
                 }
-                           
-                response.put("bookings", bookings);
-                response.put("currentPage", pageBookings.getNumber());
-                response.put("totalItems", pageBookings.getTotalElements());
-                response.put("totalPages", pageBookings.getTotalPages());
-        
-                return new ResponseEntity<>(response, HttpStatus.OK);
+                        
+                PageDTO<BookingDTO> bookingsPageDTO = new PageDTO<BookingDTO>(pageBookings.getNumber(), bookings, pageBookings.getTotalElements(),pageBookings.getTotalPages());
+                return ResponseEntity.ok(bookingsPageDTO);
         }
         throw new UnauthorizedException("Request is unauthorized");
     }
