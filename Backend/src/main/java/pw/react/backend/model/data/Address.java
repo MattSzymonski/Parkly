@@ -20,7 +20,7 @@ public class Address implements Serializable {
     public static Address EMPTY = new Address();
 
     @Id    
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ApiModelProperty(position = 1)
     private long id;
 

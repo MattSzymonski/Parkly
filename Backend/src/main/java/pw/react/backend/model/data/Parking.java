@@ -26,7 +26,7 @@ public class Parking implements Serializable {
     public static Parking EMPTY = new Parking();
 
     @Id    
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ApiModelProperty(position = 1)
     private long id;
 

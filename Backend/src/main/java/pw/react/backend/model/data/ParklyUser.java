@@ -19,7 +19,7 @@ public class ParklyUser implements Serializable {
     public static ParklyUser EMPTY = new ParklyUser();
 
     @Id    
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ApiModelProperty(position = 1)
     private long id;
 

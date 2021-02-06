@@ -20,7 +20,7 @@ public class ParkingOwner implements Serializable {
     public static ParkingOwner EMPTY = new ParkingOwner();
 
     @Id    
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ApiModelProperty(position = 1)
     private long id;
 
