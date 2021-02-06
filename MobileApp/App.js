@@ -3,6 +3,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import LoginPage from './components/loginPage';
 import ListPage from './components/listPage';
+import AddEntry from './components/addEntry';
 import { createStackNavigator } from '@react-navigation/stack'
 import { NavigationContainer, StackActions} from '@react-navigation/native'
 
@@ -21,6 +22,7 @@ export default function App() {
       <Stack.Navigator initialRouteName="Login">
         <Stack.Screen name = "Login" component={LoginPage} />
         <Stack.Screen name = "List" component={ListPage} />
+        <Stack.Screen name = "Add" component={AddEntry} />
       </Stack.Navigator>
     </NavigationContainer>
 

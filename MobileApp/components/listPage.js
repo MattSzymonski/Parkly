@@ -4,28 +4,14 @@ import { SearchBar } from 'react-native-elements';
 import { DataTable } from 'react-native-paper';
 import axios from 'axios';
 
-//   const renderListItem = ({ item }) => (
-//     <View>
-//         <DataTable.Row>
-//             <DataTable.Cell> 1 </DataTable.Cell>
-//             <DataTable.Cell> test </DataTable.Cell>
-//         </DataTable.Row>
-//     </View>
-//   );
 const api_url = "http://parkly-env.eba-u2qumtf7.us-east-2.elasticbeanstalk.com";
 
 const ListPage = ({navigation, route}) => {
 
     const [parkings, setParkings] = useState([[]]);
     const [loading ,setLoading] = useState(true);
-    
-    // useEffect(() => {
-    //     fetch(`${api_url}/p/parkings`)
-    //       .then((response) => response.json())
-    //       .then((json) => setParkings(json))
-    //       .catch((error) => console.error(error))
-    //       .finally(() => (setLoading(false)));
-    //   }, []);
+    const [totalPages, setPages] = useState(0);
+    const [currentPage, setPage] = useState(0);
 
     const ite = route.params;
 
@@ -34,38 +20,23 @@ const ListPage = ({navigation, route}) => {
     }
 
     useEffect( () => {
-        axios.get(`${api_url}/p/parkings`, options).then((response) =>  {setParkings(response.data)}).finally(() => setLoading(false))
+        axios.get(`${api_url}/p/parkings`, options).then((response) =>  {setParkings(response.data); setPages(response.data.totalPages)}).finally(() => setLoading(false))
     }, []);
 
-    const renderRow = (item) => {
-        return(
-        // <DataTable.Row>
-        //     <DataTable.Cell> {item.id} </DataTable.Cell>
-        //     <DataTable.Cell>  {item.name} </DataTable.Cell>
-        //     <DataTable.Cell>  {item.name} </DataTable.Cell>
-        //     <DataTable.Cell> {item.name} </DataTable.Cell>
-        //     <DataTable.Cell> {item.name} </DataTable.Cell>
-           
-        // </DataTable.Row>
-    <Text>{item.name}</Text> 
-        )
-      
+    // useEffect(() => {
+    //     const unsubscribe = navigation.addListener('focus', () => {
+    //         axios.get(`${api_url}/p/parkings`, options).then((response) =>  {setParkings(response.data); setPages(response.data.totalPages)}).finally(() => setLoading(false))
+    //     });
+    //     return unsubscribe;
+    //   }, [navigation]);
+
+    const pageChange = (cp) => {
+        setPage(cp)
+        setLoading(true);
+        axios.get(`${api_url}/p/parkings?page=${cp}`, options).then( (response) => {setParkings(response.data); setPages(response.data.totalPages)}).finally( () => {setLoading(false);})
     }
 
   return (
-//     <StickyHeaderFooterScrollView
-//     renderStickyHeader={() => (
-//       <View style={{height: 120, backgroundColor: "#ccc"}}>
-//         <Text>{`PARKLY.`}</Text>
-//         <Text> Parking made</Text>
-//         <Text> SIMPLE. </Text>
-//       </View>
-//     )}
-//     >
-//     <View style={styles.container}>
-//       <Text>LIST LIST LIST</Text>
-//     </View>
-//   </StickyHeaderFooterScrollView>
     <View style={styles.container}>
         <View style={styles.bannerContainer}>
             <View style={styles.banner}>
@@ -76,9 +47,6 @@ const ListPage = ({navigation, route}) => {
                 <Text style={{fontSize: 18}}><Text> {ite.user.current}</Text> </Text>
                 
             </View>
-            
-            {/* <Text style={{fontSize: 30}}> Parking made </Text>
-            <Text style={{fontSize: 30}}> SIMPLE.</Text> */}
         </View>
         <View style={styles.bannerContainer}>
             <View style={styles.searchContainer}>
@@ -94,16 +62,21 @@ const ListPage = ({navigation, route}) => {
         <TouchableOpacity style={styles.entryBtn}>
                     <Text>Filter</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.filterBtn}>
+        <TouchableOpacity style={styles.filterBtn} onPress={() => navigation.navigate('Add', {token: ite.token.current, username:ite.user.current})}>
                     <Text>Add new entry</Text>
         </TouchableOpacity>
+
+        </View>
+
+        <View style={styles.filterContainer}>
+
         </View>
 
         <View>
             
         </View>
-        <View>
-            <DataTable style={styles.tableContainer}>
+        <View>       
+            <DataTable>          
                 <DataTable.Header>
                     <DataTable.Title> Action </DataTable.Title>
                     <DataTable.Title> Name </DataTable.Title>
@@ -111,44 +84,35 @@ const ListPage = ({navigation, route}) => {
                     <DataTable.Title> Town </DataTable.Title>
                     <DataTable.Title> Spots </DataTable.Title>
                 </DataTable.Header>
-                {/* <DataTable.Row>
-                    <DataTable.Cell> Manage </DataTable.Cell>
-                    <DataTable.Cell> Test </DataTable.Cell>
-                    <DataTable.Cell> Poland </DataTable.Cell>
-                    <DataTable.Cell> Warsaw </DataTable.Cell>
-                    <DataTable.Cell> 50/50 </DataTable.Cell>
-                </DataTable.Row> */}
-                {/* <DataTable.Row>
-                    <DataTable.Cell>
-                    {parkings.items}
-                    </DataTable.Cell>
-                    <DataTable.Cell>
-                    {parkings.length}
-                    </DataTable.Cell>
-                    <DataTable.Cell>
-                    {parkings.length}
-                    </DataTable.Cell>
-                    <DataTable.Cell>
-                    {parkings.length}
-                    </DataTable.Cell>
-                    <DataTable.Cell>
-                    {parkings.length}
-                    </DataTable.Cell>
-                
-                </DataTable.Row> */}
-            
-            
             { loading ? 
             <Text> Loading ... </Text>
             :
-            <SafeAreaView style={{flex:1}}>
-            <FlatList
-                data={parkings.items}
-                keyExtractor={(item,index) => item.id}
-                renderItem={(item) => (renderRow(item))}
-            />
+            <SafeAreaView>
+            {
+                parkings.items.map(element => (
+                
+                <DataTable.Row style={{height: 80}}>
+                    <DataTable.Cell> <TouchableOpacity  style={styles.mgmtBtn}><Text>Manage</Text>
+                    </TouchableOpacity>
+                    </DataTable.Cell>
+                    <DataTable.Cell> {element.name} </DataTable.Cell>
+                    <DataTable.Cell> {element.address.country}</DataTable.Cell>
+                    <DataTable.Cell> {element.address.town}</DataTable.Cell>
+                    <DataTable.Cell> {element.spotsTaken}/{element.spotsTotal}</DataTable.Cell>
+                    
+                </DataTable.Row>
+                
+              ))
+            }
             </SafeAreaView>
             }
+           
+                <DataTable.Pagination
+                page={currentPage}
+                numberOfPages={totalPages}
+                label={`${currentPage + 1} of ${totalPages}`}
+                onPageChange={(page) => pageChange(page)}
+                />
          </DataTable>
          
     </View>
@@ -203,7 +167,18 @@ const styles = StyleSheet.create({
         backgroundColor: "#FAEBD7",
       },
 
-    banner: {
+      mgmtBtn: {
+        
+        borderRadius: 10,
+        height: 35,
+        width: 70,
+        alignItems: "center",
+        justifyContent: "center",
+     
+        backgroundColor: "#ffd300",
+      },
+
+      banner: {
         //position: "absolute",
         //top: 0,
         flexDirection: "row",
@@ -278,11 +253,31 @@ const styles = StyleSheet.create({
       marginBottom: 10,
   },
 
+  inputView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
   TextInput: {
     height: 50,
     paddingLeft: 30,
     backgroundColor: "#f8f8ff",
     borderRadius: 20,
+  },
+
+  TextInputAdd: {
+    flex: 1,
+    height: 30,
+    width: Dimensions.get("window").width-140,
+    paddingLeft: 15,
+    backgroundColor: "#f8f8ff",
+    borderRadius: 10,
+    
+   
+    marginLeft: 35,
+    marginRight: 35,
+    marginTop: 10,
   },
 
   });
