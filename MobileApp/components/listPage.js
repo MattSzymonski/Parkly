@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { SafeAreaView, View, FlatList, StyleSheet, Text, StatusBar, Image, Dimensions, TextInput, TouchableOpacity } from 'react-native';
 import { SearchBar } from 'react-native-elements';
 import { DataTable } from 'react-native-paper';
 import axios from 'axios';
+import { useFocusEffect } from '@react-navigation/native';
 
 const api_url = "http://parkly-env.eba-u2qumtf7.us-east-2.elasticbeanstalk.com";
 
@@ -19,18 +20,36 @@ const ListPage = ({navigation, route}) => {
         headers: {'security-token': ite.token.current}
     }
 
-
+    const dataFetch = () => {
+        axios.get(`${api_url}/p/parkings`, options).then((response) =>  {setParkings(response.data); setPages(response.data.totalPages)}).finally(() => setLoading(false));
+    }
 
     useEffect( () => {
-        axios.get(`${api_url}/p/parkings`, options).then((response) =>  {setParkings(response.data); setPages(response.data.totalPages)}).finally(() => setLoading(false))
-    }, []);
+        navigation.addListener('focus', () => {
+            setLoading(true);
+            dataFetch();
+        })
+    }, [navigation]);
 
-    // useEffect(() => {
-    //     const unsubscribe = navigation.addListener('focus', () => {
-    //         axios.get(`${api_url}/p/parkings`, options).then((response) =>  {setParkings(response.data); setPages(response.data.totalPages)}).finally(() => setLoading(false))
-    //     });
-    //     return unsubscribe;
-    //   }, [navigation]);
+    /* useFocusEffect(
+        React.useCallback(() => {
+            // Do something when the screen is focused
+            if(setLoading == true)
+                dataFetch();
+            return () => {
+              // Do something when the screen is unfocused
+              // Useful for cleanup functions
+                setLoading(false);
+            };
+          }, [])
+        );  */
+
+   /* useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            axios.get(`${api_url}/p/parkings`, options).then((response) =>  {setParkings(response.data); setPages(response.data.totalPages)}).finally(() => setLoading(false))
+       });
+         return unsubscribe;
+       }, [navigation]); */
 
     const pageChange = (cp) => {
         setPage(cp)
