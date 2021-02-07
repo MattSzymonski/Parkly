@@ -36,7 +36,7 @@ public class Parking implements Serializable {
 
     @Column(name = "spotsTotal")
     @ApiModelProperty(position = 3)
-    private int spotsTotal; 
+    private Integer spotsTotal; 
 
     @Column(name = "pricePerHour")
     @ApiModelProperty(position = 4)

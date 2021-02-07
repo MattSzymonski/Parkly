@@ -1,6 +1,7 @@
 package pw.react.backend.service;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
 import org.slf4j.Logger;
@@ -52,7 +53,8 @@ public class BookingService implements BookingMainService {
             return null;
         }
 
-        return repository.save(new Booking(booklyBooking, parking));
+        long hoursCount = booklyBooking.getStartDateTime().until(booklyBooking.getEndDateTime(), ChronoUnit.HOURS);
+        return repository.save(new Booking(booklyBooking, parking, hoursCount));
     }
 
     @Override

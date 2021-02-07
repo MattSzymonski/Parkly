@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import pw.react.backend.model.data.Parking;
+
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface ParkingRepository extends JpaRepository<Parking, Long> {
@@ -32,6 +34,12 @@ public interface ParkingRepository extends JpaRepository<Parking, Long> {
         @Param("country") String country,
         @Param("town") String town,
         @Param("streetName") String streetName,
+        // @Param("startDateTime") LocalDateTime startDateTime,
+        // @Param("endDateTime") LocalDateTime endDateTime, 
         Pageable pageable);
+
+
+
+
 }
 

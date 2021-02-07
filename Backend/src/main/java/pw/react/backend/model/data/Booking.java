@@ -24,12 +24,6 @@ public class Booking implements Serializable {
 
     private static final long serialVersionUID = -6783504532088859179L;
 
-    //public static Booking EMPTY = new Booking();
-    //public static Booking EMPTY = new Booking();
-
-
-
-
     @Id    
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ApiModelProperty(position = 1)
@@ -47,9 +41,9 @@ public class Booking implements Serializable {
     @ApiModelProperty(position = 4)
     private String userLastName;
 
-    @Column(name = "totalPrice")
+    @Column(name = "price")
     @ApiModelProperty(position = 5)
-    private Float totalPrice;
+    private Float price;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.PERSIST) // Do not destroy address entry
     @JoinColumn(name = "parking_id", referencedColumnName = "id")
@@ -70,11 +64,11 @@ public class Booking implements Serializable {
 
     public Booking() {}
 
-    public Booking(BooklyBooking booklyBooking, Parking parking) {
+    public Booking(BooklyBooking booklyBooking, Parking parking, long hoursCount) {
         this.userId = booklyBooking.getUserId();
         this.userFirstName = booklyBooking.getUserFirstName();
         this.userLastName = booklyBooking.getUserLastName();
-        this.totalPrice = booklyBooking.getTotalPrice();
+        this.price = parking.getPricePerHour() * hoursCount;
         this.parking = parking;
         this.startDateTime= booklyBooking.getStartDateTime();
         this.endDateTime = booklyBooking.getEndDateTime();

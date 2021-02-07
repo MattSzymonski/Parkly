@@ -6,12 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import io.swagger.annotations.ApiOperation;
-
 import io.swagger.annotations.ExampleProperty;
 import io.swagger.models.Response;
 import io.swagger.annotations.Example;
@@ -32,6 +32,11 @@ import java.util.Map;
 import java.util.ArrayList;
 
 import static java.util.stream.Collectors.joining;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 
@@ -129,7 +134,12 @@ public class ParkingController {
             
             Parking parking = parkingService.updateById(parkingId, updatedParking);
             
-            return parking != null ? ResponseEntity.ok(parking) : ResponseEntity.badRequest().body(Parking.EMPTY);
+            if (parking != null) {
+                return ResponseEntity.ok(parking) ;
+            }
+            else {
+                throw new InvalidRequestException(String.format("Parking with id %s does not exists", parkingId));
+            }
         }
         throw new UnauthorizedException("Request is unauthorized");
     }
@@ -146,6 +156,8 @@ public class ParkingController {
         @RequestParam(required = false) String country,
         @RequestParam(required = false) String town,
         @RequestParam(required = false) String streetName,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDateTime,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDateTime,
 
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "5") int pageSize
@@ -163,10 +175,12 @@ public class ParkingController {
                     country,
                     town,
                     streetName,
+                    startDateTime,
+                    endDateTime,
                     paging);
 
                 for (Parking parking : pageParkings) {
-                    parkings.add(new ParkingDTO(parking));
+                    parkings.add(new ParkingDTO(parking, 0f)); // Parking total price doesn't matter for parkly frontend (new ParkingDTO could be done, just for parkly)
                 }
                 
                 PageDTO<ParkingDTO> parkingsPageDTO = new PageDTO<ParkingDTO>(pageParkings.getNumber(), parkings, pageParkings.getTotalElements(),pageParkings.getTotalPages());
@@ -181,9 +195,6 @@ public class ParkingController {
         if (securityService.isAuthorized(headers)) {
             Parking parking = parkingService.findById(parkingId);
             return parking != null ? ResponseEntity.ok(parking) : ResponseEntity.badRequest().body(Parking.EMPTY);
-            //return parking != null ? ResponseEntity.ok(parking) : ResponseEntity.badRequest().body(String.format("Parking with id %s does not exists", parkingId));
-            //return ResponseEntity.ok(repository.findById(parkingId).orElseGet(() -> Parking.EMPTY));
-            //return ResponseEntity.ok(parkingService.findById(parkingId));
         }
         throw new UnauthorizedException("Request is unauthorized");
     }
@@ -218,6 +229,8 @@ public class ParkingController {
         @RequestParam(required = false) String country,
         @RequestParam(required = false) String town,
         @RequestParam(required = false) String streetName,
+        @RequestParam(required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDateTime,
+        @RequestParam(required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDateTime,
 
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "5") int pageSize
@@ -233,12 +246,14 @@ public class ParkingController {
                     country,
                     town,
                     streetName,
+                    startDateTime,
+                    endDateTime,
                     paging);
 
-                for (Parking parking : pageParkings) {
-                    parkings.add(new ParkingDTO(parking));
-                }
-        
+
+                long hoursCount = startDateTime.until(endDateTime, ChronoUnit.HOURS);
+                parkings = parkingService.createParkingDTOs(pageParkings.getContent(), hoursCount);
+
                 PageDTO<ParkingDTO> parkingsPageDTO = new PageDTO<ParkingDTO>(pageParkings.getNumber(), parkings, pageParkings.getTotalElements(),pageParkings.getTotalPages());
                 return ResponseEntity.ok(parkingsPageDTO);
         }
@@ -254,9 +269,6 @@ public class ParkingController {
         if (securityService.isAuthorized(apiKey)) { // Bookly autorization is done using apiKey passed as parameter
             Parking parking = parkingService.findById(parkingId);
             return parking != null ? ResponseEntity.ok(parking) : ResponseEntity.badRequest().body(Parking.EMPTY);
-            //return parking != null ? ResponseEntity.ok(parking) : ResponseEntity.badRequest().body(String.format("Parking with id %s does not exists", parkingId));
-            //return ResponseEntity.ok(repository.findById(parkingId).orElseGet(() -> Parking.EMPTY));
-            //return ResponseEntity.ok(parkingService.findById(parkingId));
         }
         throw new UnauthorizedException("Request is unauthorized");
     }

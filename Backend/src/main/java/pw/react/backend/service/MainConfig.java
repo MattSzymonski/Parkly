@@ -53,12 +53,15 @@ public class MainConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 final Set<String> mappings = getCorsMapings();
-                if (mappings.isEmpty()) {
+                if (mappings.isEmpty()) 
+                {
                     registry.addMapping("/**");
-                } else {
-                    for (String mapping : mappings) {
+                } 
+                else 
+                {
+                    for (String mapping : mappings) 
+                    {
                         registry.addMapping(mapping).allowedOrigins(getCorsUrls());
-
                     }
                 }
             }

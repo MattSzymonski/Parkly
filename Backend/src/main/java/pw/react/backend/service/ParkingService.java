@@ -1,5 +1,8 @@
 package pw.react.backend.service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.TransactionScoped;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import pw.react.backend.dao.ParkingRepository;
+import pw.react.backend.model.ParkingDTO;
 import pw.react.backend.model.data.Parking;
 import org.springframework.data.domain.Page;
 
@@ -44,6 +48,8 @@ public class ParkingService implements ParkingMainService {
         String country,
         String town,
         String streetName,
+        LocalDateTime startDateTime,
+        LocalDateTime endDateTime, 
         Pageable pageable
     ) {
         return repository.findAll(
@@ -54,6 +60,8 @@ public class ParkingService implements ParkingMainService {
             country,
             town,
             streetName,
+            //startDateTime,
+            //endDateTime,
             pageable);
     }
 
@@ -66,11 +74,11 @@ public class ParkingService implements ParkingMainService {
     @javax.transaction.Transactional
     public Parking updateById(Long parkingId, Parking updatedParking) {
         Parking result = null;
-        Parking parkingToUpdate = repository.findById(parkingId).get();
-
-        if (parkingToUpdate != null) {
-            updatedParking.setId(parkingToUpdate.getId());
-            updatedParking.setAddedDateTime(parkingToUpdate.getAddedDateTime());
+        Optional<Parking> parkingToUpdate = repository.findById(parkingId);
+        
+        if (parkingToUpdate.isPresent()) {
+            updatedParking.setId(parkingToUpdate.get().getId());
+            updatedParking.setAddedDateTime(parkingToUpdate.get().getAddedDateTime());
             result = repository.save(updatedParking);
         }
         return result;
@@ -89,7 +97,17 @@ public class ParkingService implements ParkingMainService {
         return result;
     }
 
+    @Override
 	public Parking add(Parking parking) {
 		return repository.save(parking);
+	}
+
+    @Override
+	public List<ParkingDTO> createParkingDTOs(List<Parking> parkings, long hoursCount) {
+        List<ParkingDTO> parkingDTOs = new ArrayList<ParkingDTO>();
+        for (Parking parking : parkings) {  
+            parkingDTOs.add(new ParkingDTO(parking, parking.getPricePerHour() * hoursCount));
+        }
+		return parkingDTOs;
 	}
 }
