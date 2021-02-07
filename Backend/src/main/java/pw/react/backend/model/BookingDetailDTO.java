@@ -35,21 +35,24 @@ public class BookingDetailDTO { // This object represents one entry in boking li
     @Getter @Setter private String userRegistrationPlates;
 
     @ApiModelProperty(position = 8)
-    @Getter @Setter private long parkingId;
+    @Getter @Setter private Float totalPrice;
 
     @ApiModelProperty(position = 9)
-    @Getter @Setter private String parkingName;
+    @Getter @Setter private long parkingId;
 
     @ApiModelProperty(position = 10)
-    @Getter @Setter private String parkingOwnerCompanyName;
+    @Getter @Setter private String parkingName;
 
     @ApiModelProperty(position = 11)
-    @Getter @Setter private Address parkingAddress;
+    @Getter @Setter private String parkingOwnerCompanyName;
 
     @ApiModelProperty(position = 12)
-    @Getter @Setter private LocalDateTime startDateTime;
+    @Getter @Setter private Address parkingAddress;
 
     @ApiModelProperty(position = 13)
+    @Getter @Setter private LocalDateTime startDateTime;
+
+    @ApiModelProperty(position = 14)
     @Getter @Setter private LocalDateTime endDateTime;
 
     public BookingDetailDTO(Booking booking, BooklyUser booklyUser) {
@@ -60,6 +63,7 @@ public class BookingDetailDTO { // This object represents one entry in boking li
         this.userPhoneNumber = booklyUser.getPhoneNumber();
         this.userEmailAddress = booklyUser.getEmailAddress();
         this.userRegistrationPlates = booklyUser.getRegistrationPlates();
+        this.totalPrice = booking.getTotalPrice();
         this.parkingId = booking.getParking().getId();
         this.parkingName = booking.getParking().getName();
         this.parkingOwnerCompanyName = booking.getParking().getParkingOwner().getCompanyName();

@@ -22,15 +22,18 @@ public class BookingDTO { // This object represents one entry in boking list. It
     @Getter @Setter private String userLastName;
 
     @ApiModelProperty(position = 5)
-    @Getter @Setter private long parkingId;
+    @Getter @Setter private Float totalPrice;
 
     @ApiModelProperty(position = 6)
-    @Getter @Setter private String parkingName;
+    @Getter @Setter private long parkingId;
 
     @ApiModelProperty(position = 7)
-    @Getter @Setter private LocalDateTime startDateTime;
+    @Getter @Setter private String parkingName;
 
     @ApiModelProperty(position = 8)
+    @Getter @Setter private LocalDateTime startDateTime;
+
+    @ApiModelProperty(position = 9)
     @Getter @Setter private LocalDateTime endDateTime;
 
     public BookingDTO(Booking booking) { 
@@ -38,6 +41,7 @@ public class BookingDTO { // This object represents one entry in boking list. It
         this.userId = booking.getUserId();
         this.userFirstName = booking.getUserFirstName();
         this.userLastName = booking.getUserLastName();
+        this.totalPrice = booking.getTotalPrice();
         this.parkingId = booking.getParking().getId();
         this.parkingName = booking.getParking().getName();
         this.startDateTime= booking.getStartDateTime();

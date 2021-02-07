@@ -38,20 +38,24 @@ public class Parking implements Serializable {
     @ApiModelProperty(position = 3)
     private int spotsTotal; 
 
+    @Column(name = "pricePerHour")
+    @ApiModelProperty(position = 4)
+    private Float pricePerHour;
+
     @ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.PERSIST) // Do not destroy address entry
     @JoinColumn(name = "address_id", referencedColumnName = "id")
-    @ApiModelProperty(position = 4)
+    @ApiModelProperty(position = 5)
     private Address address;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.PERSIST) // Do not destroy address entry
     @JoinColumn(name = "parkingOwner_id", referencedColumnName = "id")
-    @ApiModelProperty(position = 5)
+    @ApiModelProperty(position = 6)
     private ParkingOwner parkingOwner;
 
     @Column(name = "addedDateTime")
     @JsonDeserialize(using = JsonDateDeserializer.class) // For data decoding
     @JsonSerialize(using = JsonDateSerializer.class) // For data encoding
     @CreationTimestamp
-    @ApiModelProperty(position = 6)
+    @ApiModelProperty(position = 7)
     private LocalDateTime addedDateTime;
 }

@@ -19,12 +19,15 @@ public class BooklyBooking { // Reflects booking request from Bookly system
     @Getter @Setter private String userLastName;
 
     @ApiModelProperty(position = 4)
-    @Getter @Setter private long parkingId;
+    @Getter @Setter private float totalPrice;
 
     @ApiModelProperty(position = 5)
-    @Getter @Setter private LocalDateTime startDateTime;
+    @Getter @Setter private long parkingId;
 
     @ApiModelProperty(position = 6)
+    @Getter @Setter private LocalDateTime startDateTime;
+
+    @ApiModelProperty(position = 7)
     @Getter @Setter private LocalDateTime endDateTime; 
 
 }

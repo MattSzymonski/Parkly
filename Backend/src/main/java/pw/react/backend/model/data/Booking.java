@@ -47,21 +47,25 @@ public class Booking implements Serializable {
     @ApiModelProperty(position = 4)
     private String userLastName;
 
+    @Column(name = "totalPrice")
+    @ApiModelProperty(position = 5)
+    private Float totalPrice;
+
     @ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.PERSIST) // Do not destroy address entry
     @JoinColumn(name = "parking_id", referencedColumnName = "id")
-    @ApiModelProperty(position = 5)
+    @ApiModelProperty(position = 6)
     private Parking parking;
 
     @Column(name = "startDateTime")  
     @JsonDeserialize(using = JsonDateDeserializer.class) // For data decoding
     @JsonSerialize(using = JsonDateSerializer.class) // For data encoding
-	@ApiModelProperty(position = 6)
+	@ApiModelProperty(position = 7)
     public LocalDateTime startDateTime;
 
     @Column(name = "endDateTime")
     @JsonDeserialize(using = JsonDateDeserializer.class) // For data decoding
     @JsonSerialize(using = JsonDateSerializer.class) // For data encoding
-    @ApiModelProperty(position = 7)
+    @ApiModelProperty(position = 8)
     private LocalDateTime endDateTime;
 
     public Booking() {}
@@ -70,6 +74,7 @@ public class Booking implements Serializable {
         this.userId = booklyBooking.getUserId();
         this.userFirstName = booklyBooking.getUserFirstName();
         this.userLastName = booklyBooking.getUserLastName();
+        this.totalPrice = booklyBooking.getTotalPrice();
         this.parking = parking;
         this.startDateTime= booklyBooking.getStartDateTime();
         this.endDateTime = booklyBooking.getEndDateTime();

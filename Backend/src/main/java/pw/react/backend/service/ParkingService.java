@@ -2,11 +2,15 @@ package pw.react.backend.service;
 
 import java.util.Optional;
 
+import javax.transaction.TransactionScoped;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import pw.react.backend.dao.ParkingRepository;
 import pw.react.backend.model.data.Parking;
 import org.springframework.data.domain.Page;
@@ -59,6 +63,7 @@ public class ParkingService implements ParkingMainService {
     }
 
     @Override
+    @javax.transaction.Transactional
     public Parking updateById(Long parkingId, Parking updatedParking) {
         Parking result = null;
         Parking parkingToUpdate = repository.findById(parkingId).get();
@@ -72,6 +77,7 @@ public class ParkingService implements ParkingMainService {
     }
 
     @Override
+    @javax.transaction.Transactional
     public boolean deleteById(Long parkingId) {
         boolean result = false;
         if (repository.existsById(parkingId)) {       

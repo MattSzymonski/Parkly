@@ -15,7 +15,6 @@ public class SecurityService implements SecurityMainService {
 
     private final ParklyUserRepository repository;
     private static final String SECURITY_TOKEN = "security-token";
-    //private final String SECURITY_HEADER_VALUE = "secureMe";
 
     @Autowired
     public SecurityService(ParklyUserRepository repository) {

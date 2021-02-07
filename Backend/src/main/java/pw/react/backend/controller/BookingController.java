@@ -6,9 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+
+import pw.react.backend.appException.InvalidRequestException;
 import pw.react.backend.appException.UnauthorizedException;
 import pw.react.backend.dao.BookingRepository;
 import pw.react.backend.model.data.Booking;
@@ -171,14 +174,18 @@ public class BookingController {
     }
 
     @PostMapping(path = "/b/bookings") 
-    public ResponseEntity<String> createBookingBookly( 
+    public ResponseEntity<BookingDTO> createBookingBookly( 
         @RequestHeader HttpHeaders headers, 
         @RequestParam(required = true) String apiKey,
         @RequestBody BooklyBooking booklyBooking
     ){ 
         if (securityService.isAuthorized(apiKey)) { // Bookly autorization is done using apiKey passed as parameter
             Booking result = bookingService.add(booklyBooking);
-            return result != null ? ResponseEntity.ok(String.valueOf(result.getId())) : ResponseEntity.badRequest().body(String.format("Parking with id %s does not exists", booklyBooking.getParkingId()));
+            if (result == null) {
+                throw new InvalidRequestException(String.format("Cannot add new booking. Parking with given id does not exist"));
+            }
+            return ResponseEntity.ok(new BookingDTO(result));
+            //return result != null ? ResponseEntity.ok(result) : ResponseEntity.badRequest().body(BookingDTO.EMPTY);
         }
         throw new UnauthorizedException("Request is unauthorized");
     }
