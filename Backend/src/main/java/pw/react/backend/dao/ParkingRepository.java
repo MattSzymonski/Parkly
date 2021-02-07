@@ -28,8 +28,8 @@ public interface ParkingRepository extends JpaRepository<Parking, Long> {
     + "AND (:country is null or p.address.country LIKE %:country%) "
     + "AND (:town is null or p.address.town LIKE %:town%) "
     + "AND (:streetName is null or p.address.streetName LIKE %:streetName%) "
-    + "AND (b.endDateTime > :startDateTime) "
-    + "AND (b.startDateTime < :endDateTime) "
+    + "AND (:startDateTime is null or b.endDateTime > :startDateTime) "
+    + "AND (:endDateTime is null or b.startDateTime < :endDateTime) "
     + "GROUP BY p.id "
     + "HAVING COUNT(*) < p.spotsTotal";
 
