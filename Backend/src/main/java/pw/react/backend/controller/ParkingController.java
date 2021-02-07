@@ -35,6 +35,9 @@ import static java.util.stream.Collectors.joining;
 import java.util.Optional;
 
 
+import java.time.LocalDateTime;
+import org.springframework.format.annotation.DateTimeFormat;
+
 @RestController
 public class ParkingController {
 
@@ -146,7 +149,8 @@ public class ParkingController {
         @RequestParam(required = false) String country,
         @RequestParam(required = false) String town,
         @RequestParam(required = false) String streetName,
-
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDateTime,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDateTime,
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "5") int pageSize
     ){
@@ -163,6 +167,8 @@ public class ParkingController {
                     country,
                     town,
                     streetName,
+                    startDateTime,
+                    endDateTime,
                     paging);
 
                 for (Parking parking : pageParkings) {
@@ -218,6 +224,8 @@ public class ParkingController {
         @RequestParam(required = false) String country,
         @RequestParam(required = false) String town,
         @RequestParam(required = false) String streetName,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDateTime,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDateTime,
 
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "5") int pageSize
@@ -233,6 +241,8 @@ public class ParkingController {
                     country,
                     town,
                     streetName,
+                    startDateTime,
+                    endDateTime,
                     paging);
 
                 for (Parking parking : pageParkings) {

@@ -9,21 +9,31 @@ import org.springframework.data.repository.query.Param;
 import pw.react.backend.model.data.Parking;
 import java.util.Optional;
 
+
+import java.time.LocalDateTime;
+import org.springframework.format.annotation.DateTimeFormat;
+
 public interface ParkingRepository extends JpaRepository<Parking, Long> {
     Optional<Parking> findByAddressId(Long addressId);
     Optional<Parking> findByIdAndAddressId(Long id, Long addressId);
 
-    public String findAllQuery = "SELECT p FROM Parking p WHERE"
-    + "(:id is null or p.id = :id)"
-    + "AND (:name is null or p.name LIKE %:name%)"
-    + "AND (:minimumSpotsTotal is null or p.spotsTotal >= :minimumSpotsTotal)"
-    + "AND (:companyName is null or p.parkingOwner.companyName LIKE %:companyName%)"
-    + "AND (:country is null or p.address.country LIKE %:country%)"
-    + "AND (:town is null or p.address.town LIKE %:town%)"
-    + "AND (:streetName is null or p.address.streetName LIKE %:streetName%)";
-    // Add finding parkings with free spots in given time interval to this query
+    public String findAllQuery =
+    "SELECT p FROM Parking p "
+    + "JOIN Booking b ON b.parking.id = p.id "
+    + "WHERE "
+    + "(:id is null or p.id = :id) "
+    + "AND (:name is null or p.name LIKE %:name%) "
+    + "AND (:minimumSpotsTotal is null or p.spotsTotal >= :minimumSpotsTotal) "
+    + "AND (:companyName is null or p.parkingOwner.companyName LIKE %:companyName%) "
+    + "AND (:country is null or p.address.country LIKE %:country%) "
+    + "AND (:town is null or p.address.town LIKE %:town%) "
+    + "AND (:streetName is null or p.address.streetName LIKE %:streetName%) "
+    + "AND (b.endDateTime > :startDateTime) "
+    + "AND (b.startDateTime < :endDateTime) "
+    + "GROUP BY p.id "
+    + "HAVING COUNT(*) < p.spotsTotal";
 
-    @Query(value = findAllQuery)
+   @Query(value = findAllQuery)
     public Page<Parking> findAll(
         @Param("id") Long id,
         @Param("name") String name,
@@ -32,6 +42,9 @@ public interface ParkingRepository extends JpaRepository<Parking, Long> {
         @Param("country") String country,
         @Param("town") String town,
         @Param("streetName") String streetName,
+        @Param("startDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDateTime,
+        @Param("endDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDateTime,
         Pageable pageable);
+    
 }
 
