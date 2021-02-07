@@ -21,10 +21,9 @@ export default function LoginPage() {
     axios.post(`${api_url}/p/login`, {
       login: username,
       password: password
-    }).then((response) =>  {setFetching(false); token.current = response.data; history.push('/home', {token: token, user: username2})}).catch((err) => {setErr(err); setFetching(false);})
+    }).then((response) =>  {setFetching(false); console.log(response.data); token.current = response.data; history.push('/home', {token: token, user: username2})}).catch((err) => {setErr(err); setFetching(false);})
   }
-  console.log(username);
-  console.log(password);
+
 
   return (
     <div>
