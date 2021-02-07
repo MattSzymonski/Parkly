@@ -36,7 +36,7 @@ const DetailsPage = ({navigation, route}) => {
     const [err, setErr] = useState("");
     
     const options = {
-        headers: {'security-token': route.params.token}
+        headers: {'security-token': route.params.token.current}
     }
 
     const updateParking = () => {
@@ -75,6 +75,7 @@ const DetailsPage = ({navigation, route}) => {
             <ScrollView>
                 <View style={styles.actionBar} >
                     <Text style={styles.standardText}>Address</Text>
+                    
                     {isEditingAddress == false ? 
                     <TouchableOpacity onPress={() => setAddressEditing(true)}><Text style={styles.editSaveFunc}>Edit</Text></TouchableOpacity>
                     :
