@@ -65,7 +65,7 @@ const ListPage = ({navigation, route}) => {
                 <Text> Admin </Text>
             </View>
             <View style={styles.welcomeUser}>
-                <Text style={{fontSize: 18}}><Text> {ite.user.current}</Text> </Text>
+                <Text style={{fontSize: 18}}><Text> {route.params.user.current}</Text> </Text>
                 
             </View>
         </View>
@@ -80,10 +80,10 @@ const ListPage = ({navigation, route}) => {
         </View>
 
         <View style={styles.filterContainer}>
-        <TouchableOpacity style={styles.entryBtn} onPress={() => navigation.navigate('Filter', {token: ite.token.current, username:ite.user.current})}>
+        <TouchableOpacity style={styles.entryBtn} onPress={() => navigation.navigate('Filter', {token: ite.token.current, username:ite.user})}>
                     <Text>Filter</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.filterBtn} onPress={() => navigation.navigate('Add', {token: ite.token.current, username:ite.user.current})}>
+        <TouchableOpacity style={styles.filterBtn} onPress={() => navigation.navigate('Add', {token: ite.token.current, username:ite.user})}>
                     <Text>Add new entry</Text>
         </TouchableOpacity>
 
@@ -113,7 +113,7 @@ const ListPage = ({navigation, route}) => {
                 parkings.items.map(element => (
                 
                 <DataTable.Row style={{height: 80}}>
-                    <DataTable.Cell> <TouchableOpacity onPress={() => navigation.navigate('Details', {token: ite.token.current, username:ite.user.current, item:element})} style={styles.mgmtBtn}><Text>Manage</Text>
+                    <DataTable.Cell> <TouchableOpacity onPress={() => navigation.navigate('Details', {token: ite.token, username:ite.user, item:element})} style={styles.mgmtBtn}><Text>Manage</Text>
                     </TouchableOpacity>
                     </DataTable.Cell>
                     <DataTable.Cell> {element.name} </DataTable.Cell>
