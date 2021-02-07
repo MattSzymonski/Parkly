@@ -19,6 +19,8 @@ const ListPage = ({navigation, route}) => {
         headers: {'security-token': ite.token.current}
     }
 
+
+
     useEffect( () => {
         axios.get(`${api_url}/p/parkings`, options).then((response) =>  {setParkings(response.data); setPages(response.data.totalPages)}).finally(() => setLoading(false))
     }, []);
@@ -59,7 +61,7 @@ const ListPage = ({navigation, route}) => {
         </View>
 
         <View style={styles.filterContainer}>
-        <TouchableOpacity style={styles.entryBtn}>
+        <TouchableOpacity style={styles.entryBtn} onPress={() => navigation.navigate('Filter', {token: ite.token.current, username:ite.user.current})}>
                     <Text>Filter</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.filterBtn} onPress={() => navigation.navigate('Add', {token: ite.token.current, username:ite.user.current})}>
@@ -68,7 +70,7 @@ const ListPage = ({navigation, route}) => {
 
         </View>
 
-        <View style={styles.filterContainer}>
+        <View style={styles.filterContainer}>   
 
         </View>
 
