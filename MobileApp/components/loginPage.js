@@ -20,7 +20,7 @@ export default function LoginPage({navigation}) {
   const [fetching, setFetching] = useState(false);
   //const [token, setToken] = useState("");
   const [err, setErr] = useState("");
-  const username2 = useRef("");
+  const username2 = useRef("ParklyAppTest");
   const token = useRef("");
 
   const userLogin = () => {
