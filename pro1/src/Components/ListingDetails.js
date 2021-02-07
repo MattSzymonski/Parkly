@@ -1,13 +1,16 @@
 import './AdminPanel.css';
+import {useHistory} from "react-router";
 import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import AddIcon from '@material-ui/icons/Add';
 import {Table} from'./Table.js'
 function ListingDetails() {
 
+  const history = useHistory();
   var data=[];
-
+  
   return (
   <div>
     <div className="topcontainer">
@@ -17,7 +20,11 @@ function ListingDetails() {
       <div style={{flex:"5%"}}></div>
     </div>
     <div style={{display:"flex"}}>
-      <div style={{flex: "11%"}}></div>
+      <div style={{flex: "11%"}}>
+      <IconButton aria-label="search" style={{marginTop:"100px",marginLeft:"40px"}} onClick={()=>history.push("/home")}>
+        <ArrowBackIosIcon fontSize="large"/>
+      </IconButton>
+      </div>
       <div style={{flex: "84%"}}>
       <div style={{marginTop:"10px",marginBottom:"10px",display:"flex"}}>
             <div style={{flex: "50%"}}>

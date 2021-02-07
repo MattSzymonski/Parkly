@@ -56,7 +56,7 @@ const handleEdit=(e)=>
 }
 const handleClick=(e)=>
 {
-   history.push( {pathname: '/listingdetails',state:  e })
+   history.push('/listingdetails',{update:  e })
 }
 
 return(

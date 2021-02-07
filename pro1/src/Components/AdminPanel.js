@@ -1,14 +1,28 @@
 import './AdminPanel.css';
+import React, {useEffect, useState} from 'react';
 import {Table} from'./Table.js'
-import { useHistory } from 'react-router-dom';
+import { useHistory,useLocation } from 'react-router-dom';
 import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import AddIcon from '@material-ui/icons/Add';
+import axios from 'axios';
+
 function AdminPanel() {
 
-  var data=[{"id":33,"country":"pol","town":"Radom","owner":"sb","total_spots":10,"spots_taken":5,"date_added":444,"date_last":4444},
-  {"id":56,"country":"pol","town":"Radom","owner":"sb","total_spots":10,"spots_taken":5,"date_added":444,"date_last":4444}];
+  const [data,setParkings] = useState([]);
+  const [loading ,setLoading] = useState(true);
+  const api_url = "http://parkly-env.eba-u2qumtf7.us-east-2.elasticbeanstalk.com";
+  const location=useLocation()
+  console.log(location);
+  const options = {
+    headers: {'security-token': '1AC4FCOPR'}
+}
+  useEffect( () => {
+    axios.get(`${api_url}/p/parkings`, options).then((response) => {setParkings(response.data)}).finally(() => setLoading(false))
+});
+
+  console.log(data);
   const history=useHistory();
   const handleClick=()=>
   {
@@ -40,8 +54,8 @@ function AdminPanel() {
             </div>
             <div style={{flex: "50%"}}></div>
           </div>
-        <div>
-          <Table dat={data}/>         
+        <div>{
+          loading? "Loading...": <Table dat={data}/>  }               
         </div>     
         </div>
       <div style={{flex: "4%"}}></div>

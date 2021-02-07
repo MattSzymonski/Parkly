@@ -1,13 +1,14 @@
 import './AdminPanel.css';
 import React, { useState} from 'react';
-import { useLocation } from 'react-router';
+import { useHistory,useLocation } from 'react-router';
+import Button from "@material-ui/core/Button";
 import FormInfo from './Forms/FormInfo';
 import FormInv from './Forms/FormInfo';
 const EditPark=props=>
 {
-    console.log(props);
     const location=useLocation();
-    console.log(location)
+    const history=useHistory();
+    console.log(location);
   return (
     <div>
         <div className="topcontainer">
@@ -41,6 +42,19 @@ const EditPark=props=>
                          </div>
                     </div>
                 </div>
+                <Button 
+          color="secondary"
+          variant="outlined"
+          style={{ marginRight: "1rem" }}
+          onClick={()=>history.push("/home")}
+        >Cancel
+        </Button>
+        <Button  
+          color="primary"
+          variant="outlined"
+          onClick={()=>history.push("/home")}
+        >Submit
+        </Button>
             </div>
             <div style={{flex: "4%"}}></div>
         </div>
