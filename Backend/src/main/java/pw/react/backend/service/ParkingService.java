@@ -16,6 +16,7 @@ public class ParkingService implements ParkingMainService {
     private final Logger logger = LoggerFactory.getLogger(ParkingMainService.class);
 
     private ParkingRepository repository;
+    private BookingService bookingService;
 
     ParkingService() {
         /* Needed only for initializing spy in unit tests */}
@@ -23,6 +24,11 @@ public class ParkingService implements ParkingMainService {
     @Autowired
     ParkingService(ParkingRepository repository) {
         this.repository = repository;
+    }
+
+    @Autowired
+    public void setBookingService(BookingService bookingService) {
+        this.bookingService = bookingService;
     }
 
     @Override
@@ -68,8 +74,10 @@ public class ParkingService implements ParkingMainService {
     @Override
     public boolean deleteById(Long parkingId) {
         boolean result = false;
-        if (repository.existsById(parkingId)) {
-            repository.deleteById(parkingId);
+        if (repository.existsById(parkingId)) {       
+            bookingService.deleteBookingsByParkingId(parkingId); // Delete all bookings related to this parking
+            repository.deleteById(parkingId); // Delete parking itself
+
             result = true;
         }
         return result;

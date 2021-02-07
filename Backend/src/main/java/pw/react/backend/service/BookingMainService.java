@@ -28,4 +28,6 @@ public interface BookingMainService {
     boolean deleteById(Long bookingId);
 
     BookingDetailDTO createBookingDetailedDTO(Booking booking);
+
+    int deleteBookingsByParkingId(long parkingId);
 }

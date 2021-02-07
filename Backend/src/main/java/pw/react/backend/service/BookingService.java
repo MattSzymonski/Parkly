@@ -1,6 +1,7 @@
 package pw.react.backend.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import org.springframework.beans.factory.annotation.Value;
 import pw.react.backend.dao.BookingRepository;
 import pw.react.backend.model.data.Booking;
 import pw.react.backend.model.data.Parking;
@@ -23,6 +26,12 @@ public class BookingService implements BookingMainService {
     private final BookingRepository repository;
     private ParkingService parkingService;
 
+    @Value(value = "${bookly.users.address.endpoint}")
+    private String booklyUsersAddressEndpoint;
+    
+    @Value(value = "${bookly.api.key}")
+    private String apiKey;
+
     @Autowired
     public BookingService(BookingRepository repository) {
         this.repository = repository;
@@ -32,6 +41,9 @@ public class BookingService implements BookingMainService {
     public void setParkingService(ParkingService parkingService) {
         this.parkingService = parkingService;
     }
+
+    @Autowired
+	private HttpClient httpService;
 
     @Override
     public Booking add(BooklyBooking booklyBooking) {
@@ -71,9 +83,23 @@ public class BookingService implements BookingMainService {
         boolean result = false;
         if (repository.existsById(bookingId)) {
             repository.deleteById(bookingId);
+
+            // TODO: Send notification to Bookly here
+
             result = true;
         }
         return result;
+    }
+
+    @Override
+    public int deleteBookingsByParkingId(long parkingId) {
+        int deletedBookings = 0;
+        ArrayList<Long> bookingIndices = repository.findIndicesByParkingId(parkingId);
+        for (Long bookingIndex : bookingIndices) {
+            deleteById(bookingIndex);
+            deletedBookings++;
+        }
+        return deletedBookings;
     }
 
     @Override
@@ -84,17 +110,30 @@ public class BookingService implements BookingMainService {
     @Override
     public BookingDetailDTO createBookingDetailedDTO(Booking booking) {
         
-        // TODO: fetch user data from Bookly !!!!!!!!!!
-        // If failed to fetch then return null
-
-        BooklyUser booklyUser = new BooklyUser(); // Mock user
-        booklyUser.setFirstName(booking.getUserFirstName()); // This is not needed because first name is saved in booking already
-        booklyUser.setLastName(booking.getUserLastName());  // This is not needed because last name is saved in booking already
-        booklyUser.setPhoneNumber("MOCK_PHONE");
-        booklyUser.setEmailAddress("MOCK_EMAIL_ADDRESS");
-        booklyUser.setRegistrationPlates("MOCK_REGISTRATION_PLATES");
+        BooklyUser booklyUser = new BooklyUser();; 
+        try {
+            booklyUser = httpService.getUserData(booklyUsersAddressEndpoint, booking.getUserId(), apiKey);
+        }
+        catch(Exception e) { // If failed to get data from Bookly
+            booklyUser.setFirstName(booking.getUserFirstName()); 
+            booklyUser.setLastName(booking.getUserLastName()); 
+            booklyUser.setPhoneNumber("Failed getting this data from Bookly");
+            booklyUser.setEmailAddress("Failed getting this data from Bookly");
+            booklyUser.setRegistrationPlates("Failed getting this data from Bookly");
+            //return null;
+        }
+    
+        // Mock (in case of Bookly not available)
+        // BooklyUser booklyUser = new BooklyUser(); // Mock user
+        // booklyUser.setFirstName(booking.getUserFirstName()); // This is not needed because first name is saved in booking already
+        // booklyUser.setLastName(booking.getUserLastName());  // This is not needed because last name is saved in booking already
+        // booklyUser.setPhoneNumber("MOCK_PHONE");
+        // booklyUser.setEmailAddress("MOCK_EMAIL_ADDRESS");
+        // booklyUser.setRegistrationPlates("MOCK_REGISTRATION_PLATES");
 
         return new BookingDetailDTO(booking, booklyUser);
     }
+
+    
 }
 

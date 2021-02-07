@@ -2,8 +2,11 @@ package pw.react.backend.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.web.client.RestTemplate;
-import pw.react.backend.web.Quote;
+
+
+import pw.react.backend.model.bookly.BooklyUser;
 
 public class HttpService implements HttpClient {
 
@@ -16,13 +19,9 @@ public class HttpService implements HttpClient {
     }
 
     @Override
-    public Quote consume(String url) {
-        final Quote quote = restTemplate.getForObject("https://gturnquist-quoters.cfapps.io/api/random", Quote.class);
-        if (quote != null) {
-            logger.info("This is Quote: {}", quote.toString());
-        } else {
-            logger.warn("Quote is null");
-        }
-        return quote;
+    public BooklyUser getUserData(String endpointAddress, long userId, String apiKey) {
+        String address = endpointAddress + "/" + userId + "?apiKey=" + apiKey;
+        BooklyUser booklyUser = restTemplate.getForObject(address, BooklyUser.class);
+        return booklyUser;
     }
 }

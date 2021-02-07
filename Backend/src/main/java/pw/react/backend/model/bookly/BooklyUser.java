@@ -27,4 +27,6 @@ public class BooklyUser { // Reflects user class in Bookly system (TO BE CHANGED
 
     @ApiModelProperty(position = 6)
     @Getter @Setter private String registrationPlates;
+    
+    public BooklyUser() {}
 }

@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import pw.react.backend.model.data.Booking;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,4 +35,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
         @Param("startDateTime") LocalDateTime startDateTime,
         @Param("endDateTime")LocalDateTime endDateTime,
         Pageable pageable);
+
+
+    public String findIndicesByParkingIdQuery = "SELECT b.id FROM Booking b WHERE"
+    + "(:parkingId is null or b.parking.id = :parkingId)";
+
+    @Query(value = findIndicesByParkingIdQuery) 
+    public ArrayList<Long> findIndicesByParkingId(@Param("parkingId") long parkingId);
 }

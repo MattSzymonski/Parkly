@@ -19,6 +19,9 @@ import static java.util.stream.Collectors.toSet;
 @Configuration
 public class MainConfig {
 
+    
+   
+
     @Value(value = "${cors.urls}")
     private String corsUrls;
     @Value(value = "${cors.mappings}")
@@ -26,11 +29,11 @@ public class MainConfig {
 
     @PostConstruct
     private void init() {
-        Logger logger = LoggerFactory.getLogger(MainConfig.class);
-        logger.info("************** Environment variables **************");
-        for (Map.Entry<String, String> entry : System.getenv().entrySet()) {
-            logger.info("[{}] : [{}]", entry.getKey(), entry.getValue());
-        }
+        // Logger logger = LoggerFactory.getLogger(MainConfig.class);
+        // logger.info("************** Environment variables **************");
+        // for (Map.Entry<String, String> entry : System.getenv().entrySet()) {
+        //     logger.info("[{}] : [{}]", entry.getKey(), entry.getValue());
+        // }
     }
 
     @Bean
