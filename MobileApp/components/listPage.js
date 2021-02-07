@@ -92,7 +92,7 @@ const ListPage = ({navigation, route}) => {
                 parkings.items.map(element => (
                 
                 <DataTable.Row style={{height: 80}}>
-                    <DataTable.Cell> <TouchableOpacity onPress={() => navigation.navigate('Details', element, {token: ite.token.current, username:ite.user.current})} style={styles.mgmtBtn}><Text>Manage</Text>
+                    <DataTable.Cell> <TouchableOpacity onPress={() => navigation.navigate('Details', {token: ite.token.current, username:ite.user.current, item:element})} style={styles.mgmtBtn}><Text>Manage</Text>
                     </TouchableOpacity>
                     </DataTable.Cell>
                     <DataTable.Cell> {element.name} </DataTable.Cell>
