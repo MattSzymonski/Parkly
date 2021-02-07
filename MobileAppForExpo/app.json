@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Lab14 Application",
-    "slug": "lab14",
+    "name": "Parkly Application",
+    "slug": "parkly",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
