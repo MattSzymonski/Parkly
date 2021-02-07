@@ -6,6 +6,7 @@ import ListPage from './components/listPage';
 import AddEntry from './components/addEntry';
 import { createStackNavigator } from '@react-navigation/stack'
 import { NavigationContainer, StackActions} from '@react-navigation/native'
+import DetailsPage from './components/detailsPage';
 
 const Stack = createStackNavigator();
 
@@ -23,7 +24,8 @@ export default function App() {
         <Stack.Screen name = "Login" component={LoginPage} />
         <Stack.Screen name = "List" component={ListPage} />
         <Stack.Screen name = "Add" component={AddEntry} />
-      </Stack.Navigator>
+        <Stack.Screen name = "Details" component={DetailsPage}/>
+      </Stack.Navigator> 
     </NavigationContainer>
 
 
