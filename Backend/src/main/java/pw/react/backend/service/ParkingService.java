@@ -19,6 +19,8 @@ import pw.react.backend.model.ParkingDTO;
 import pw.react.backend.model.data.Parking;
 import org.springframework.data.domain.Page;
 
+import java.time.LocalDateTime;
+
 @Service
 public class ParkingService implements ParkingMainService {
     private final Logger logger = LoggerFactory.getLogger(ParkingMainService.class);
@@ -49,7 +51,7 @@ public class ParkingService implements ParkingMainService {
         String town,
         String streetName,
         LocalDateTime startDateTime,
-        LocalDateTime endDateTime, 
+        LocalDateTime endDateTime,
         Pageable pageable
     ) {
         return repository.findAll(
@@ -60,8 +62,8 @@ public class ParkingService implements ParkingMainService {
             country,
             town,
             streetName,
-            //startDateTime,
-            //endDateTime,
+            startDateTime,
+            endDateTime,
             pageable);
     }
 

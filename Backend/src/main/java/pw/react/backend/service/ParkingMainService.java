@@ -9,6 +9,8 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
+
 public interface ParkingMainService { 
     Page<Parking> findAll(
         Long id,
@@ -19,7 +21,7 @@ public interface ParkingMainService {
         String town,
         String streetName,
         LocalDateTime startDateTime,
-        LocalDateTime endDateTime, 
+        LocalDateTime endDateTime,
         Pageable pageable);
     Parking findById(long parkingId);
     Parking updateById(Long parkingId, Parking updatedParking);
