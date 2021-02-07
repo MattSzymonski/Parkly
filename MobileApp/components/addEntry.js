@@ -30,12 +30,13 @@ export default function AddEntry({navigation, route}) {
     const [ownerTown, setOwnerTown] = useState("");
     const [ownerStreet, setOwnerStreet] = useState("");
     const [ownerStreetNumber, setOwnerStreetNumber] = useState("");
+    const [pricePerHour, setPricePerHour] = useState(0);
 
     const [adding, setAdding] = useState(false)
     const [err, setErr] = useState("");
 
     const options = {
-        headers: {'security-token': route.params.token}
+        headers: {'security-token': route.params.token.current}
     }
 
     const createParking = () => {
@@ -48,6 +49,7 @@ export default function AddEntry({navigation, route}) {
                 streetNumber: streetNumber
             },
             spotsTotal: spotsTotal,
+            pricePerHour: pricePerHour,
             parkingOwner: {
                 firstName: firstName,
                 lastName: lastName,
@@ -120,6 +122,15 @@ return (<ScrollView style={styles.container} contentContainerStyle={{alignItems:
                 placeholder="number of spots"
                 placeholderTextColor="#003f5c"
                 onChangeText={(val) => setSpotsTotal(parseInt(val))}
+        />
+    </View>
+    <Text style={{marginBottom: 8}}>Price per hour: </Text>
+    <View style={styles.inputView}>
+        <TextInput
+                style={styles.TextInput}
+                placeholder="price per hour"
+                placeholderTextColor="#003f5c"
+                onChangeText={(val) => setPricePerHour(parseInt(val))}
         />
     </View>
     <Text style={{fontSize: 16, marginBottom: 15, paddingTop: 20}}> Parking Owner </Text>
