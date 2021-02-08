@@ -11,9 +11,6 @@ import pw.react.backend.model.Credentials;
 import static java.util.stream.Collectors.joining;
 
 
-
-
-
 @RestController
 public class LoginController {
 

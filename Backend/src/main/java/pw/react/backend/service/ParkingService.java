@@ -6,21 +6,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.transaction.TransactionScoped;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import pw.react.backend.dao.ParkingRepository;
 import pw.react.backend.model.ParkingDTO;
 import pw.react.backend.model.data.Parking;
 import org.springframework.data.domain.Page;
 
-import java.time.LocalDateTime;
 
 @Service
 public class ParkingService implements ParkingMainService {
@@ -69,9 +65,7 @@ public class ParkingService implements ParkingMainService {
     }
 
     @Override
-    public Parking findById(long parkingId) {
-
-        
+    public Parking findById(long parkingId) {     
         return repository.findById(parkingId).orElseGet(() -> null);
     }
 

@@ -14,8 +14,6 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-
-
 @Entity
 @Table(name = "booking")  // Generate table in database with fields below
 @Data // Lombok - autogenerate all getters and setters for variables

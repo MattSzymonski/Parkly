@@ -33,13 +33,12 @@ public class HttpService implements HttpClient {
         headers.set("Security-Token", apiKey);
         HttpEntity request = new HttpEntity(headers);
         ResponseEntity<BooklyUser> response = restTemplate.exchange(address, HttpMethod.GET, request, BooklyUser.class,1);
+        
         if (response.getStatusCode() == HttpStatus.OK) {
             return response.getBody();
         } else {
             throw new InvalidRequestException("Request failed");
         } 
-
-        //ResponseEntity<BooklyUser> booklyUser// = restTemplate.exchange(address, HttpMethod.GET, entity, String.class);
 
         //BooklyUser booklyUser = restTemplate.getForObject(address, BooklyUser.class);
         //return booklyUser;

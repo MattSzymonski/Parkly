@@ -16,7 +16,6 @@ import java.io.Serializable;
 public class ParkingOwner implements Serializable {
 
     private static final long serialVersionUID = -6783504532088859179L;
-
     public static ParkingOwner EMPTY = new ParkingOwner();
 
     @Id    

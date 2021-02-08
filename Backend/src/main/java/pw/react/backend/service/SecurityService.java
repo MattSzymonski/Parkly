@@ -8,8 +8,6 @@ import pw.react.backend.model.Credentials;
 import pw.react.backend.model.data.ParklyUser;
 import java.util.Optional;
 
-
-
 @Service
 public class SecurityService implements SecurityMainService {
 

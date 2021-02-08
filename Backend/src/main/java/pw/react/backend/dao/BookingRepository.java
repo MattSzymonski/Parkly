@@ -44,11 +44,9 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     public ArrayList<Long> findIndicesByParkingId(@Param("parkingId") long parkingId);
 
 
-
-
-
     public String findBookingCountForParkingId = "SELECT COUNT(b.parking.id) AS c FROM Booking b WHERE b.parking.id = :parkingId "
     + " AND b.endDateTime > :startDateTime AND b.startDateTime < :endDateTime";
+    
     @Query(value = findBookingCountForParkingId) 
 	public int checkBookingCountForParkingId(long parkingId, LocalDateTime startDateTime, LocalDateTime endDateTime);
 }

@@ -1,7 +1,5 @@
 package pw.react.backend.service;
-
 import org.springframework.http.HttpHeaders;
-
 import pw.react.backend.model.Credentials;
 
 public interface SecurityMainService {

@@ -19,9 +19,6 @@ import static java.util.stream.Collectors.toSet;
 @Configuration
 public class MainConfig {
 
-    
-   
-
     @Value(value = "${cors.urls}")
     private String corsUrls;
     @Value(value = "${cors.mappings}")

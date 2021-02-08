@@ -7,18 +7,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import pw.react.backend.model.data.Parking;
-
-import java.time.LocalDateTime;
 import java.util.Optional;
 
-
-import java.time.LocalDateTime;
-import org.springframework.format.annotation.DateTimeFormat;
 
 public interface ParkingRepository extends JpaRepository<Parking, Long> {
     Optional<Parking> findByAddressId(Long addressId);
     Optional<Parking> findByIdAndAddressId(Long id, Long addressId);
-
 
     public String findAllQuery = "SELECT p FROM Parking p WHERE"
     + "(:id is null or p.id = :id)"
@@ -41,7 +35,6 @@ public interface ParkingRepository extends JpaRepository<Parking, Long> {
         @Param("town") String town,
         @Param("streetName") String streetName,
         Pageable pageable);
-
 
     public String getSpotsTotalByParkingIdQuery = "SELECT p.spotsTotal FROM Parking p WHERE p.id = :id";
     @Query(value = getSpotsTotalByParkingIdQuery)
