@@ -10,8 +10,9 @@ import {
     SafeAreaView
 } from "react-native";
 import { ScrollView } from 'react-native-gesture-handler';
-
+import Collapsible from 'react-native-collapsible';
 import axios from 'axios';
+import { DataTable } from "react-native-paper";
 
 
 const api_url = "http://parkly-env.eba-u2qumtf7.us-east-2.elasticbeanstalk.com";
@@ -39,6 +40,12 @@ const DetailsPage = ({navigation, route}) => {
     const [isInvoiceEditing, setInvoiceEditing] = useState(false);
     const [err, setErr] = useState("");
     
+    const [bookings, setBookings] = useState([[]]);
+    const [isCollapsed, setCollapsed] = useState(true);
+
+    const [totalPages, setPages] = useState(0);
+    const [currentPage, setPage] = useState(0);
+
     const options = {
         headers: {'security-token': route.params.token.current}
     }
@@ -78,6 +85,10 @@ const DetailsPage = ({navigation, route}) => {
         axios.get(`${api_url}/p/parkings/${route.params.item.id}`, options).then( (response) => {fillStates(response.data)}).finally(() => setLoading(false))
     }
 
+    const fetchBookings = () => {
+        axios.get(`${api_url}/p/bookings?parkingId=${route.params.item.id}`, options).then( (response) => {setBookings(response.data)}).finally(() => setLoading(false))
+    }
+
     const fillStates = (data) => {
         setName(data.name);
         setCountry(data.address.country);
@@ -96,7 +107,10 @@ const DetailsPage = ({navigation, route}) => {
     }
 
     useEffect( () => {
+        setLoading(true);
         fetchParking();
+        setLoading(true);
+        fetchBookings();
     }, [navigation])
 
 
@@ -220,8 +234,69 @@ const DetailsPage = ({navigation, route}) => {
                 :
                 <TextInput style={styles.TextInput} value={ownerTown} onChangeText={(val) => setOwnerTown(val)}></TextInput>}                 
             </View>
+        
+
+        <TouchableOpacity onPress={() => setCollapsed(!isCollapsed)} style={styles.actionBar}>
+            <Text style={styles.standardText}> Bookings </Text>
+        </TouchableOpacity>
+        <SafeAreaView>
+                <Collapsible collapsed={isCollapsed}>
+                    <ScrollView>
+                    <DataTable>          
+                <DataTable.Header>
+                    <DataTable.Title> Action </DataTable.Title>
+                    <DataTable.Title> First Name </DataTable.Title>
+                    {/* <DataTable.Title> Country </DataTable.Title> */}
+                    <DataTable.Title> Last Name </DataTable.Title>
+                    <DataTable.Title> Parking Name </DataTable.Title>
+                </DataTable.Header>
+            { loading ? 
+            <Text> Loading ... </Text>
+            :
+            <SafeAreaView>
+            {
+                bookings.items.map(element => (
+                
+                <DataTable.Row style={{height: 80}}>
+                    <DataTable.Cell> DELETE
+                    </DataTable.Cell>
+                    <DataTable.Cell> {element.userFirstName} </DataTable.Cell>
+                    {/* <DataTable.Cell> {element.address.country}</DataTable.Cell> */}
+                    <DataTable.Cell> {element.userLastName}</DataTable.Cell>
+                    <DataTable.Cell> {element.parkingName}</DataTable.Cell>
+                    
+                </DataTable.Row>
+                
+              ))
+            }
+            </SafeAreaView>
+            }
+           
+                <DataTable.Pagination
+                page={currentPage}
+                numberOfPages={totalPages}
+                label={`${currentPage + 1} of ${totalPages}`}
+                onPageChange={(page) => pageChange(page)}
+                />
+                <View style={{flexDirection: "row", justifyContent: "center", paddingTop: 20}}>
+                <TouchableOpacity onPress={() => pageChange(0)}>
+                <Text style={{alignSelf: "flex-end", paddingRight: 10, fontSize: 12}}>First page</Text>
+                </TouchableOpacity>
+                
+                <Text style={{alignSelf: "flex-end", paddingRight: 10, fontSize: 12}}> | </Text>
+                <TouchableOpacity onPress={() => pageChange(totalPages-1)}>
+                <Text style={{alignSelf: "flex-end", paddingRight: 10, fontSize: 12}}>Last page</Text>
+                </TouchableOpacity>
+                
+                </View>
+         </DataTable>
+                    </ScrollView>
+                </Collapsible>
+        </SafeAreaView>
         <View style={{margin: 30}}/>
-        </ScrollView>
+
+
+
         <View style={styles.buttonHolder}>
             <TouchableOpacity onPress={updateParking} style={styles.actionButton}>
                 <Text style={styles.standardText}>Update</Text>
@@ -230,6 +305,11 @@ const DetailsPage = ({navigation, route}) => {
                 <Text style={styles.standardText}>Delete</Text>
             </TouchableOpacity>
         </View>
+
+        </ScrollView>
+
+
+
             </SafeAreaView>
             }
         </View>
@@ -278,7 +358,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: "row",
         justifyContent: "space-between",
-        position: 'absolute',
+        //position: 'absolute',
         marginTop: 20,
         bottom: 10, 
         marginBottom: 40,
