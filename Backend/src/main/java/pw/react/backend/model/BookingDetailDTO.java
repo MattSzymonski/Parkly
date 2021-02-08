@@ -26,33 +26,36 @@ public class BookingDetailDTO { // This object represents one entry in boking li
     @Getter @Setter private String userLastName;
 
     @ApiModelProperty(position = 5)
-    @Getter @Setter private String userPhoneNumber;
-
-    @ApiModelProperty(position = 6)
     @Getter @Setter private String userEmailAddress;
 
+    @ApiModelProperty(position = 6)
+    @Getter @Setter private String userPhoneNumber;
+
     @ApiModelProperty(position = 7)
-    @Getter @Setter private String userRegistrationPlates;
+    @Getter @Setter private String userCountry;
 
     @ApiModelProperty(position = 8)
-    @Getter @Setter private Float price;
+    @Getter @Setter private String userAddress;
 
     @ApiModelProperty(position = 9)
-    @Getter @Setter private long parkingId;
+    @Getter @Setter private Float price;
 
     @ApiModelProperty(position = 10)
-    @Getter @Setter private String parkingName;
+    @Getter @Setter private long parkingId;
 
     @ApiModelProperty(position = 11)
-    @Getter @Setter private String parkingOwnerCompanyName;
+    @Getter @Setter private String parkingName;
 
     @ApiModelProperty(position = 12)
-    @Getter @Setter private Address parkingAddress;
+    @Getter @Setter private String parkingOwnerCompanyName;
 
     @ApiModelProperty(position = 13)
-    @Getter @Setter private LocalDateTime startDateTime;
+    @Getter @Setter private Address parkingAddress;
 
     @ApiModelProperty(position = 14)
+    @Getter @Setter private LocalDateTime startDateTime;
+
+    @ApiModelProperty(position = 15)
     @Getter @Setter private LocalDateTime endDateTime;
 
     public BookingDetailDTO(Booking booking, BooklyUser booklyUser) {
@@ -60,9 +63,13 @@ public class BookingDetailDTO { // This object represents one entry in boking li
         this.userId = booking.getUserId();
         this.userFirstName = booking.getUserFirstName();
         this.userLastName = booking.getUserLastName();
+
+        //this.userFirstName = booklyUser.getFirstName();
+        //this.userLastName = booklyUser.getLastName();
+        this.userEmailAddress = booklyUser.getEmail();
         this.userPhoneNumber = booklyUser.getPhoneNumber();
-        this.userEmailAddress = booklyUser.getEmailAddress();
-        this.userRegistrationPlates = booklyUser.getRegistrationPlates();
+        this.userCountry =  booklyUser.getCountry();
+        this.userAddress = booklyUser.getAddress();
         this.price = booking.getPrice();
         this.parkingId = booking.getParking().getId();
         this.parkingName = booking.getParking().getName();

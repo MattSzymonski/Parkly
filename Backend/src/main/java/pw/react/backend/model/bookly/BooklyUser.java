@@ -23,10 +23,16 @@ public class BooklyUser { // Reflects user class in Bookly system (TO BE CHANGED
     @Getter @Setter private String phoneNumber;
 
     @ApiModelProperty(position = 5)
-    @Getter @Setter private String emailAddress;
+    @Getter @Setter private String country;
 
     @ApiModelProperty(position = 6)
-    @Getter @Setter private String registrationPlates;
+    @Getter @Setter private String address;
+
+    @ApiModelProperty(position = 7)
+    @Getter @Setter private String email;
+
+    //@ApiModelProperty(position = 7)
+    //@Getter @Setter private String registrationPlates;
     
     public BooklyUser() {}
 }

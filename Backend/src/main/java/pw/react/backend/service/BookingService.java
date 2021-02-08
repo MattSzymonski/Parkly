@@ -130,9 +130,14 @@ public class BookingService implements BookingMainService {
         catch(Exception e) { // If failed to get data from Bookly
             booklyUser.setFirstName(booking.getUserFirstName()); 
             booklyUser.setLastName(booking.getUserLastName()); 
+
+            //booklyUser.setFirstName(booklyUser.getFirstName());
+            //booklyUser.setLastName(booklyUser.getLastName());
+            booklyUser.setAddress("Failed getting this data from Bookly");
+            booklyUser.setCountry("Failed getting this data from Bookly");
             booklyUser.setPhoneNumber("Failed getting this data from Bookly");
-            booklyUser.setEmailAddress("Failed getting this data from Bookly");
-            booklyUser.setRegistrationPlates("Failed getting this data from Bookly");
+            booklyUser.setEmail("Failed getting this data from Bookly");
+            //booklyUser.setRegistrationPlates("Failed getting this data from Bookly");
             //return null;
         }
     
