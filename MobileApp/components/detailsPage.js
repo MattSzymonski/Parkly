@@ -115,6 +115,10 @@ const DetailsPage = ({navigation, route}) => {
         axios.get(`${api_url}/p/bookings?parkingId=${route.params.item.id}&page=${cp}`, options).then( (response) => {setBookings(response.data); setPages(response.data.totalPages)}).finally(() => setBookingsLoading(false))
     }
 
+    const deleteBooking = (bookingId) => {
+        axios.delete(`${api_url}/p/bookings/${bookingId}`, options).then( (response) => {setBookingsLoading(true)}).finally(() => fetchBookings())
+    }
+
     useEffect( () => {
         setLoading(true);
         fetchParking();
@@ -267,8 +271,7 @@ const DetailsPage = ({navigation, route}) => {
                 bookings.items.map(element => (
                 
                 <DataTable.Row style={{height: 80}}>
-                    <DataTable.Cell> DELETE
-                    </DataTable.Cell>
+                    <DataTable.Cell> <TouchableOpacity style={styles.deleteBtn} onPress={() => deleteBooking(element.id)} ><Text style={{color: "white"}}>Delete</Text></TouchableOpacity></DataTable.Cell>
                     <DataTable.Cell> {element.userFirstName} </DataTable.Cell>
                     {/* <DataTable.Cell> {element.address.country}</DataTable.Cell> */}
                     <DataTable.Cell> {element.userLastName}</DataTable.Cell>
@@ -396,7 +399,14 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         backgroundColor: "#ffd300",
         
-    }
+    },
+
+    deleteBtn: {
+        borderRadius: 10,
+        backgroundColor: "red",
+        padding: 10,
+        
+    },
 });
 
 export default DetailsPage;
