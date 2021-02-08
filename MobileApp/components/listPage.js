@@ -71,6 +71,7 @@ const ListPage = ({navigation, route}) => {
         navigation.addListener('focus', () => {
             setLoading(true);
             dataFetch();
+            setPage(0);
         })
     }, [navigation]);
 
