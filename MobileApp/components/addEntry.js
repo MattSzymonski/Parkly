@@ -9,6 +9,7 @@ import {
   Button,
   TouchableOpacity,
   ScrollView,
+  KeyboardAvoidingView,
 } from "react-native";
 
 import axios from 'axios';
@@ -66,8 +67,10 @@ export default function AddEntry({navigation, route}) {
     }
 
 return (<ScrollView style={styles.container} contentContainerStyle={{alignItems: "center"}}>
+    
     <Text style={{fontSize: 20, marginBottom: 15, paddingTop: 20}}> Adding new entry: </Text>
     <Text style={{marginBottom: 8}}> Name: </Text>
+    
     <View style={styles.inputView}>
         
         <TextInput
@@ -205,8 +208,9 @@ return (<ScrollView style={styles.container} contentContainerStyle={{alignItems:
     {/* <View>
         {err.request.map(element => <Text> {element} </Text>)}
     </View> */}
-
+    
     </ScrollView>
+    
 )
   
 }
@@ -216,7 +220,7 @@ const styles = StyleSheet.create({
       flex: 1,
       backgroundColor: "#fff",
       //alignItems: "center",
-      
+      //paddingBottom: 250,
       //justifyContent: "center",
     },
   
@@ -292,7 +296,7 @@ const styles = StyleSheet.create({
       alignItems: "center",
       justifyContent: "center",
       marginTop: 20,
-      marginBottom: 40,
+      marginBottom: 300,
       backgroundColor: "#ffd300",
     },
 
