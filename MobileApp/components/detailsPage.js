@@ -151,14 +151,14 @@ const DetailsPage = ({navigation, route}) => {
                     {isEditingAddress == false ? 
                     <Text style={styles.categoryField}>{spotsTotal}</Text>
                     :
-                    <TextInput style={styles.TextInput} value={spotsTotal} onChangeText={(val) => setSpotsTotal(val)}></TextInput>}
+                    <TextInput style={styles.TextInput} value={String(spotsTotal)} onChangeText={(val) => setSpotsTotal(val)}></TextInput>}
                 </View>
                 <View>
                     <Text style={styles.categoryText}>Price per Hour</Text>
                     {isEditingAddress == false ? 
                     <Text style={styles.categoryField}>{pricePerHour}</Text>
                     :
-                    <TextInput style={styles.TextInput} value={pricePerHour} onChangeText={(val) => setPPH(val)}></TextInput>}
+                    <TextInput style={styles.TextInput} value={String(pricePerHour)} onChangeText={(val) => setPPH(val)}></TextInput>}
                 </View>
                 
                 <View style={styles.actionBar} >
