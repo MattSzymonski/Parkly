@@ -142,7 +142,7 @@ const ListPage = ({navigation, route}) => {
                 <DataTable.Header>
                     <DataTable.Title> Action </DataTable.Title>
                     <DataTable.Title> Name </DataTable.Title>
-                    <DataTable.Title> Country </DataTable.Title>
+                    {/* <DataTable.Title> Country </DataTable.Title> */}
                     <DataTable.Title> Town </DataTable.Title>
                     <DataTable.Title> Spots </DataTable.Title>
                 </DataTable.Header>
@@ -158,7 +158,7 @@ const ListPage = ({navigation, route}) => {
                     </TouchableOpacity>
                     </DataTable.Cell>
                     <DataTable.Cell> {element.name} </DataTable.Cell>
-                    <DataTable.Cell> {element.address.country}</DataTable.Cell>
+                    {/* <DataTable.Cell> {element.address.country}</DataTable.Cell> */}
                     <DataTable.Cell> {element.address.town}</DataTable.Cell>
                     <DataTable.Cell> {element.spotsTaken}/{element.spotsTotal}</DataTable.Cell>
                     
