@@ -50,6 +50,7 @@ const DetailsPage = ({navigation, route}) => {
                 streetNumber: streetNumber
             },
             spotsTotal: spotsTotal,
+            pricePerHour: pricePerHour,
             parkingOwner: {
                 firstName: firstName,
                 lastName: lastName,
