@@ -7,6 +7,7 @@ import {
     TextInput,
     Button,
     TouchableOpacity,
+    SafeAreaView
 } from "react-native";
 import { ScrollView } from 'react-native-gesture-handler';
 
@@ -16,6 +17,8 @@ import axios from 'axios';
 const api_url = "http://parkly-env.eba-u2qumtf7.us-east-2.elasticbeanstalk.com";
 
 const DetailsPage = ({navigation, route}) => {
+
+    const [loading ,setLoading] = useState(true);
 
     const [name, setName] = useState("");
     const [country, setCountry] = useState("");
@@ -72,7 +75,7 @@ const DetailsPage = ({navigation, route}) => {
     }
 
     const fetchParking = () => {
-        axios.get(`${api_url}/p/parkings/${route.params.item.id}`, options).then( (response) => {fillStates(response.data)}).finally( () => {setLoading(false);})
+        axios.get(`${api_url}/p/parkings/${route.params.item.id}`, options).then( (response) => {fillStates(response.data)}).finally(() => setLoading(false))
     }
 
     const fillStates = (data) => {
@@ -99,131 +102,136 @@ const DetailsPage = ({navigation, route}) => {
 
     return (
         <View style={styles.container}>
-
-            <ScrollView>
-                <View style={styles.actionBar} >
-                    <Text style={styles.standardText}>Address</Text>
-                    
-                    {isEditingAddress == false ? 
-                    <TouchableOpacity onPress={() => setAddressEditing(true)}><Text style={styles.editSaveFunc}>Edit</Text></TouchableOpacity>
-                    :
-                    <TouchableOpacity onPress={() => setAddressEditing(false)}><Text style={styles.editSaveFunc}>Save</Text></TouchableOpacity>
-                    }
-                </View>
-                
-                <View>
-                    <Text style={styles.categoryText}>Name</Text>
-                    {isEditingAddress == false ? 
-                    <Text style={styles.categoryField}>{name}</Text>
-                    :
-                    <TextInput style={styles.TextInput} value={name} onChangeText={(val) => setName(val)}></TextInput>}
-                </View>
-                <View>
-                    <Text style={styles.categoryText}>Country</Text>
-                    {isEditingAddress == false ? 
-                    <Text style={styles.categoryField}>{country}</Text>
-                    :
-                    <TextInput style={styles.TextInput} value={country} onChangeText={(val) => setCountry(val)}></TextInput>}
-                </View>
-                <View>
-                    <Text style={styles.categoryText}>Street Name</Text>
-                    {isEditingAddress == false ? 
-                    <Text style={styles.categoryField}>{streetName}</Text>
-                    :
-                    <TextInput style={styles.TextInput} value={streetName} onChangeText={(val) => setStreetName(val)}></TextInput>}
-                </View>
-                <View>
-                    <Text style={styles.categoryText}>Street Number</Text>   
-                    {isEditingAddress == false ? 
-                    <Text style={styles.categoryField}>{streetNumber}</Text>
-                    :
-                    <TextInput style={styles.TextInput} value={streetNumber} onChangeText={(val) => setStreetNumber(val)}></TextInput>}
-                </View>
-                <View>
-                    <Text style={styles.categoryText}>City</Text>
-                    {isEditingAddress == false ? 
-                    <Text style={styles.categoryField}>{town}</Text>
-                    :
-                    <TextInput style={styles.TextInput} value={town} onChangeText={(val) => setTown(val)}></TextInput>}
-                </View>
-                <View>
-                    <Text style={styles.categoryText}>Number of Spots</Text>
-                    {isEditingAddress == false ? 
-                    <Text style={styles.categoryField}>{spotsTotal}</Text>
-                    :
-                    <TextInput style={styles.TextInput} value={String(spotsTotal)} onChangeText={(val) => setSpotsTotal(val)}></TextInput>}
-                </View>
-                <View>
-                    <Text style={styles.categoryText}>Price per Hour</Text>
-                    {isEditingAddress == false ? 
-                    <Text style={styles.categoryField}>{pricePerHour}</Text>
-                    :
-                    <TextInput style={styles.TextInput} value={String(pricePerHour)} onChangeText={(val) => setPPH(val)}></TextInput>}
-                </View>
-                
-                <View style={styles.actionBar} >
-                    <Text style={styles.standardText}>Invoice Information</Text>
-                    {isInvoiceEditing == false ? 
-                    <TouchableOpacity onPress={() => setInvoiceEditing(true)}><Text style={styles.editSaveFunc}>Edit</Text></TouchableOpacity>
-                    :
-                    <TouchableOpacity onPress={() => setInvoiceEditing(false)}><Text style={styles.editSaveFunc}>Save</Text></TouchableOpacity>
-                    }
-                </View>
-
-                <View>
-                    <Text style={styles.categoryText}>First Name</Text>  
-                    {isInvoiceEditing == false ? 
-                    <Text style={styles.categoryField}>{firstName}</Text>
-                    :
-                    <TextInput style={styles.TextInput} value={firstName} onChangeText={(val) => setFirstName(val)}></TextInput>}
-                </View>
-                <View>
-                    <Text style={styles.categoryText}>Last Name</Text>
-                    {isInvoiceEditing == false ? 
-                    <Text style={styles.categoryField}>{lastName}</Text>
-                    :
-                    <TextInput style={styles.TextInput} value={lastName} onChangeText={(val) => setLastName(val)}></TextInput>}
-                </View>
-                <View>
-                    <Text style={styles.categoryText}>Country</Text>
-                    {isInvoiceEditing == false ? 
-                    <Text style={styles.categoryField}>{ownerCountry}</Text>
-                    :
-                    <TextInput style={styles.TextInput} value={ownerCountry} onChangeText={(val) => setOwnerCountry(val)}></TextInput>}
-                </View>
-                <View>
-                    <Text style={styles.categoryText}>Street Name</Text>
-                    {isInvoiceEditing == false ? 
-                    <Text style={styles.categoryField}>{ownerStreet}</Text>
-                    :
-                    <TextInput style={styles.TextInput} value={ownerStreet} onChangeText={(val) => setOwnerStreet(val)}></TextInput>}
-                </View>
-                <View>
-                    <Text style={styles.categoryText}>Street Number</Text>
-                    {isInvoiceEditing == false ? 
-                    <Text style={styles.categoryField}>{ownerStreetNumber}</Text>
-                    :
-                    <TextInput style={styles.TextInput} value={ownerStreetNumber} onChangeText={(val) => setOwnerStreetNumber(val)}></TextInput>}
-                </View>
-                <View>
-                    <Text style={styles.categoryText}>City</Text>
-                    {isInvoiceEditing == false ? 
-                    <Text style={styles.categoryField}>{ownerTown}</Text>
-                    :
-                    <TextInput style={styles.TextInput} value={ownerTown} onChangeText={(val) => setOwnerTown(val)}></TextInput>}                 
-                </View>
-            <View style={{margin: 30}}/>
-            </ScrollView>
-            <View style={styles.buttonHolder}>
-                <TouchableOpacity onPress={updateParking} style={styles.actionButton}>
-                    <Text style={styles.standardText}>Update</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={deleteParking} style={styles.actionButton}>
-                    <Text style={styles.standardText}>Delete</Text>
-                </TouchableOpacity>
-            </View>
             
 
+            {loading ?
+            <Text> Loading... </Text>
+            :
+            <SafeAreaView> 
+                <ScrollView>
+            <View style={styles.actionBar} >
+                <Text style={styles.standardText}>Address</Text>
+                
+                {isEditingAddress == false ? 
+                <TouchableOpacity onPress={() => setAddressEditing(true)}><Text style={styles.editSaveFunc}>Edit</Text></TouchableOpacity>
+                :
+                <TouchableOpacity onPress={() => setAddressEditing(false)}><Text style={styles.editSaveFunc}>Save</Text></TouchableOpacity>
+                }
+            </View>
+            
+            <View>
+                <Text style={styles.categoryText}>Name</Text>
+                {isEditingAddress == false ? 
+                <Text style={styles.categoryField}>{name}</Text>
+                :
+                <TextInput style={styles.TextInput} value={name} onChangeText={(val) => setName(val)}></TextInput>}
+            </View>
+            <View>
+                <Text style={styles.categoryText}>Country</Text>
+                {isEditingAddress == false ? 
+                <Text style={styles.categoryField}>{country}</Text>
+                :
+                <TextInput style={styles.TextInput} value={country} onChangeText={(val) => setCountry(val)}></TextInput>}
+            </View>
+            <View>
+                <Text style={styles.categoryText}>Street Name</Text>
+                {isEditingAddress == false ? 
+                <Text style={styles.categoryField}>{streetName}</Text>
+                :
+                <TextInput style={styles.TextInput} value={streetName} onChangeText={(val) => setStreetName(val)}></TextInput>}
+            </View>
+            <View>
+                <Text style={styles.categoryText}>Street Number</Text>   
+                {isEditingAddress == false ? 
+                <Text style={styles.categoryField}>{streetNumber}</Text>
+                :
+                <TextInput style={styles.TextInput} value={streetNumber} onChangeText={(val) => setStreetNumber(val)}></TextInput>}
+            </View>
+            <View>
+                <Text style={styles.categoryText}>City</Text>
+                {isEditingAddress == false ? 
+                <Text style={styles.categoryField}>{town}</Text>
+                :
+                <TextInput style={styles.TextInput} value={town} onChangeText={(val) => setTown(val)}></TextInput>}
+            </View>
+            <View>
+                <Text style={styles.categoryText}>Number of Spots</Text>
+                {isEditingAddress == false ? 
+                <Text style={styles.categoryField}>{spotsTotal}</Text>
+                :
+                <TextInput style={styles.TextInput} value={String(spotsTotal)} onChangeText={(val) => setSpotsTotal(val)}></TextInput>}
+            </View>
+            <View>
+                <Text style={styles.categoryText}>Price per Hour</Text>
+                {isEditingAddress == false ? 
+                <Text style={styles.categoryField}>{pricePerHour}</Text>
+                :
+                <TextInput style={styles.TextInput} value={String(pricePerHour)} onChangeText={(val) => setPPH(val)}></TextInput>}
+            </View>
+            
+            <View style={styles.actionBar} >
+                <Text style={styles.standardText}>Invoice Information</Text>
+                {isInvoiceEditing == false ? 
+                <TouchableOpacity onPress={() => setInvoiceEditing(true)}><Text style={styles.editSaveFunc}>Edit</Text></TouchableOpacity>
+                :
+                <TouchableOpacity onPress={() => setInvoiceEditing(false)}><Text style={styles.editSaveFunc}>Save</Text></TouchableOpacity>
+                }
+            </View>
+
+            <View>
+                <Text style={styles.categoryText}>First Name</Text>  
+                {isInvoiceEditing == false ? 
+                <Text style={styles.categoryField}>{firstName}</Text>
+                :
+                <TextInput style={styles.TextInput} value={firstName} onChangeText={(val) => setFirstName(val)}></TextInput>}
+            </View>
+            <View>
+                <Text style={styles.categoryText}>Last Name</Text>
+                {isInvoiceEditing == false ? 
+                <Text style={styles.categoryField}>{lastName}</Text>
+                :
+                <TextInput style={styles.TextInput} value={lastName} onChangeText={(val) => setLastName(val)}></TextInput>}
+            </View>
+            <View>
+                <Text style={styles.categoryText}>Country</Text>
+                {isInvoiceEditing == false ? 
+                <Text style={styles.categoryField}>{ownerCountry}</Text>
+                :
+                <TextInput style={styles.TextInput} value={ownerCountry} onChangeText={(val) => setOwnerCountry(val)}></TextInput>}
+            </View>
+            <View>
+                <Text style={styles.categoryText}>Street Name</Text>
+                {isInvoiceEditing == false ? 
+                <Text style={styles.categoryField}>{ownerStreet}</Text>
+                :
+                <TextInput style={styles.TextInput} value={ownerStreet} onChangeText={(val) => setOwnerStreet(val)}></TextInput>}
+            </View>
+            <View>
+                <Text style={styles.categoryText}>Street Number</Text>
+                {isInvoiceEditing == false ? 
+                <Text style={styles.categoryField}>{ownerStreetNumber}</Text>
+                :
+                <TextInput style={styles.TextInput} value={ownerStreetNumber} onChangeText={(val) => setOwnerStreetNumber(val)}></TextInput>}
+            </View>
+            <View>
+                <Text style={styles.categoryText}>City</Text>
+                {isInvoiceEditing == false ? 
+                <Text style={styles.categoryField}>{ownerTown}</Text>
+                :
+                <TextInput style={styles.TextInput} value={ownerTown} onChangeText={(val) => setOwnerTown(val)}></TextInput>}                 
+            </View>
+        <View style={{margin: 30}}/>
+        </ScrollView>
+        <View style={styles.buttonHolder}>
+            <TouchableOpacity onPress={updateParking} style={styles.actionButton}>
+                <Text style={styles.standardText}>Update</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={deleteParking} style={styles.actionButton}>
+                <Text style={styles.standardText}>Delete</Text>
+            </TouchableOpacity>
+        </View>
+            </SafeAreaView>
+            }
         </View>
     )
 
