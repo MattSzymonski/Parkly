@@ -10,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+
 import javax.annotation.PostConstruct;
 import java.util.*;
 
@@ -25,11 +26,11 @@ public class MainConfig {
 
     @PostConstruct
     private void init() {
-        Logger logger = LoggerFactory.getLogger(MainConfig.class);
-        logger.info("************** Environment variables **************");
-        for (Map.Entry<String, String> entry : System.getenv().entrySet()) {
-            logger.info("[{}] : [{}]", entry.getKey(), entry.getValue());
-        }
+        // Logger logger = LoggerFactory.getLogger(MainConfig.class);
+        // logger.info("************** Environment variables **************");
+        // for (Map.Entry<String, String> entry : System.getenv().entrySet()) {
+        //     logger.info("[{}] : [{}]", entry.getKey(), entry.getValue());
+        // }
     }
 
     @Bean
@@ -49,12 +50,15 @@ public class MainConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 final Set<String> mappings = getCorsMapings();
-                if (mappings.isEmpty()) {
-                    registry.addMapping("/**");
-                } else {
-                    for (String mapping : mappings) {
-                        registry.addMapping(mapping).allowedOrigins(getCorsUrls());
-
+                if (mappings.isEmpty()) 
+                {
+                    registry.addMapping("/**").allowedMethods("GET", "POST", "OPTIONS", "PUT", "DELETE");
+                } 
+                else 
+                {
+                    for (String mapping : mappings) 
+                    {
+                        registry.addMapping(mapping).allowedOrigins(getCorsUrls()).allowedMethods("GET", "POST", "OPTIONS", "PUT", "DELETE");
                     }
                 }
             }

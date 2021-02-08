@@ -1,7 +1,8 @@
 package pw.react.backend.service;
 
-import pw.react.backend.web.Quote;
+import pw.react.backend.model.bookly.BooklyUser;
+import org.springframework.http.ResponseEntity;
 
 public interface HttpClient {
-    Quote consume(String url);
+    BooklyUser getUserData(String endpointAddress, long userId, String apiKey);
 }

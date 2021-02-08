@@ -1,8 +1,12 @@
-package pw.react.backend.model;
+package pw.react.backend.model.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import org.hibernate.annotations.CreationTimestamp;
+
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import pw.react.backend.utils.JsonDateDeserializer;
 import pw.react.backend.utils.JsonDateSerializer;
@@ -22,33 +26,36 @@ public class Parking implements Serializable {
     public static Parking EMPTY = new Parking();
 
     @Id    
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ApiModelProperty(position = 1)
     private long id;
 
     @Column(name = "name")
+    @ApiModelProperty(position = 2)
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.ALL, optional = false)
-    //@ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "address_id", referencedColumnName = "id")
-   // @OnDelete(action = OnDeleteAction.CASCADE)
+    @Column(name = "spotsTotal")
+    @ApiModelProperty(position = 3)
+    private Integer spotsTotal; 
 
-    // @Column(name = "address")
-    // @OneToOne(cascade = CascadeType.ALL)
-    // @JoinColumn(name = "address_id", referencedColumnName = "id")
+    @Column(name = "pricePerHour")
+    @ApiModelProperty(position = 4)
+    private Float pricePerHour;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.PERSIST) // Do not destroy address entry
+    @JoinColumn(name = "address_id", referencedColumnName = "id")
+    @ApiModelProperty(position = 5)
     private Address address;
 
-    @Column(name = "spotsTotal")
-    private int spotsTotal;
-
-    @Column(name = "spotsTaken")
-    private int spotsTaken;
-
-    @Column(name = "ownerId")
-    private long ownerId;
+    @ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.PERSIST) // Do not destroy address entry
+    @JoinColumn(name = "parkingOwner_id", referencedColumnName = "id")
+    @ApiModelProperty(position = 6)
+    private ParkingOwner parkingOwner;
 
     @Column(name = "addedDateTime")
     @JsonDeserialize(using = JsonDateDeserializer.class) // For data decoding
     @JsonSerialize(using = JsonDateSerializer.class) // For data encoding
+    @CreationTimestamp
+    @ApiModelProperty(position = 7)
     private LocalDateTime addedDateTime;
 }

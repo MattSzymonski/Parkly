@@ -1,5 +1,5 @@
-# Starter
-This is the starter for the backend application.
+# Parkly
+This is Parkly backend application.
 
 ### Installed Prerequisites
 In order to launch the application the following items must be installed:

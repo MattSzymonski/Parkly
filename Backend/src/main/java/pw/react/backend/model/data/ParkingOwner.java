@@ -1,15 +1,13 @@
-package pw.react.backend.model;
+package pw.react.backend.model.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import pw.react.backend.utils.JsonDateDeserializer;
-import pw.react.backend.utils.JsonDateSerializer;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+
 
 @Entity
 @Table(name = "parkingOwner")  // Generate table in database with fields below
@@ -18,24 +16,27 @@ import java.time.LocalDateTime;
 public class ParkingOwner implements Serializable {
 
     private static final long serialVersionUID = -6783504532088859179L;
-
     public static ParkingOwner EMPTY = new ParkingOwner();
 
     @Id    
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ApiModelProperty(position = 1)
     private long id;
 
     @Column(name = "firstName")
+    @ApiModelProperty(position = 2)
     private String firstName;
 
     @Column(name = "lastName")
+    @ApiModelProperty(position = 3)
     private String lastName;
 
     @Column(name = "companyName")
+    @ApiModelProperty(position = 4)
     private String companyName;
 
-    // @Column(name = "address")
-    // @OneToOne(cascade = CascadeType.ALL)
-    // @JoinColumn(name = "address_id", referencedColumnName = "id")
-    // private Address address;
+    @ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.PERSIST) // Do not destroy address entry
+    @JoinColumn(name = "address_id", referencedColumnName = "id")
+    @ApiModelProperty(position = 5)
+    private Address address;
 }
