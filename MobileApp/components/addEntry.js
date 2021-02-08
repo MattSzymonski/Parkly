@@ -36,32 +36,6 @@ export default function AddEntry({navigation, route}) {
     const [adding, setAdding] = useState(false)
     const [err, setErr] = useState("");
 
-    const [isValid, setValidation] = useState(false);
-
-    const verify = () => {
-        if(name.length > 0 &&
-            country.length > 0 &&
-            town.length > 0 &&
-            streetName.length > 0 &&
-            streetNumber > 0 &&
-            spotsTotal > 0 &&
-            firstName.length > 0 &&
-            lastName.length > 0 &&
-            companyName.length > 0 &&
-            ownerCountry.length > 0 &&
-            ownerTown.length > 0 &&
-            ownerStreet.length > 0 &&
-            ownerStreetNumber.length > 0 &&
-            pricePerHour > 0)
-                setValidation(true);
-            else setValidation(false);
-    }
-
-    useEffect( () => {
-        verify();
-    }, [name, country, town, streetName, streetNumber, spotsTotal, firstName, lastName,
-        companyName, ownerCountry, ownerTown, ownerStreet, ownerStreetNumber, pricePerHour]);
-
     const options = {
         headers: {'security-token': route.params.token.current}
     }
@@ -226,8 +200,8 @@ return (<ScrollView style={styles.container} contentContainerStyle={{alignItems:
                 onChangeText={(val) => setOwnerStreetNumber(val)}
         />
     </View>
-
-    <TouchableOpacity disabled={!isValid} style={styles.loginBtn} onPress={createParking}>
+    
+    <TouchableOpacity style={styles.loginBtn} onPress={createParking}>
         <Text style={styles.loginText}>Add</Text>
       </TouchableOpacity>
 
