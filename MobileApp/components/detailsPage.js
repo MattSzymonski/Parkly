@@ -84,34 +84,46 @@ const DetailsPage = ({navigation, route}) => {
                 </View>
                 
                 <View>
+                    <Text style={styles.categoryText}>Name</Text>
                     {isEditingAddress == false ? 
-                    <Text style={styles.standardText}>{name}</Text>
+                    <Text style={styles.categoryField}>{name}</Text>
                     :
                     <TextInput style={styles.TextInput} value={name} onChangeText={(val) => setName(val)}></TextInput>}
                 </View>
                 <View>
+                    <Text style={styles.categoryText}>Country</Text>
                     {isEditingAddress == false ? 
-                    <Text style={styles.standardText}>{country}</Text>
+                    <Text style={styles.categoryField}>{country}</Text>
                     :
                     <TextInput style={styles.TextInput} value={country} onChangeText={(val) => setCountry(val)}></TextInput>}
                 </View>
                 <View>
+                    <Text style={styles.categoryText}>Street Name</Text>
                     {isEditingAddress == false ? 
-                    <Text style={styles.standardText}>{streetName}</Text>
+                    <Text style={styles.categoryField}>{streetName}</Text>
                     :
                     <TextInput style={styles.TextInput} value={streetName} onChangeText={(val) => setStreetName(val)}></TextInput>}
                 </View>
                 <View>
+                    <Text style={styles.categoryText}>Street Number</Text>   
                     {isEditingAddress == false ? 
-                    <Text style={styles.standardText}>{streetNumber}</Text>
+                    <Text style={styles.categoryField}>{streetNumber}</Text>
                     :
                     <TextInput style={styles.TextInput} value={streetNumber} onChangeText={(val) => setStreetNumber(val)}></TextInput>}
                 </View>
                 <View>
+                    <Text style={styles.categoryText}>City</Text>
                     {isEditingAddress == false ? 
-                    <Text style={styles.standardText}>{town}</Text>
+                    <Text style={styles.categoryField}>{town}</Text>
                     :
                     <TextInput style={styles.TextInput} value={town} onChangeText={(val) => setTown(val)}></TextInput>}
+                </View>
+                <View>
+                    <Text style={styles.categoryText}>Number of Spots</Text>
+                    {isEditingAddress == false ? 
+                    <Text style={styles.categoryField}>{spotsTotal}</Text>
+                    :
+                    <TextInput style={styles.TextInput} value={town} onChangeText={(val) => setSpotsTotal(val)}></TextInput>}
                 </View>
                 
                 <View style={styles.actionBar} >
@@ -124,43 +136,48 @@ const DetailsPage = ({navigation, route}) => {
                 </View>
 
                 <View>
+                    <Text style={styles.categoryText}>First Name</Text>  
                     {isInvoiceEditing == false ? 
-                    <Text style={styles.standardText}>{firstName}</Text>
+                    <Text style={styles.categoryField}>{firstName}</Text>
                     :
                     <TextInput style={styles.TextInput} value={firstName} onChangeText={(val) => setFirstName(val)}></TextInput>}
                 </View>
                 <View>
+                    <Text style={styles.categoryText}>Last Name</Text>
                     {isInvoiceEditing == false ? 
-                    <Text style={styles.standardText}>{lastName}</Text>
+                    <Text style={styles.categoryField}>{lastName}</Text>
                     :
                     <TextInput style={styles.TextInput} value={lastName} onChangeText={(val) => setLastName(val)}></TextInput>}
                 </View>
                 <View>
+                    <Text style={styles.categoryText}>Country</Text>
                     {isInvoiceEditing == false ? 
-                    <Text style={styles.standardText}>{ownerCountry}</Text>
+                    <Text style={styles.categoryField}>{ownerCountry}</Text>
                     :
                     <TextInput style={styles.TextInput} value={ownerCountry} onChangeText={(val) => setOwnerCountry(val)}></TextInput>}
                 </View>
                 <View>
+                    <Text style={styles.categoryText}>Street Name</Text>
                     {isInvoiceEditing == false ? 
-                    <Text style={styles.standardText}>{ownerStreet}</Text>
+                    <Text style={styles.categoryField}>{ownerStreet}</Text>
                     :
                     <TextInput style={styles.TextInput} value={ownerStreet} onChangeText={(val) => setOwnerStreet(val)}></TextInput>}
                 </View>
                 <View>
+                    <Text style={styles.categoryText}>Street Number</Text>
                     {isInvoiceEditing == false ? 
-                    <Text style={styles.standardText}>{ownerStreetNumber}</Text>
+                    <Text style={styles.categoryField}>{ownerStreetNumber}</Text>
                     :
                     <TextInput style={styles.TextInput} value={ownerStreetNumber} onChangeText={(val) => setOwnerStreetNumber(val)}></TextInput>}
                 </View>
                 <View>
+                    <Text style={styles.categoryText}>City</Text>
                     {isInvoiceEditing == false ? 
-                    <Text style={styles.standardText}>{ownerTown}</Text>
+                    <Text style={styles.categoryField}>{ownerTown}</Text>
                     :
-                    <TextInput style={styles.TextInput} value={ownerTown} onChangeText={(val) => setOwnerTown(val)}></TextInput>}
+                    <TextInput style={styles.TextInput} value={ownerTown} onChangeText={(val) => setOwnerTown(val)}></TextInput>}                 
                 </View>
-
-
+            <View style={{margin: 30}}/>
             </ScrollView>
             <View style={styles.buttonHolder}>
                 <TouchableOpacity onPress={updateParking} style={styles.actionButton}>
@@ -189,9 +206,28 @@ const styles = StyleSheet.create({
         margin: 10
     },
 
+    titleText: {
+        fontSize: 20,
+        margin: 10,
+        fontFamily: ""
+    },
+
     editSaveFunc: {
         fontSize: 20,
         margin: 10
+    },
+
+    categoryText: {
+        marginTop: 10,
+        marginBottom: 5,
+        marginHorizontal: 10,
+        fontSize: 20
+    },
+
+    categoryField: {
+        marginBottom: 10,
+        marginHorizontal: 10,
+        fontSize: 20
     },
 
     buttonHolder: 
@@ -200,7 +236,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         position: 'absolute',
-        bottom: 10
+        marginTop: 20,
+        bottom: 10, 
     },
 
     actionBar: {

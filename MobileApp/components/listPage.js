@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { SafeAreaView, View, FlatList, StyleSheet, Text, StatusBar, Image, Dimensions, TextInput, TouchableOpacity } from 'react-native';
 import { SearchBar } from 'react-native-elements';
-import { DataTable } from 'react-native-paper';
+import { Button, DataTable } from 'react-native-paper';
 import axios from 'axios';
 import { useFocusEffect } from '@react-navigation/native';
+import Collapsible from 'react-native-collapsible';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const api_url = "http://parkly-env.eba-u2qumtf7.us-east-2.elasticbeanstalk.com";
 
@@ -14,6 +16,36 @@ const ListPage = ({navigation, route}) => {
     const [totalPages, setPages] = useState(0);
     const [currentPage, setPage] = useState(0);
 
+    const [isFiltering, setFiltering] = useState(false);
+    const [filteredName, setFilteredName] = useState("");
+    const [filteredStreetName, setFilteredStreetName] = useState("");
+    const [filteredTown, setFilteredTown] = useState("");
+    const [filteredCountry, setFilteredCountry] = useState("");
+    const [filteredParkingSpots, setMinParkingSpots] = useState("");
+
+    const [alreadyFiltered, setAlreadyFiltered] = useState(false);
+    const [filter, setFilter] = useState("");
+
+    const testStringFilter = (field, value) => {
+        if(value.length > 0)
+            if(alreadyFiltered == false) {
+                setFilter(`${field}=${value}`);
+                setAlreadyFiltered(true);
+            }
+            else    
+                setFilter(filter + `&${field}=${value}`);
+    }
+
+    const updateFilter = () => {
+        setFilter("");
+        testStringFilter('town', filteredTown);
+        testStringFilter('streetName', filteredStreetName);
+        testStringFilter('country', filteredCountry);
+        testStringFilter('name', filteredName);
+        testStringFilter('minimumParkingSpots', filteredName);
+        setAlreadyFiltered(false);
+    }
+
     const ite = route.params;
 
     const options = {
@@ -21,7 +53,10 @@ const ListPage = ({navigation, route}) => {
     }
 
     const dataFetch = () => {
-        axios.get(`${api_url}/p/parkings`, options).then((response) =>  {setParkings(response.data); setPages(response.data.totalPages)}).finally(() => setLoading(false));
+        if(filter.length == 0)
+            axios.get(api_url + '/p/parkings', options).then((response) =>  {setParkings(response.data); setPages(response.data.totalPages)}).finally(() => setLoading(false));
+        else
+            axios.get(api_url + '/p/parkings?' + filter, options).then((response) =>  {setParkings(response.data); setPages(response.data.totalPages)}).finally(() => setLoading(false));
     }
 
     useEffect( () => {
@@ -52,9 +87,12 @@ const ListPage = ({navigation, route}) => {
        }, [navigation]); */
 
     const pageChange = (cp) => {
-        setPage(cp)
+        setPage(cp);
         setLoading(true);
-        axios.get(`${api_url}/p/parkings?page=${cp}`, options).then( (response) => {setParkings(response.data); setPages(response.data.totalPages)}).finally( () => {setLoading(false);})
+        if(filter.length == 0)
+            axios.get(`${api_url}/p/parkings?page=${cp}`, options).then( (response) => {setParkings(response.data); setPages(response.data.totalPages)}).finally( () => {setLoading(false);})
+        else
+            axios.get(`${api_url}/p/parkings?page=${0}&` + filter, options).then( (response) => {setParkings(response.data); setPages(response.data.totalPages)}).finally( () => {setLoading(false);})
     }
 
   return (
@@ -80,10 +118,10 @@ const ListPage = ({navigation, route}) => {
         </View>
 
         <View style={styles.filterContainer}>
-        <TouchableOpacity style={styles.entryBtn} onPress={() => navigation.navigate('Filter', {token: ite.token.current, username:ite.user})}>
+        <TouchableOpacity style={styles.entryBtn} onPress={() => {const x = (isFiltering + 1) % 2; setFiltering(x);}}>
                     <Text>Filter</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.filterBtn} onPress={() => navigation.navigate('Add', {token: ite.token, username:ite.user})}>
+        <TouchableOpacity style={styles.filterBtn} onPress={() => navigation.navigate('Add', {token: ite.token.current, username:ite.user})}>
                     <Text>Add new entry</Text>
         </TouchableOpacity>
 
@@ -96,6 +134,29 @@ const ListPage = ({navigation, route}) => {
         <View>
             
         </View>
+        <SafeAreaView>
+                <Collapsible collapsed={!isFiltering}>
+                    <ScrollView>
+                        <Text style={styles.categoryText}>Name</Text>
+                        <TextInput style={styles.TextInput} value={filteredName} onChangeText={(val) => setFilteredName(val)} />
+                        <Text style={styles.categoryText}>Country</Text>
+                        <TextInput style={styles.TextInput} value={filteredCountry} onChangeText={(val) => setFilteredCountry(val)} />
+                        <Text style={styles.categoryText}>City</Text>
+                        <TextInput style={styles.TextInput} value={filteredTown} onChangeText={(val) => setFilteredTown(val)} />
+                        <Text style={styles.categoryText}>Street Name</Text>
+                        <TextInput style={styles.TextInput} value={filteredStreetName} onChangeText={(val) => setFilteredStreetName(val)} />
+                        <Text style={styles.categoryText}>Parking Spots Available</Text>
+                        <TextInput style={styles.TextInput} value={filteredParkingSpots} onChangeText={(val) => setMinParkingSpots(val)} />
+                        <TouchableOpacity style={styles.applyFilterBtn}  onPress={() => {
+                            updateFilter(); 
+                            setFiltering(false); 
+                            pageChange(0);
+                        }}>
+                        <Text>Apply Filter</Text>
+                        </TouchableOpacity>
+                    </ScrollView>
+                </Collapsible>
+        </SafeAreaView>
         <View>       
             <DataTable>          
                 <DataTable.Header>
@@ -199,6 +260,18 @@ const styles = StyleSheet.create({
         backgroundColor: "#ffd300",
       },
 
+      applyFilterBtn: {
+        borderRadius: 10,
+        height: 50,
+        alignItems: "center",
+        display: "flex",
+        flex: 1,
+        justifyContent: "center",
+        alignSelf: "center",
+        width: Dimensions.get("window").width - 200,
+        backgroundColor: "#ffd300",
+      },
+
       banner: {
         //position: "absolute",
         //top: 0,
@@ -294,12 +367,16 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     backgroundColor: "#f8f8ff",
     borderRadius: 10,
-    
-   
     marginLeft: 35,
     marginRight: 35,
     marginTop: 10,
   },
+
+  categoryText: {
+    marginTop: 10,
+    marginBottom: 5,
+    marginHorizontal: 10,
+    },
 
   });
 
