@@ -281,6 +281,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         marginTop: 20,
         bottom: 10, 
+        marginBottom: 40,
     },
 
     actionBar: {
@@ -305,6 +306,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: "#ffd300",
+        
     }
 });
 
