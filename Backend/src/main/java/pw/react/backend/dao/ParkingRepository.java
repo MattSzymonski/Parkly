@@ -44,8 +44,8 @@ public interface ParkingRepository extends JpaRepository<Parking, Long> {
         @Param("country") String country,
         @Param("town") String town,
         @Param("streetName") String streetName,
-        // @Param("startDateTime") LocalDateTime startDateTime,
-        // @Param("endDateTime") LocalDateTime endDateTime, 
+        @Param("startDateTime") LocalDateTime startDateTime,
+        @Param("endDateTime") LocalDateTime endDateTime, 
         Pageable pageable);
     
 }
