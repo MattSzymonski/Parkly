@@ -7,7 +7,8 @@ import {
     TextInput,
     Button,
     TouchableOpacity,
-    SafeAreaView
+    SafeAreaView,
+    Dimensions
 } from "react-native";
 import { ScrollView } from 'react-native-gesture-handler';
 import Collapsible from 'react-native-collapsible';
@@ -110,6 +111,7 @@ const DetailsPage = ({navigation, route}) => {
     const pageChange = (cp) => {
         setPage(cp);
         setBookingsLoading(true);
+        
         axios.get(`${api_url}/p/bookings?parkingId=${route.params.item.id}&page=${cp}`, options).then( (response) => {setBookings(response.data); setPages(response.data.totalPages)}).finally(() => setBookingsLoading(false))
     }
 
@@ -246,8 +248,8 @@ const DetailsPage = ({navigation, route}) => {
         <TouchableOpacity onPress={() => setCollapsed(!isCollapsed)} style={styles.actionBar}>
             <Text style={styles.standardText}> Bookings </Text>
         </TouchableOpacity>
-        <SafeAreaView>
-                <SafeAreaView>
+        <SafeAreaView style={{flex:1}}>
+                <Collapsible collapsed={isCollapsed} align="bottom" enablePointerEvents={true} style={{height: Dimensions.get("window").height*0.6}}>
                     <ScrollView>
                     <DataTable>          
                 <DataTable.Header>
@@ -298,7 +300,7 @@ const DetailsPage = ({navigation, route}) => {
                 </View>
          </DataTable>
                     </ScrollView>
-                </SafeAreaView>
+                </Collapsible>
         </SafeAreaView>
         <View style={{margin: 30}}/>
 
