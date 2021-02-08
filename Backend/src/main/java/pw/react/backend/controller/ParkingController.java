@@ -50,13 +50,15 @@ public class ParkingController {
 
     private final SecurityService securityService;
     private final ParkingService parkingService;
+    private final BookingService bookingService;
     private AddressService addressService;
     private ParkingOwnerService parkingOwnerService;
 
     @Autowired
-    public ParkingController(SecurityService securityService, ParkingService parkingService, AddressService addressService) {
+    public ParkingController(SecurityService securityService, ParkingService parkingService, AddressService addressService, BookingService bookingService) {
         this.securityService = securityService;
         this.parkingService = parkingService; 
+        this.bookingService = bookingService;
     }
 
     @Autowired
@@ -68,6 +70,7 @@ public class ParkingController {
     public void setParkingOwnerService(ParkingOwnerService parkingOwnerService) {
         this.parkingOwnerService = parkingOwnerService;
     }
+
 
     private void logHeaders(@RequestHeader HttpHeaders headers) {
         logger.info("Controller request headers {}",
@@ -185,7 +188,7 @@ public class ParkingController {
                     paging);
 
                 for (Parking parking : pageParkings) {
-                    parkings.add(new ParkingDTO(parking, 0f)); // Parking total price doesn't matter for parkly frontend (new ParkingDTO could be done, just for parkly)
+                    parkings.add(new ParkingDTO(parking, 0f, bookingService.checkBookingCountForParkingId(parking.getId(), startDateTime, endDateTime))); // Parking total price doesn't matter for parkly frontend (new ParkingDTO could be done, just for parkly)
                 }
                 
                 PageDTO<ParkingDTO> parkingsPageDTO = new PageDTO<ParkingDTO>(pageParkings.getNumber(), parkings, pageParkings.getTotalElements(),pageParkings.getTotalPages());
@@ -257,9 +260,7 @@ public class ParkingController {
                     endDateTime,
                     paging);
 
-
-                long hoursCount = startDateTime.until(endDateTime, ChronoUnit.HOURS);
-                parkings = parkingService.createParkingDTOs(pageParkings.getContent(), hoursCount);
+                parkings = parkingService.createParkingDTOs(pageParkings.getContent(), startDateTime, endDateTime);
 
                 PageDTO<ParkingDTO> parkingsPageDTO = new PageDTO<ParkingDTO>(pageParkings.getNumber(), parkings, pageParkings.getTotalElements(),pageParkings.getTotalPages());
                 return ResponseEntity.ok(parkingsPageDTO);

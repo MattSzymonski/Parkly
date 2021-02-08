@@ -38,11 +38,11 @@ public class ParkingDTO { // This object represents one entry in parking list. I
     @ApiModelProperty(position = 9)
     @Getter @Setter private LocalDateTime addedDateTime;
 
-    public ParkingDTO(Parking parking, Float totalPrice){
+    public ParkingDTO(Parking parking, Float totalPrice, Integer spotsTaken){
         this.id = parking.getId();
         this.name = parking.getName();
-        this.spotsTaken = 0;
         this.spotsTotal = parking.getSpotsTotal();  
+        this.spotsTaken = this.spotsTotal < spotsTaken ? this.spotsTotal : spotsTaken;
         this.pricePerHour = parking.getPricePerHour();
         this.totalPrice = totalPrice;  
         this.ownerCompanyName = parking.getParkingOwner().getCompanyName();

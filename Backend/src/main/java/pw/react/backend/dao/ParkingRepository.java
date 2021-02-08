@@ -19,49 +19,6 @@ public interface ParkingRepository extends JpaRepository<Parking, Long> {
     Optional<Parking> findByAddressId(Long addressId);
     Optional<Parking> findByIdAndAddressId(Long id, Long addressId);
 
-    // public String findAllQuery =
-    // "SELECT p FROM Parking p "
-    // + "JOIN Booking b ON b.parking.id = p.id "
-    // + "WHERE "
-    // + "(:id is null or p.id = :id) "
-    // + "AND (:name is null or p.name LIKE %:name%) "
-    // + "AND (:minimumSpotsTotal is null or p.spotsTotal >= :minimumSpotsTotal) "
-    // + "AND (:maximumPricePerHour is null or p.pricePerHour <= :maximumPricePerHour) "
-    // + "AND (:companyName is null or p.parkingOwner.companyName LIKE %:companyName%) "
-    // + "AND (:country is null or p.address.country LIKE %:country%) "
-    // + "AND (:town is null or p.address.town LIKE %:town%) "
-    // + "AND (:streetName is null or p.address.streetName LIKE %:streetName%) "
-    // + "AND (:startDateTime is null or b.endDateTime > :startDateTime) "
-    // + "AND (:endDateTime is null or b.startDateTime < :endDateTime) "
-    // + "GROUP BY p.id "
-    // + "HAVING COUNT(*) < p.spotsTotal";
-
-    public String findAllQueryWithDates = "SELECT p FROM Parking p WHERE"
-    + "(:id is null or p.id = :id)"
-    + "AND (:name is null or p.name LIKE %:name%)"
-    + "AND (:minimumSpotsTotal is null or p.spotsTotal >= :minimumSpotsTotal)"
-    + "AND (:maximumPricePerHour is null or p.pricePerHour <= :maximumPricePerHour) "
-    + "AND (:companyName is null or p.parkingOwner.companyName LIKE %:companyName%)"
-    + "AND (:country is null or p.address.country LIKE %:country%)"
-    + "AND (:town is null or p.address.town LIKE %:town%)"
-    + "AND (:streetName is null or p.address.streetName LIKE %:streetName%)"
-    + "AND (:startDateTime is not null ) "
-    + "AND (:endDateTime is not null) ";
-
-   @Query(value = findAllQueryWithDates)
-    public Page<Parking> findAll(
-        @Param("id") Long id,
-        @Param("name") String name,
-        @Param("minimumSpotsTotal") Integer minimumSpotsTotal,
-        @Param("maximumPricePerHour") Float maximumPricePerHour,
-        @Param("companyName") String companyName,
-        @Param("country") String country,
-        @Param("town") String town,
-        @Param("streetName") String streetName,
-        @Param("startDateTime") LocalDateTime startDateTime,
-        @Param("endDateTime") LocalDateTime endDateTime, 
-        Pageable pageable);
-
 
     public String findAllQuery = "SELECT p FROM Parking p WHERE"
     + "(:id is null or p.id = :id)"

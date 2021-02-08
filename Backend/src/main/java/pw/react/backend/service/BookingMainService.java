@@ -30,4 +30,6 @@ public interface BookingMainService {
     BookingDetailDTO createBookingDetailedDTO(Booking booking);
 
     int deleteBookingsByParkingId(long parkingId);
+
+    Integer checkBookingCountForParkingId(long parkingId, LocalDateTime startDateTime, LocalDateTime endDateTime);
 }

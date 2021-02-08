@@ -57,7 +57,7 @@ public class BookingService implements BookingMainService {
         }
 
         int spotsTotal = parkingService.getSpotsTotalByParkingId(booklyBooking.getParkingId());
-        int bookingCount = repository.checkBookingCountForParkingId(booklyBooking.getParkingId(), booklyBooking.getStartDateTime(), booklyBooking.getEndDateTime()); 
+        int bookingCount = checkBookingCountForParkingId(booklyBooking.getParkingId(), booklyBooking.getStartDateTime(), booklyBooking.getEndDateTime()); 
 
         if (bookingCount >= spotsTotal) {
             return null;
@@ -66,6 +66,16 @@ public class BookingService implements BookingMainService {
         long hoursCount = booklyBooking.getStartDateTime().until(booklyBooking.getEndDateTime(), ChronoUnit.HOURS);
         return repository.save(new Booking(booklyBooking, parking, hoursCount));
     }
+
+    @Override
+    public Integer checkBookingCountForParkingId(long parkingId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        if (startDateTime == null || endDateTime == null) {
+            return 0;
+        }
+
+        return repository.checkBookingCountForParkingId(parkingId, startDateTime, endDateTime); 
+    }
+
 
     @Override
     public Page<Booking> findAll(
@@ -151,6 +161,8 @@ public class BookingService implements BookingMainService {
 
         return new BookingDetailDTO(booking, booklyUser);
     }
+
+   
 
     
 }

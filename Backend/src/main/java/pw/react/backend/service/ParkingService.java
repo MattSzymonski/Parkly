@@ -1,6 +1,7 @@
 package pw.react.backend.service;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -64,13 +65,13 @@ public class ParkingService implements ParkingMainService {
             country,
             town,
             streetName,
-            // startDateTime,
-            // endDateTime,
             pageable);
     }
 
     @Override
     public Parking findById(long parkingId) {
+
+        
         return repository.findById(parkingId).orElseGet(() -> null);
     }
 
@@ -107,14 +108,18 @@ public class ParkingService implements ParkingMainService {
 	}
 
     @Override
-	public List<ParkingDTO> createParkingDTOs(List<Parking> parkings, long hoursCount) {
+	public List<ParkingDTO> createParkingDTOs(List<Parking> parkings, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         List<ParkingDTO> parkingDTOs = new ArrayList<ParkingDTO>();
+
+        long hoursCount = startDateTime.until(endDateTime, ChronoUnit.HOURS);
         for (Parking parking : parkings) {  
-            parkingDTOs.add(new ParkingDTO(parking, parking.getPricePerHour() * hoursCount));
+            parkingDTOs.add(new ParkingDTO(parking, parking.getPricePerHour() * hoursCount, bookingService.checkBookingCountForParkingId(parking.getId(), startDateTime, endDateTime)));
         }
 		return parkingDTOs;
 	}
 
+
+    @Override
 	public int getSpotsTotalByParkingId(long parkingId) {
 		return repository.getSpotsTotalByParkingId(parkingId);
 	}

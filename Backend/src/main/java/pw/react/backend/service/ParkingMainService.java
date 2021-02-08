@@ -28,5 +28,6 @@ public interface ParkingMainService {
     Parking updateById(Long parkingId, Parking updatedParking);
     boolean deleteById(Long parkingId);
     Parking add(Parking parking);
-	List<ParkingDTO> createParkingDTOs(List<Parking> parkings, long hoursCount);
+	List<ParkingDTO> createParkingDTOs(List<Parking> parkings, LocalDateTime startDateTime, LocalDateTime endDateTime );
+    int getSpotsTotalByParkingId(long parkingId);
 }
