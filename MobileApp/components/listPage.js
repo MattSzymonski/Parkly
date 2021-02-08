@@ -25,6 +25,7 @@ const ListPage = ({navigation, route}) => {
 
     const [alreadyFiltered, setAlreadyFiltered] = useState(false);
     const [filter, setFilter] = useState("");
+    const [finishedFiltering, setFinishedFiltering] = useState(false);
 
     const testStringFilter = (field, value) => {
         if(value.length > 0)
@@ -44,6 +45,13 @@ const ListPage = ({navigation, route}) => {
         testStringFilter('name', filteredName);
         testStringFilter('minimumParkingSpots', filteredName);
         setAlreadyFiltered(false);
+        setFinishedFiltering(true);
+    }
+
+    const handleFilterApplying = () => {
+        setFiltering(false); 
+        dataFetch();
+        pageChange(0);
     }
 
     const ite = route.params;
@@ -66,25 +74,9 @@ const ListPage = ({navigation, route}) => {
         })
     }, [navigation]);
 
-    /* useFocusEffect(
-        React.useCallback(() => {
-            // Do something when the screen is focused
-            if(setLoading == true)
-                dataFetch();
-            return () => {
-              // Do something when the screen is unfocused
-              // Useful for cleanup functions
-                setLoading(false);
-            };
-          }, [])
-        );  */
-
-   /* useEffect(() => {
-        const unsubscribe = navigation.addListener('focus', () => {
-            axios.get(`${api_url}/p/parkings`, options).then((response) =>  {setParkings(response.data); setPages(response.data.totalPages)}).finally(() => setLoading(false))
-       });
-         return unsubscribe;
-       }, [navigation]); */
+    useEffect( () => {
+        handleFilterApplying();
+    }, [filter])
 
     const pageChange = (cp) => {
         setPage(cp);
@@ -96,7 +88,7 @@ const ListPage = ({navigation, route}) => {
     }
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
         <View style={styles.bannerContainer}>
             <View style={styles.banner}>
                 <Text style={styles.welcomeSubtext}> PARKLY.</Text>
@@ -147,11 +139,7 @@ const ListPage = ({navigation, route}) => {
                         <TextInput style={styles.TextInput} value={filteredStreetName} onChangeText={(val) => setFilteredStreetName(val)} />
                         <Text style={styles.categoryText}>Parking Spots Available</Text>
                         <TextInput style={styles.TextInput} value={filteredParkingSpots} onChangeText={(val) => setMinParkingSpots(val)} />
-                        <TouchableOpacity style={styles.applyFilterBtn}  onPress={() => {
-                            updateFilter(); 
-                            setFiltering(false); 
-                            pageChange(0);
-                        }}>
+                        <TouchableOpacity style={styles.applyFilterBtn}  onPress={() => {updateFilter()}}>
                         <Text>Apply Filter</Text>
                         </TouchableOpacity>
                     </ScrollView>
@@ -198,7 +186,7 @@ const ListPage = ({navigation, route}) => {
          </DataTable>
          
     </View>
-</View>
+</ScrollView>
 
   );
 }
@@ -256,11 +244,11 @@ const styles = StyleSheet.create({
         width: 70,
         alignItems: "center",
         justifyContent: "center",
-     
         backgroundColor: "#ffd300",
       },
 
       applyFilterBtn: {
+        margin: 20,
         borderRadius: 10,
         height: 50,
         alignItems: "center",
