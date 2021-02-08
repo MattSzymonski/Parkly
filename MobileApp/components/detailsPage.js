@@ -72,10 +72,10 @@ const DetailsPage = ({navigation, route}) => {
     }
 
     const fetchParking = () => {
-        axios.get(`${api_url}/p/parkings/${route.params.item.id}`, options).then( (response) => {setData(response.data)}).finally( () => {setLoading(false);})
+        axios.get(`${api_url}/p/parkings/${route.params.item.id}`, options).then( (response) => {fillStates(response.data)}).finally( () => {setLoading(false);})
     }
 
-    const fillStates = () => {
+    const fillStates = (data) => {
         setName(data.name);
         setCountry(data.address.country);
         setTown(data.address.town);
@@ -93,10 +93,8 @@ const DetailsPage = ({navigation, route}) => {
 
     useEffect( () => {
         fetchParking();
-        fillStates();
     }, [navigation])
 
-   
 
     return (
         <View style={styles.container}>
