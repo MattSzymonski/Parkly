@@ -8,6 +8,7 @@ import {
   TextInput,
   Button,
   TouchableOpacity,
+  KeyboardAvoidingView,
 } from "react-native";
 
 import axios from 'axios';
@@ -34,7 +35,7 @@ export default function LoginPage({navigation}) {
 
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView behavior="padding" style={styles.container}>
       <View style={styles.welcomeContainer}>
             <Text style={styles.welcomeText}>
                 PARKLY.
@@ -98,7 +99,7 @@ export default function LoginPage({navigation}) {
        </View>
      }
 
-    </View>
+    </KeyboardAvoidingView>
 
   );
   
