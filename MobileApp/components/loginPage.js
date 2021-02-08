@@ -16,7 +16,7 @@ import axios from 'axios';
 const api_url = "http://parkly-env.eba-u2qumtf7.us-east-2.elasticbeanstalk.com";
 
 export default function LoginPage({navigation}) {
-  const [username, setUsername] = useState("ParklyAppTest");
+  const [username, setUsername] = useState("ParklyAppTes");
   const [password, setPassword] = useState("root");
   const [fetching, setFetching] = useState(false);
   //const [token, setToken] = useState("");
@@ -94,8 +94,8 @@ export default function LoginPage({navigation}) {
        null
        :
        <View>
-       <Text style={{paddingTop: 35, fontWeight: 'bold'}}>Failed to login!</Text>
-       <Text style={{fontWeight: 'bold'}}>Please check your credentials!</Text>
+       <Text style={{paddingTop: 35, fontWeight: 'bold', color: "#8b0000"}}>Failed to login!</Text>
+       <Text style={{fontWeight: 'bold', color: "#8b0000"}}>Please check your credentials!</Text>
        </View>
      }
 
