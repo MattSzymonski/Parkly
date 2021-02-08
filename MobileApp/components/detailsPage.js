@@ -41,6 +41,7 @@ const DetailsPage = ({navigation, route}) => {
     const [err, setErr] = useState("");
     
     const [bookings, setBookings] = useState([[]]);
+    const [bookingsLoading, setBookingsLoading] = useState(true);
     const [isCollapsed, setCollapsed] = useState(true);
 
     const [totalPages, setPages] = useState(0);
@@ -86,7 +87,7 @@ const DetailsPage = ({navigation, route}) => {
     }
 
     const fetchBookings = () => {
-        axios.get(`${api_url}/p/bookings?parkingId=${route.params.item.id}`, options).then( (response) => {setBookings(response.data)}).finally(() => setLoading(false))
+        axios.get(`${api_url}/p/bookings?parkingId=${route.params.item.id}`, options).then( (response) => {setBookings(response.data)}).finally(() => setBookingsLoading(false))
     }
 
     const fillStates = (data) => {
@@ -109,7 +110,7 @@ const DetailsPage = ({navigation, route}) => {
     useEffect( () => {
         setLoading(true);
         fetchParking();
-        setLoading(true);
+        //setLoading(true);
         fetchBookings();
     }, [navigation])
 
@@ -250,7 +251,7 @@ const DetailsPage = ({navigation, route}) => {
                     <DataTable.Title> Last Name </DataTable.Title>
                     <DataTable.Title> Parking Name </DataTable.Title>
                 </DataTable.Header>
-            { loading ? 
+            { bookingsLoading ? 
             <Text> Loading ... </Text>
             :
             <SafeAreaView>
