@@ -105,7 +105,7 @@ const ListPage = ({navigation, route}) => {
         <TouchableOpacity style={styles.entryBtn} onPress={() => {const x = (isFiltering + 1) % 2; setFiltering(x);}}>
                     <Text>Filter</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.filterBtn} onPress={() => navigation.navigate('Add', {token: ite.token.current, username:ite.user})}>
+        <TouchableOpacity style={styles.filterBtn} onPress={() => navigation.navigate('Add', {token: ite.token, username:ite.user})}>
                     <Text>Add new entry</Text>
         </TouchableOpacity>
 

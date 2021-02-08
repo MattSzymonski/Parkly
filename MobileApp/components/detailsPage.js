@@ -91,10 +91,6 @@ const DetailsPage = ({navigation, route}) => {
         axios.get(`${api_url}/p/bookings?parkingId=${route.params.item.id}`, options).then( (response) => {setBookings(response.data); setPages(response.data.totalPages)}).finally(() => setBookingsLoading(false))
     }
 
-    const deleteBooking = (bookingId) => {
-        axios.delete(`${api_url}/p/bookings/${bookingId}`, options).then( (response) => {setBookingsLoading(true)}).finally(() => fetchBookings())
-    }
-
     const fillStates = (data) => {
         setName(data.name);
         setCountry(data.address.country);
