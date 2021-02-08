@@ -91,6 +91,10 @@ const DetailsPage = ({navigation, route}) => {
         axios.get(`${api_url}/p/bookings?parkingId=${route.params.item.id}`, options).then( (response) => {setBookings(response.data); setPages(response.data.totalPages)}).finally(() => setBookingsLoading(false))
     }
 
+    const deleteBooking = (bookingId) => {
+        axios.delete(`${api_url}/p/bookings/${bookingId}`, options).then( (response) => {setBookingsLoading(true)}).finally(() => fetchBookings())
+    }
+
     const fillStates = (data) => {
         setName(data.name);
         setCountry(data.address.country);
@@ -267,7 +271,7 @@ const DetailsPage = ({navigation, route}) => {
                 bookings.items.map(element => (
                 
                 <DataTable.Row style={{height: 80}}>
-                    <DataTable.Cell> DELETE
+                    <DataTable.Cell><TouchableOpacity onPress={() => deleteBooking(element.id)}><Text>DELETE</Text></TouchableOpacity> 
                     </DataTable.Cell>
                     <DataTable.Cell> {element.userFirstName} </DataTable.Cell>
                     {/* <DataTable.Cell> {element.address.country}</DataTable.Cell> */}
