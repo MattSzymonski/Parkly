@@ -16,13 +16,14 @@ import axios from 'axios';
 const api_url = "http://parkly-env.eba-u2qumtf7.us-east-2.elasticbeanstalk.com";
 
 const DetailsPage = ({navigation, route}) => {
-    
+
     const [name, setName] = useState("");
     const [country, setCountry] = useState("");
     const [town, setTown] = useState("");
     const [streetName, setStreetName] = useState("");
     const [streetNumber, setStreetNumber] = useState("");
     const [spotsTotal, setSpotsTotal] = useState("");
+    const [pricePerHour, setPPPH] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [companyName, setCompanyName] = useState("");
@@ -80,6 +81,7 @@ const DetailsPage = ({navigation, route}) => {
         setStreetName(data.address.streetName);
         setStreetNumber(data.address.streetNumber);
         setSpotsTotal(data.spotsTotal);
+        setPPPH(data.pricePerHour)
         setFirstName(data.parkingOwner.firstName);
         setLastName(data.parkingOwner.lastName);
         setCompanyName(data.parkingOwner.companyName);
@@ -149,6 +151,13 @@ const DetailsPage = ({navigation, route}) => {
                     <Text style={styles.categoryField}>{spotsTotal}</Text>
                     :
                     <TextInput style={styles.TextInput} value={town} onChangeText={(val) => setSpotsTotal(val)}></TextInput>}
+                </View>
+                <View>
+                    <Text style={styles.categoryText}>Price per Hour</Text>
+                    {isEditingAddress == false ? 
+                    <Text style={styles.categoryField}>{pricePerHour}</Text>
+                    :
+                    <TextInput style={styles.TextInput} value={town} onChangeText={(val) => setPPH(val)}></TextInput>}
                 </View>
                 
                 <View style={styles.actionBar} >
