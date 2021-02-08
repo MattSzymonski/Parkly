@@ -21,7 +21,7 @@ const ListPage = ({navigation, route}) => {
     const [filteredStreetName, setFilteredStreetName] = useState("");
     const [filteredTown, setFilteredTown] = useState("");
     const [filteredCountry, setFilteredCountry] = useState("");
-    const [filteredParkingSpots, setMinParkingSpots] = useState("");
+    const [filteredPricePerHous, setMaxPricePerHour] = useState("");
 
     const [alreadyFiltered, setAlreadyFiltered] = useState(false);
     const [filter, setFilter] = useState("");
@@ -43,7 +43,7 @@ const ListPage = ({navigation, route}) => {
         testStringFilter('streetName', filteredStreetName);
         testStringFilter('country', filteredCountry);
         testStringFilter('name', filteredName);
-        testStringFilter('minimumParkingSpots', filteredName);
+        testStringFilter('maximumPricePerHour', filteredPricePerHous);
         setAlreadyFiltered(false);
         setFinishedFiltering(true);
     }
@@ -99,15 +99,6 @@ const ListPage = ({navigation, route}) => {
                 
             </View>
         </View>
-        <View style={styles.bannerContainer}>
-            <View style={styles.searchContainer}>
-                <TextInput style={styles.TextInput} placeholder="Search for objects..." placeholderTextColor="#000"></TextInput>
-
-            </View> 
-            <TouchableOpacity style={styles.searchBtn}>
-                    <Text>Search</Text>
-            </TouchableOpacity>
-        </View>
 
         <View style={styles.filterContainer}>
         <TouchableOpacity style={styles.entryBtn} onPress={() => {const x = (isFiltering + 1) % 2; setFiltering(x);}}>
@@ -137,8 +128,8 @@ const ListPage = ({navigation, route}) => {
                         <TextInput style={styles.TextInput} value={filteredTown} onChangeText={(val) => setFilteredTown(val)} />
                         <Text style={styles.categoryText}>Street Name</Text>
                         <TextInput style={styles.TextInput} value={filteredStreetName} onChangeText={(val) => setFilteredStreetName(val)} />
-                        <Text style={styles.categoryText}>Parking Spots Available</Text>
-                        <TextInput style={styles.TextInput} value={filteredParkingSpots} onChangeText={(val) => setMinParkingSpots(val)} />
+                        <Text style={styles.categoryText}>Maximum Price Per Hour</Text>
+                        <TextInput style={styles.TextInput} value={filteredPricePerHous} onChangeText={(val) => setMaxPricePerHour(val)} />
                         <TouchableOpacity style={styles.applyFilterBtn}  onPress={() => {updateFilter()}}>
                         <Text>Apply Filter</Text>
                         </TouchableOpacity>
