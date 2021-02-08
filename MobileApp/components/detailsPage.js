@@ -247,7 +247,7 @@ const DetailsPage = ({navigation, route}) => {
             <Text style={styles.standardText}> Bookings </Text>
         </TouchableOpacity>
         <SafeAreaView>
-                <Collapsible collapsed={isCollapsed}>
+                <SafeAreaView>
                     <ScrollView>
                     <DataTable>          
                 <DataTable.Header>
@@ -298,7 +298,7 @@ const DetailsPage = ({navigation, route}) => {
                 </View>
          </DataTable>
                     </ScrollView>
-                </Collapsible>
+                </SafeAreaView>
         </SafeAreaView>
         <View style={{margin: 30}}/>
 
