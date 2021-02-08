@@ -175,6 +175,17 @@ const ListPage = ({navigation, route}) => {
                 label={`${currentPage + 1} of ${totalPages}`}
                 onPageChange={(page) => pageChange(page)}
                 />
+                <View style={{flexDirection: "row", justifyContent: "center", paddingTop: 20}}>
+                <TouchableOpacity onPress={() => pageChange(0)}>
+                <Text style={{alignSelf: "flex-end", paddingRight: 10, fontSize: 12}}>First page</Text>
+                </TouchableOpacity>
+                
+                <Text style={{alignSelf: "flex-end", paddingRight: 10, fontSize: 12}}> | </Text>
+                <TouchableOpacity onPress={() => pageChange(totalPages-1)}>
+                <Text style={{alignSelf: "flex-end", paddingRight: 10, fontSize: 12}}>Last page</Text>
+                </TouchableOpacity>
+                
+                </View>
          </DataTable>
          
     </View>
