@@ -1,0 +1,52 @@
+.top
+{
+height: 30px;
+background-color:  rgb(255, 230, 2);
+border-width:1px;
+border-style:solid;
+border-color:gray;
+}
+p
+{
+  margin-left: 10px;
+  margin-bottom: 5px;
+  margin-top: 2px;
+  text-align: left;
+  font-size: 20px;
+  opacity: 0.5;
+  font-weight: bold;
+}
+.elem
+{
+    height: 30px;
+    display: flex;
+}
+.name
+{
+    flex: 30%;
+}
+input
+{
+    font-size: 20px;
+    margin-left: 1px;
+    margin-top:  1px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    width: 100%;
+    height: 25px;
+    outline: none;
+}
+textarea:focus, input:focus{
+    outline: none;
+}
+input[type="text"], textarea {
+
+    background-color :  rgb(240, 240, 240); 
+  
+}
+.errors
+{
+    height: 30px;
+    vertical-align: middle;
+    margin-left: 10px;
+}
