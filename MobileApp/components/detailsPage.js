@@ -87,7 +87,7 @@ const DetailsPage = ({navigation, route}) => {
     }
 
     const fetchBookings = () => {
-        axios.get(`${api_url}/p/bookings?parkingId=${route.params.item.id}`, options).then( (response) => {setBookings(response.data)}).finally(() => setBookingsLoading(false))
+        axios.get(`${api_url}/p/bookings?parkingId=${route.params.item.id}`, options).then( (response) => {setBookings(response.data); setPages(response.data.totalPages)}).finally(() => setBookingsLoading(false))
     }
 
     const fillStates = (data) => {
@@ -105,6 +105,12 @@ const DetailsPage = ({navigation, route}) => {
         setOwnerTown(data.parkingOwner.address.town);
         setOwnerStreet(data.parkingOwner.address.streetName);
         setOwnerStreetNumber(data.parkingOwner.address.streetNumber);
+    }
+
+    const pageChange = (cp) => {
+        setPage(cp);
+        setBookingsLoading(true);
+        axios.get(`${api_url}/p/bookings?parkingId=${route.params.item.id}&page=${cp}`, options).then( (response) => {setBookings(response.data); setPages(response.data.totalPages)}).finally(() => setBookingsLoading(false))
     }
 
     useEffect( () => {
