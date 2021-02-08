@@ -182,7 +182,7 @@ public class BookingController {
         if (securityService.isAuthorized(apiKey)) { // Bookly autorization is done using apiKey passed as parameter
             Booking result = bookingService.add(booklyBooking);
             if (result == null) {
-                throw new InvalidRequestException(String.format("Cannot add new booking. Parking with given id does not exist"));
+                throw new InvalidRequestException(String.format("Cannot add new booking. Parking with given id does not exist or is full in given time interval"));
             }
             return ResponseEntity.ok(new BookingDTO(result));
             //return result != null ? ResponseEntity.ok(result) : ResponseEntity.badRequest().body(BookingDTO.EMPTY);

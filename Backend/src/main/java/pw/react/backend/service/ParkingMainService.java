@@ -16,6 +16,7 @@ public interface ParkingMainService {
         Long id,
         String name,
         Integer minimumSpotsTotal,
+        Float maximumPricePerHour,
         String companyName,
         String country,
         String town,

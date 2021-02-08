@@ -46,6 +46,7 @@ public class ParkingService implements ParkingMainService {
         Long id,
         String name,
         Integer minimumSpotsTotal,
+        Float maximumPricePerHour,
         String companyName,
         String country,
         String town,
@@ -58,12 +59,13 @@ public class ParkingService implements ParkingMainService {
             id,
             name, 
             minimumSpotsTotal,
+            maximumPricePerHour,
             companyName,
             country,
             town,
             streetName,
-            startDateTime,
-            endDateTime,
+            // startDateTime,
+            // endDateTime,
             pageable);
     }
 
@@ -111,5 +113,9 @@ public class ParkingService implements ParkingMainService {
             parkingDTOs.add(new ParkingDTO(parking, parking.getPricePerHour() * hoursCount));
         }
 		return parkingDTOs;
+	}
+
+	public int getSpotsTotalByParkingId(long parkingId) {
+		return repository.getSpotsTotalByParkingId(parkingId);
 	}
 }

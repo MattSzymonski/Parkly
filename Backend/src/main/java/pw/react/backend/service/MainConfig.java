@@ -55,13 +55,13 @@ public class MainConfig {
                 final Set<String> mappings = getCorsMapings();
                 if (mappings.isEmpty()) 
                 {
-                    registry.addMapping("/**");
+                    registry.addMapping("/**").allowedMethods("GET", "POST", "OPTIONS", "PUT", "DELETE");
                 } 
                 else 
                 {
                     for (String mapping : mappings) 
                     {
-                        registry.addMapping(mapping).allowedOrigins(getCorsUrls());
+                        registry.addMapping(mapping).allowedOrigins(getCorsUrls()).allowedMethods("GET", "POST", "OPTIONS", "PUT", "DELETE");
                     }
                 }
             }

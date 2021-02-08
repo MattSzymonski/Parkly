@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
+import javax.transaction.Transactional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,9 +49,17 @@ public class BookingService implements BookingMainService {
 	private HttpClient httpService;
 
     @Override
+    @Transactional
     public Booking add(BooklyBooking booklyBooking) {
         Parking parking = parkingService.findById(booklyBooking.getParkingId());
         if (parking == null) {
+            return null;
+        }
+
+        int spotsTotal = parkingService.getSpotsTotalByParkingId(booklyBooking.getParkingId());
+        int bookingCount = repository.checkBookingCountForParkingId(booklyBooking.getParkingId(), booklyBooking.getStartDateTime(), booklyBooking.getEndDateTime()); 
+
+        if (bookingCount >= spotsTotal) {
             return null;
         }
 
@@ -106,6 +116,7 @@ public class BookingService implements BookingMainService {
 
     @Override
     public Booking findById(long bookingId) {
+
         return repository.findById(bookingId).orElseGet(() -> null);
     }
 
