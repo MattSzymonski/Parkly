@@ -23,7 +23,7 @@ const DetailsPage = ({navigation, route}) => {
     const [streetName, setStreetName] = useState("");
     const [streetNumber, setStreetNumber] = useState("");
     const [spotsTotal, setSpotsTotal] = useState("");
-    const [pricePerHour, setPPPH] = useState("");
+    const [pricePerHour, setPPH] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [companyName, setCompanyName] = useState("");
@@ -81,7 +81,7 @@ const DetailsPage = ({navigation, route}) => {
         setStreetName(data.address.streetName);
         setStreetNumber(data.address.streetNumber);
         setSpotsTotal(data.spotsTotal);
-        setPPPH(data.pricePerHour)
+        setPPH(data.pricePerHour)
         setFirstName(data.parkingOwner.firstName);
         setLastName(data.parkingOwner.lastName);
         setCompanyName(data.parkingOwner.companyName);
@@ -150,14 +150,14 @@ const DetailsPage = ({navigation, route}) => {
                     {isEditingAddress == false ? 
                     <Text style={styles.categoryField}>{spotsTotal}</Text>
                     :
-                    <TextInput style={styles.TextInput} value={town} onChangeText={(val) => setSpotsTotal(val)}></TextInput>}
+                    <TextInput style={styles.TextInput} value={spotsTotal} onChangeText={(val) => setSpotsTotal(val)}></TextInput>}
                 </View>
                 <View>
                     <Text style={styles.categoryText}>Price per Hour</Text>
                     {isEditingAddress == false ? 
                     <Text style={styles.categoryField}>{pricePerHour}</Text>
                     :
-                    <TextInput style={styles.TextInput} value={town} onChangeText={(val) => setPPH(val)}></TextInput>}
+                    <TextInput style={styles.TextInput} value={pricePerHour} onChangeText={(val) => setPPH(val)}></TextInput>}
                 </View>
                 
                 <View style={styles.actionBar} >
