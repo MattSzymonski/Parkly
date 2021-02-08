@@ -16,9 +16,7 @@ import axios from 'axios';
 const api_url = "http://parkly-env.eba-u2qumtf7.us-east-2.elasticbeanstalk.com";
 
 const DetailsPage = ({navigation, route}) => {
-
-    const [data, setData] = useState("");
-
+    
     const [name, setName] = useState("");
     const [country, setCountry] = useState("");
     const [town, setTown] = useState("");
