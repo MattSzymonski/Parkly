@@ -144,7 +144,7 @@ const ListPage = ({navigation, route}) => {
                     <DataTable.Title> Name </DataTable.Title>
                     {/* <DataTable.Title> Country </DataTable.Title> */}
                     <DataTable.Title> Town </DataTable.Title>
-                    <DataTable.Title> Spots </DataTable.Title>
+                    <DataTable.Title> Total spots </DataTable.Title>
                 </DataTable.Header>
             { loading ? 
             <Text> Loading ... </Text>
@@ -160,7 +160,7 @@ const ListPage = ({navigation, route}) => {
                     <DataTable.Cell> {element.name} </DataTable.Cell>
                     {/* <DataTable.Cell> {element.address.country}</DataTable.Cell> */}
                     <DataTable.Cell> {element.address.town}</DataTable.Cell>
-                    <DataTable.Cell> {element.spotsTaken}/{element.spotsTotal}</DataTable.Cell>
+                    <DataTable.Cell> {element.spotsTotal}</DataTable.Cell>
                     
                 </DataTable.Row>
                 
