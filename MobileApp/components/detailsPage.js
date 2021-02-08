@@ -258,10 +258,11 @@ const DetailsPage = ({navigation, route}) => {
                     <DataTable>          
                 <DataTable.Header>
                     <DataTable.Title> Action </DataTable.Title>
-                    <DataTable.Title> First Name </DataTable.Title>
+                    <DataTable.Title> Id </DataTable.Title>
+                    <DataTable.Title> Start </DataTable.Title>
                     {/* <DataTable.Title> Country </DataTable.Title> */}
-                    <DataTable.Title> Last Name </DataTable.Title>
-                    <DataTable.Title> Parking Name </DataTable.Title>
+                    <DataTable.Title> End </DataTable.Title>
+                    
                 </DataTable.Header>
             { bookingsLoading ? 
             <Text> Loading ... </Text>
@@ -272,10 +273,11 @@ const DetailsPage = ({navigation, route}) => {
                 
                 <DataTable.Row style={{height: 80}}>
                     <DataTable.Cell> <TouchableOpacity style={styles.deleteBtn} onPress={() => deleteBooking(element.id)} ><Text style={{color: "white"}}>Delete</Text></TouchableOpacity></DataTable.Cell>
-                    <DataTable.Cell> {element.userFirstName} </DataTable.Cell>
+                    <DataTable.Cell> {element.id} </DataTable.Cell>
+                    <DataTable.Cell> {element.startDateTime} </DataTable.Cell>
                     {/* <DataTable.Cell> {element.address.country}</DataTable.Cell> */}
-                    <DataTable.Cell> {element.userLastName}</DataTable.Cell>
-                    <DataTable.Cell> {element.parkingName}</DataTable.Cell>
+                    <DataTable.Cell> {element.endDateTime}</DataTable.Cell>
+                 
                     
                 </DataTable.Row>
                 
