@@ -17,19 +17,21 @@ const api_url = "http://parkly-env.eba-u2qumtf7.us-east-2.elasticbeanstalk.com";
 
 const DetailsPage = ({navigation, route}) => {
 
-    const [name, setName] = useState(route.params.item.name);
-    const [country, setCountry] = useState(route.params.item.address.country);
-    const [town, setTown] = useState(route.params.item.address.town);
-    const [streetName, setStreetName] = useState(route.params.item.address.streetName);
-    const [streetNumber, setStreetNumber] = useState(route.params.item.address.streetNumber);
-    const [spotsTotal, setSpotsTotal] = useState(route.params.item.spotsTotal);
-    const [firstName, setFirstName] = useState(route.params.item.firstName);
-    const [lastName, setLastName] = useState(route.params.item.lastName);
-    const [companyName, setCompanyName] = useState(route.params.item.companyName);
-    const [ownerCountry, setOwnerCountry] = useState(route.params.item.ownerCountry);
-    const [ownerTown, setOwnerTown] = useState(route.params.item.ownerTown);
-    const [ownerStreet, setOwnerStreet] = useState(route.params.item.ownerStreet);
-    const [ownerStreetNumber, setOwnerStreetNumber] = useState(route.params.item.ownerStreetNumber);
+    const [data, setData] = useState("");
+
+    const [name, setName] = useState("");
+    const [country, setCountry] = useState("");
+    const [town, setTown] = useState("");
+    const [streetName, setStreetName] = useState("");
+    const [streetNumber, setStreetNumber] = useState("");
+    const [spotsTotal, setSpotsTotal] = useState("");
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [companyName, setCompanyName] = useState("");
+    const [ownerCountry, setOwnerCountry] = useState("");
+    const [ownerTown, setOwnerTown] = useState("");
+    const [ownerStreet, setOwnerStreet] = useState("");
+    const [ownerStreetNumber, setOwnerStreetNumber] = useState("");
 
     const [isEditingAddress, setAddressEditing] = useState(false);
     const [isInvoiceEditing, setInvoiceEditing] = useState(false);
@@ -68,6 +70,33 @@ const DetailsPage = ({navigation, route}) => {
         axios.delete(`${api_url}/p/parkings/${route.params.item.id}`, 
         options).then((response) => navigation.navigate('List', {token: route.params.token, user: route.params.username})).catch(err => setErr(err))
     }
+
+    const fetchParking = () => {
+        axios.get(`${api_url}/p/parkings/${route.params.item.id}`, options).then( (response) => {setData(response.data)}).finally( () => {setLoading(false);})
+    }
+
+    const fillStates = () => {
+        setName(data.name);
+        setCountry(data.address.country);
+        setTown(data.address.town);
+        setStreetName(data.address.streetName);
+        setStreetNumber(data.address.streetNumber);
+        setSpotsTotal(data.spotsTotal);
+        setFirstName(data.parkingOwner.firstName);
+        setLastName(data.parkingOwner.lastName);
+        setCompanyName(data.parkingOwner.companyName);
+        setOwnerCountry(data.parkingOwner.address.country);
+        setOwnerTown(data.parkingOwner.address.town);
+        setOwnerStreet(data.parkingOwner.address.streetName);
+        setOwnerStreetNumber(data.parkingOwner.address.streetNumber);
+    }
+
+    useEffect( () => {
+        fetchParking();
+        fillStates();
+    }, [navigation])
+
+   
 
     return (
         <View style={styles.container}>
