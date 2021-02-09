@@ -1,4 +1,4 @@
-# Parkly
+# Parkly Backend
 This is Parkly backend application.
 
 ### Installed Prerequisites
