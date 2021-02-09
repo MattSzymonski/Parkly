@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { SafeAreaView, View, FlatList, StyleSheet, Text, StatusBar, Image, Dimensions, TextInput, TouchableOpacity } from 'react-native';
 import { SearchBar } from 'react-native-elements';
-import { DataTable } from 'react-native-paper';
+import { Button, DataTable } from 'react-native-paper';
 import axios from 'axios';
 import { useFocusEffect } from '@react-navigation/native';
+import Collapsible from 'react-native-collapsible';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const api_url = "http://parkly-env.eba-u2qumtf7.us-east-2.elasticbeanstalk.com";
 
@@ -14,6 +16,44 @@ const ListPage = ({navigation, route}) => {
     const [totalPages, setPages] = useState(0);
     const [currentPage, setPage] = useState(0);
 
+    const [isFiltering, setFiltering] = useState(false);
+    const [filteredName, setFilteredName] = useState("");
+    const [filteredStreetName, setFilteredStreetName] = useState("");
+    const [filteredTown, setFilteredTown] = useState("");
+    const [filteredCountry, setFilteredCountry] = useState("");
+    const [filteredPricePerHous, setMaxPricePerHour] = useState("");
+
+    const [alreadyFiltered, setAlreadyFiltered] = useState(false);
+    const [filter, setFilter] = useState("");
+    const [finishedFiltering, setFinishedFiltering] = useState(false);
+
+    const testStringFilter = (field, value) => {
+        if(value.length > 0)
+            if(alreadyFiltered == false) {
+                setFilter(`${field}=${value}`);
+                setAlreadyFiltered(true);
+            }
+            else    
+                setFilter(filter + `&${field}=${value}`);
+    }
+
+    const updateFilter = () => {
+        setFilter("");
+        testStringFilter('town', filteredTown);
+        testStringFilter('streetName', filteredStreetName);
+        testStringFilter('country', filteredCountry);
+        testStringFilter('name', filteredName);
+        testStringFilter('maximumPricePerHour', filteredPricePerHous);
+        setAlreadyFiltered(false);
+        setFinishedFiltering(true);
+    }
+
+    const handleFilterApplying = () => {
+        setFiltering(false); 
+        dataFetch();
+        pageChange(0);
+    }
+
     const ite = route.params;
 
     const options = {
@@ -21,44 +61,35 @@ const ListPage = ({navigation, route}) => {
     }
 
     const dataFetch = () => {
-        axios.get(`${api_url}/p/parkings`, options).then((response) =>  {setParkings(response.data); setPages(response.data.totalPages)}).finally(() => setLoading(false));
+        if(filter.length == 0)
+            axios.get(api_url + '/p/parkings', options).then((response) =>  {setParkings(response.data); setPages(response.data.totalPages)}).finally(() => setLoading(false));
+        else
+            axios.get(api_url + '/p/parkings?' + filter, options).then((response) =>  {setParkings(response.data); setPages(response.data.totalPages)}).finally(() => setLoading(false));
     }
 
     useEffect( () => {
         navigation.addListener('focus', () => {
             setLoading(true);
             dataFetch();
+            setPage(0);
         })
     }, [navigation]);
 
-    /* useFocusEffect(
-        React.useCallback(() => {
-            // Do something when the screen is focused
-            if(setLoading == true)
-                dataFetch();
-            return () => {
-              // Do something when the screen is unfocused
-              // Useful for cleanup functions
-                setLoading(false);
-            };
-          }, [])
-        );  */
-
-   /* useEffect(() => {
-        const unsubscribe = navigation.addListener('focus', () => {
-            axios.get(`${api_url}/p/parkings`, options).then((response) =>  {setParkings(response.data); setPages(response.data.totalPages)}).finally(() => setLoading(false))
-       });
-         return unsubscribe;
-       }, [navigation]); */
+    useEffect( () => {
+        handleFilterApplying();
+    }, [filter])
 
     const pageChange = (cp) => {
-        setPage(cp)
+        setPage(cp);
         setLoading(true);
-        axios.get(`${api_url}/p/parkings?page=${cp}`, options).then( (response) => {setParkings(response.data); setPages(response.data.totalPages)}).finally( () => {setLoading(false);})
+        if(filter.length == 0)
+            axios.get(`${api_url}/p/parkings?page=${cp}`, options).then( (response) => {setParkings(response.data); setPages(response.data.totalPages)}).finally( () => {setLoading(false);})
+        else
+            axios.get(`${api_url}/p/parkings?page=${0}&` + filter, options).then( (response) => {setParkings(response.data); setPages(response.data.totalPages)}).finally( () => {setLoading(false);})
     }
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
         <View style={styles.bannerContainer}>
             <View style={styles.banner}>
                 <Text style={styles.welcomeSubtext}> PARKLY.</Text>
@@ -69,18 +100,9 @@ const ListPage = ({navigation, route}) => {
                 
             </View>
         </View>
-        <View style={styles.bannerContainer}>
-            <View style={styles.searchContainer}>
-                <TextInput style={styles.TextInput} placeholder="Search for objects..." placeholderTextColor="#000"></TextInput>
-
-            </View> 
-            <TouchableOpacity style={styles.searchBtn}>
-                    <Text>Search</Text>
-            </TouchableOpacity>
-        </View>
 
         <View style={styles.filterContainer}>
-        <TouchableOpacity style={styles.entryBtn} onPress={() => navigation.navigate('Filter', {token: ite.token.current, username:ite.user})}>
+        <TouchableOpacity style={styles.entryBtn} onPress={() => {const x = (isFiltering + 1) % 2; setFiltering(x);}}>
                     <Text>Filter</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.filterBtn} onPress={() => navigation.navigate('Add', {token: ite.token, username:ite.user})}>
@@ -96,14 +118,33 @@ const ListPage = ({navigation, route}) => {
         <View>
             
         </View>
+        <SafeAreaView>
+                <Collapsible collapsed={!isFiltering}>
+                    <ScrollView>
+                        <Text style={styles.categoryText}>Name</Text>
+                        <TextInput style={styles.TextInput} value={filteredName} onChangeText={(val) => setFilteredName(val)} />
+                        <Text style={styles.categoryText}>Country</Text>
+                        <TextInput style={styles.TextInput} value={filteredCountry} onChangeText={(val) => setFilteredCountry(val)} />
+                        <Text style={styles.categoryText}>City</Text>
+                        <TextInput style={styles.TextInput} value={filteredTown} onChangeText={(val) => setFilteredTown(val)} />
+                        <Text style={styles.categoryText}>Street Name</Text>
+                        <TextInput style={styles.TextInput} value={filteredStreetName} onChangeText={(val) => setFilteredStreetName(val)} />
+                        <Text style={styles.categoryText}>Maximum Price Per Hour</Text>
+                        <TextInput style={styles.TextInput} value={filteredPricePerHous} onChangeText={(val) => setMaxPricePerHour(val)} />
+                        <TouchableOpacity style={styles.applyFilterBtn}  onPress={() => {updateFilter()}}>
+                        <Text>Apply Filter</Text>
+                        </TouchableOpacity>
+                    </ScrollView>
+                </Collapsible>
+        </SafeAreaView>
         <View>       
             <DataTable>          
                 <DataTable.Header>
                     <DataTable.Title> Action </DataTable.Title>
                     <DataTable.Title> Name </DataTable.Title>
-                    <DataTable.Title> Country </DataTable.Title>
+                    {/* <DataTable.Title> Country </DataTable.Title> */}
                     <DataTable.Title> Town </DataTable.Title>
-                    <DataTable.Title> Spots </DataTable.Title>
+                    <DataTable.Title> Total spots </DataTable.Title>
                 </DataTable.Header>
             { loading ? 
             <Text> Loading ... </Text>
@@ -117,9 +158,9 @@ const ListPage = ({navigation, route}) => {
                     </TouchableOpacity>
                     </DataTable.Cell>
                     <DataTable.Cell> {element.name} </DataTable.Cell>
-                    <DataTable.Cell> {element.address.country}</DataTable.Cell>
+                    {/* <DataTable.Cell> {element.address.country}</DataTable.Cell> */}
                     <DataTable.Cell> {element.address.town}</DataTable.Cell>
-                    <DataTable.Cell> {element.spotsTaken}/{element.spotsTotal}</DataTable.Cell>
+                    <DataTable.Cell> {element.spotsTotal}</DataTable.Cell>
                     
                 </DataTable.Row>
                 
@@ -134,10 +175,21 @@ const ListPage = ({navigation, route}) => {
                 label={`${currentPage + 1} of ${totalPages}`}
                 onPageChange={(page) => pageChange(page)}
                 />
+                <View style={{flexDirection: "row", justifyContent: "center", paddingTop: 20}}>
+                <TouchableOpacity onPress={() => pageChange(0)}>
+                <Text style={{alignSelf: "flex-end", paddingRight: 10, fontSize: 12}}>First page</Text>
+                </TouchableOpacity>
+                
+                <Text style={{alignSelf: "flex-end", paddingRight: 10, fontSize: 12}}> | </Text>
+                <TouchableOpacity onPress={() => pageChange(totalPages-1)}>
+                <Text style={{alignSelf: "flex-end", paddingRight: 10, fontSize: 12}}>Last page</Text>
+                </TouchableOpacity>
+                
+                </View>
          </DataTable>
          
     </View>
-</View>
+</ScrollView>
 
   );
 }
@@ -195,7 +247,19 @@ const styles = StyleSheet.create({
         width: 70,
         alignItems: "center",
         justifyContent: "center",
-     
+        backgroundColor: "#ffd300",
+      },
+
+      applyFilterBtn: {
+        margin: 20,
+        borderRadius: 10,
+        height: 50,
+        alignItems: "center",
+        display: "flex",
+        flex: 1,
+        justifyContent: "center",
+        alignSelf: "center",
+        width: Dimensions.get("window").width - 200,
         backgroundColor: "#ffd300",
       },
 
@@ -294,12 +358,16 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     backgroundColor: "#f8f8ff",
     borderRadius: 10,
-    
-   
     marginLeft: 35,
     marginRight: 35,
     marginTop: 10,
   },
+
+  categoryText: {
+    marginTop: 10,
+    marginBottom: 5,
+    marginHorizontal: 10,
+    },
 
   });
 
