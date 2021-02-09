@@ -7,34 +7,47 @@ import {
     TextInput,
     Button,
     TouchableOpacity,
+    SafeAreaView,
+    Dimensions
 } from "react-native";
 import { ScrollView } from 'react-native-gesture-handler';
-
+import Collapsible from 'react-native-collapsible';
 import axios from 'axios';
+import { DataTable } from "react-native-paper";
 
 
 const api_url = "http://parkly-env.eba-u2qumtf7.us-east-2.elasticbeanstalk.com";
 
 const DetailsPage = ({navigation, route}) => {
 
-    const [name, setName] = useState(route.params.item.name);
-    const [country, setCountry] = useState(route.params.item.address.country);
-    const [town, setTown] = useState(route.params.item.address.town);
-    const [streetName, setStreetName] = useState(route.params.item.address.streetName);
-    const [streetNumber, setStreetNumber] = useState(route.params.item.address.streetNumber);
-    const [spotsTotal, setSpotsTotal] = useState(route.params.item.spotsTotal);
-    const [firstName, setFirstName] = useState(route.params.item.firstName);
-    const [lastName, setLastName] = useState(route.params.item.lastName);
-    const [companyName, setCompanyName] = useState(route.params.item.companyName);
-    const [ownerCountry, setOwnerCountry] = useState(route.params.item.ownerCountry);
-    const [ownerTown, setOwnerTown] = useState(route.params.item.ownerTown);
-    const [ownerStreet, setOwnerStreet] = useState(route.params.item.ownerStreet);
-    const [ownerStreetNumber, setOwnerStreetNumber] = useState(route.params.item.ownerStreetNumber);
+    const [loading ,setLoading] = useState(true);
+
+    const [name, setName] = useState("");
+    const [country, setCountry] = useState("");
+    const [town, setTown] = useState("");
+    const [streetName, setStreetName] = useState("");
+    const [streetNumber, setStreetNumber] = useState("");
+    const [spotsTotal, setSpotsTotal] = useState("");
+    const [pricePerHour, setPPH] = useState("");
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [companyName, setCompanyName] = useState("");
+    const [ownerCountry, setOwnerCountry] = useState("");
+    const [ownerTown, setOwnerTown] = useState("");
+    const [ownerStreet, setOwnerStreet] = useState("");
+    const [ownerStreetNumber, setOwnerStreetNumber] = useState("");
 
     const [isEditingAddress, setAddressEditing] = useState(false);
     const [isInvoiceEditing, setInvoiceEditing] = useState(false);
     const [err, setErr] = useState("");
     
+    const [bookings, setBookings] = useState([[]]);
+    const [bookingsLoading, setBookingsLoading] = useState(true);
+    const [isCollapsed, setCollapsed] = useState(true);
+
+    const [totalPages, setPages] = useState(0);
+    const [currentPage, setPage] = useState(0);
+
     const options = {
         headers: {'security-token': route.params.token.current}
     }
@@ -49,6 +62,7 @@ const DetailsPage = ({navigation, route}) => {
                 streetNumber: streetNumber
             },
             spotsTotal: spotsTotal,
+            pricePerHour: pricePerHour,
             parkingOwner: {
                 firstName: firstName,
                 lastName: lastName,
@@ -69,109 +83,249 @@ const DetailsPage = ({navigation, route}) => {
         options).then((response) => navigation.navigate('List', {token: route.params.token, user: route.params.username})).catch(err => setErr(err))
     }
 
+    const fetchParking = () => {
+        axios.get(`${api_url}/p/parkings/${route.params.item.id}`, options).then( (response) => {fillStates(response.data)}).finally(() => setLoading(false))
+    }
+
+    const fetchBookings = () => {
+        axios.get(`${api_url}/p/bookings?parkingId=${route.params.item.id}`, options).then( (response) => {setBookings(response.data); setPages(response.data.totalPages)}).finally(() => setBookingsLoading(false))
+    }
+
+    const fillStates = (data) => {
+        setName(data.name);
+        setCountry(data.address.country);
+        setTown(data.address.town);
+        setStreetName(data.address.streetName);
+        setStreetNumber(data.address.streetNumber);
+        setSpotsTotal(data.spotsTotal);
+        setPPH(data.pricePerHour)
+        setFirstName(data.parkingOwner.firstName);
+        setLastName(data.parkingOwner.lastName);
+        setCompanyName(data.parkingOwner.companyName);
+        setOwnerCountry(data.parkingOwner.address.country);
+        setOwnerTown(data.parkingOwner.address.town);
+        setOwnerStreet(data.parkingOwner.address.streetName);
+        setOwnerStreetNumber(data.parkingOwner.address.streetNumber);
+    }
+
+    const pageChange = (cp) => {
+        setPage(cp);
+        setBookingsLoading(true);
+        
+        axios.get(`${api_url}/p/bookings?parkingId=${route.params.item.id}&page=${cp}`, options).then( (response) => {setBookings(response.data); setPages(response.data.totalPages)}).finally(() => setBookingsLoading(false))
+    }
+
+    const deleteBooking = (bookingId) => {
+        axios.delete(`${api_url}/p/bookings/${bookingId}`, options).then( (response) => {setBookingsLoading(true); setPage(0)}).finally(() => fetchBookings())
+    }
+
+    useEffect( () => {
+        setLoading(true);
+        fetchParking();
+        //setLoading(true);
+        fetchBookings();
+    }, [navigation])
+
+
     return (
         <View style={styles.container}>
-
-            <ScrollView>
-                <View style={styles.actionBar} >
-                    <Text style={styles.standardText}>Address</Text>
-                    
-                    {isEditingAddress == false ? 
-                    <TouchableOpacity onPress={() => setAddressEditing(true)}><Text style={styles.editSaveFunc}>Edit</Text></TouchableOpacity>
-                    :
-                    <TouchableOpacity onPress={() => setAddressEditing(false)}><Text style={styles.editSaveFunc}>Save</Text></TouchableOpacity>
-                    }
-                </View>
-                
-                <View>
-                    {isEditingAddress == false ? 
-                    <Text style={styles.standardText}>{name}</Text>
-                    :
-                    <TextInput style={styles.TextInput} value={name} onChangeText={(val) => setName(val)}></TextInput>}
-                </View>
-                <View>
-                    {isEditingAddress == false ? 
-                    <Text style={styles.standardText}>{country}</Text>
-                    :
-                    <TextInput style={styles.TextInput} value={country} onChangeText={(val) => setCountry(val)}></TextInput>}
-                </View>
-                <View>
-                    {isEditingAddress == false ? 
-                    <Text style={styles.standardText}>{streetName}</Text>
-                    :
-                    <TextInput style={styles.TextInput} value={streetName} onChangeText={(val) => setStreetName(val)}></TextInput>}
-                </View>
-                <View>
-                    {isEditingAddress == false ? 
-                    <Text style={styles.standardText}>{streetNumber}</Text>
-                    :
-                    <TextInput style={styles.TextInput} value={streetNumber} onChangeText={(val) => setStreetNumber(val)}></TextInput>}
-                </View>
-                <View>
-                    {isEditingAddress == false ? 
-                    <Text style={styles.standardText}>{town}</Text>
-                    :
-                    <TextInput style={styles.TextInput} value={town} onChangeText={(val) => setTown(val)}></TextInput>}
-                </View>
-                
-                <View style={styles.actionBar} >
-                    <Text style={styles.standardText}>Invoice Information</Text>
-                    {isInvoiceEditing == false ? 
-                    <TouchableOpacity onPress={() => setInvoiceEditing(true)}><Text style={styles.editSaveFunc}>Edit</Text></TouchableOpacity>
-                    :
-                    <TouchableOpacity onPress={() => setInvoiceEditing(false)}><Text style={styles.editSaveFunc}>Save</Text></TouchableOpacity>
-                    }
-                </View>
-
-                <View>
-                    {isInvoiceEditing == false ? 
-                    <Text style={styles.standardText}>{firstName}</Text>
-                    :
-                    <TextInput style={styles.TextInput} value={firstName} onChangeText={(val) => setFirstName(val)}></TextInput>}
-                </View>
-                <View>
-                    {isInvoiceEditing == false ? 
-                    <Text style={styles.standardText}>{lastName}</Text>
-                    :
-                    <TextInput style={styles.TextInput} value={lastName} onChangeText={(val) => setLastName(val)}></TextInput>}
-                </View>
-                <View>
-                    {isInvoiceEditing == false ? 
-                    <Text style={styles.standardText}>{ownerCountry}</Text>
-                    :
-                    <TextInput style={styles.TextInput} value={ownerCountry} onChangeText={(val) => setOwnerCountry(val)}></TextInput>}
-                </View>
-                <View>
-                    {isInvoiceEditing == false ? 
-                    <Text style={styles.standardText}>{ownerStreet}</Text>
-                    :
-                    <TextInput style={styles.TextInput} value={ownerStreet} onChangeText={(val) => setOwnerStreet(val)}></TextInput>}
-                </View>
-                <View>
-                    {isInvoiceEditing == false ? 
-                    <Text style={styles.standardText}>{ownerStreetNumber}</Text>
-                    :
-                    <TextInput style={styles.TextInput} value={ownerStreetNumber} onChangeText={(val) => setOwnerStreetNumber(val)}></TextInput>}
-                </View>
-                <View>
-                    {isInvoiceEditing == false ? 
-                    <Text style={styles.standardText}>{ownerTown}</Text>
-                    :
-                    <TextInput style={styles.TextInput} value={ownerTown} onChangeText={(val) => setOwnerTown(val)}></TextInput>}
-                </View>
-
-
-            </ScrollView>
-            <View style={styles.buttonHolder}>
-                <TouchableOpacity onPress={updateParking} style={styles.actionButton}>
-                    <Text style={styles.standardText}>Update</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={deleteParking} style={styles.actionButton}>
-                    <Text style={styles.standardText}>Delete</Text>
-                </TouchableOpacity>
-            </View>
             
 
+            {loading ?
+            <Text> Loading... </Text>
+            :
+            <SafeAreaView> 
+                <ScrollView>
+            <View style={styles.actionBar} >
+                <Text style={styles.standardText}>Address</Text>
+                
+                {isEditingAddress == false ? 
+                <TouchableOpacity onPress={() => setAddressEditing(true)}><Text style={styles.editSaveFunc}>Edit</Text></TouchableOpacity>
+                :
+                <TouchableOpacity onPress={() => setAddressEditing(false)}><Text style={styles.editSaveFunc}>Save</Text></TouchableOpacity>
+                }
+            </View>
+            
+            <View>
+                <Text style={styles.categoryText}>Name</Text>
+                {isEditingAddress == false ? 
+                <Text style={styles.categoryField}>{name}</Text>
+                :
+                <TextInput style={styles.TextInput} value={name} onChangeText={(val) => setName(val)}></TextInput>}
+            </View>
+            <View>
+                <Text style={styles.categoryText}>Country</Text>
+                {isEditingAddress == false ? 
+                <Text style={styles.categoryField}>{country}</Text>
+                :
+                <TextInput style={styles.TextInput} value={country} onChangeText={(val) => setCountry(val)}></TextInput>}
+            </View>
+            <View>
+                <Text style={styles.categoryText}>Street Name</Text>
+                {isEditingAddress == false ? 
+                <Text style={styles.categoryField}>{streetName}</Text>
+                :
+                <TextInput style={styles.TextInput} value={streetName} onChangeText={(val) => setStreetName(val)}></TextInput>}
+            </View>
+            <View>
+                <Text style={styles.categoryText}>Street Number</Text>   
+                {isEditingAddress == false ? 
+                <Text style={styles.categoryField}>{streetNumber}</Text>
+                :
+                <TextInput style={styles.TextInput} value={streetNumber} onChangeText={(val) => setStreetNumber(val)}></TextInput>}
+            </View>
+            <View>
+                <Text style={styles.categoryText}>City</Text>
+                {isEditingAddress == false ? 
+                <Text style={styles.categoryField}>{town}</Text>
+                :
+                <TextInput style={styles.TextInput} value={town} onChangeText={(val) => setTown(val)}></TextInput>}
+            </View>
+            <View>
+                <Text style={styles.categoryText}>Number of Spots</Text>
+                {isEditingAddress == false ? 
+                <Text style={styles.categoryField}>{spotsTotal}</Text>
+                :
+                <TextInput style={styles.TextInput} value={String(spotsTotal)} onChangeText={(val) => setSpotsTotal(val)}></TextInput>}
+            </View>
+            <View>
+                <Text style={styles.categoryText}>Price per Hour</Text>
+                {isEditingAddress == false ? 
+                <Text style={styles.categoryField}>{pricePerHour}</Text>
+                :
+                <TextInput style={styles.TextInput} value={String(pricePerHour)} onChangeText={(val) => setPPH(val)}></TextInput>}
+            </View>
+            
+            <View style={styles.actionBar} >
+                <Text style={styles.standardText}>Invoice Information</Text>
+                {isInvoiceEditing == false ? 
+                <TouchableOpacity onPress={() => setInvoiceEditing(true)}><Text style={styles.editSaveFunc}>Edit</Text></TouchableOpacity>
+                :
+                <TouchableOpacity onPress={() => setInvoiceEditing(false)}><Text style={styles.editSaveFunc}>Save</Text></TouchableOpacity>
+                }
+            </View>
+
+            <View>
+                <Text style={styles.categoryText}>First Name</Text>  
+                {isInvoiceEditing == false ? 
+                <Text style={styles.categoryField}>{firstName}</Text>
+                :
+                <TextInput style={styles.TextInput} value={firstName} onChangeText={(val) => setFirstName(val)}></TextInput>}
+            </View>
+            <View>
+                <Text style={styles.categoryText}>Last Name</Text>
+                {isInvoiceEditing == false ? 
+                <Text style={styles.categoryField}>{lastName}</Text>
+                :
+                <TextInput style={styles.TextInput} value={lastName} onChangeText={(val) => setLastName(val)}></TextInput>}
+            </View>
+            <View>
+                <Text style={styles.categoryText}>Country</Text>
+                {isInvoiceEditing == false ? 
+                <Text style={styles.categoryField}>{ownerCountry}</Text>
+                :
+                <TextInput style={styles.TextInput} value={ownerCountry} onChangeText={(val) => setOwnerCountry(val)}></TextInput>}
+            </View>
+            <View>
+                <Text style={styles.categoryText}>Street Name</Text>
+                {isInvoiceEditing == false ? 
+                <Text style={styles.categoryField}>{ownerStreet}</Text>
+                :
+                <TextInput style={styles.TextInput} value={ownerStreet} onChangeText={(val) => setOwnerStreet(val)}></TextInput>}
+            </View>
+            <View>
+                <Text style={styles.categoryText}>Street Number</Text>
+                {isInvoiceEditing == false ? 
+                <Text style={styles.categoryField}>{ownerStreetNumber}</Text>
+                :
+                <TextInput style={styles.TextInput} value={ownerStreetNumber} onChangeText={(val) => setOwnerStreetNumber(val)}></TextInput>}
+            </View>
+            <View>
+                <Text style={styles.categoryText}>City</Text>
+                {isInvoiceEditing == false ? 
+                <Text style={styles.categoryField}>{ownerTown}</Text>
+                :
+                <TextInput style={styles.TextInput} value={ownerTown} onChangeText={(val) => setOwnerTown(val)}></TextInput>}                 
+            </View>
+        
+
+        <TouchableOpacity onPress={() => setCollapsed(!isCollapsed)} style={styles.actionBar}>
+            <Text style={styles.standardText}> Bookings </Text>
+        </TouchableOpacity>
+        <SafeAreaView style={{flex:1}}>
+                <Collapsible collapsed={isCollapsed} align="bottom" enablePointerEvents={true} style={{height: Dimensions.get("window").height*0.6}}>
+                    <ScrollView>
+                    <DataTable>          
+                <DataTable.Header>
+                    <DataTable.Title> Action </DataTable.Title>
+                    <DataTable.Title> Id </DataTable.Title>
+                    <DataTable.Title> Start </DataTable.Title>
+                    {/* <DataTable.Title> Country </DataTable.Title> */}
+                    <DataTable.Title> End </DataTable.Title>
+                    
+                </DataTable.Header>
+            { bookingsLoading ? 
+            <Text> Loading ... </Text>
+            :
+            <SafeAreaView>
+            {
+                bookings.items.map(element => (
+                
+                <DataTable.Row style={{height: 80}}>
+                    <DataTable.Cell> <TouchableOpacity style={styles.deleteBtn} onPress={() => deleteBooking(element.id)} ><Text style={{color: "white"}}>Delete</Text></TouchableOpacity></DataTable.Cell>
+                    <DataTable.Cell> {element.id} </DataTable.Cell>
+                    <DataTable.Cell> {element.startDateTime} </DataTable.Cell>
+                    {/* <DataTable.Cell> {element.address.country}</DataTable.Cell> */}
+                    <DataTable.Cell> {element.endDateTime}</DataTable.Cell>
+                 
+                    
+                </DataTable.Row>
+                
+              ))
+            }
+            </SafeAreaView>
+            }
+           
+                <DataTable.Pagination
+                page={currentPage}
+                numberOfPages={totalPages}
+                label={`${currentPage + 1} of ${totalPages}`}
+                onPageChange={(page) => pageChange(page)}
+                />
+                <View style={{flexDirection: "row", justifyContent: "center", paddingTop: 20}}>
+                <TouchableOpacity onPress={() => pageChange(0)}>
+                <Text style={{alignSelf: "flex-end", paddingRight: 10, fontSize: 12}}>First page</Text>
+                </TouchableOpacity>
+                
+                <Text style={{alignSelf: "flex-end", paddingRight: 10, fontSize: 12}}> | </Text>
+                <TouchableOpacity onPress={() => pageChange(totalPages-1)}>
+                <Text style={{alignSelf: "flex-end", paddingRight: 10, fontSize: 12}}>Last page</Text>
+                </TouchableOpacity>
+                
+                </View>
+         </DataTable>
+                    </ScrollView>
+                </Collapsible>
+        </SafeAreaView>
+        <View style={{margin: 30}}/>
+
+
+
+        <View style={styles.buttonHolder}>
+            <TouchableOpacity onPress={updateParking} style={styles.actionButton}>
+                <Text style={styles.standardText}>Update</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={deleteParking} style={styles.actionButton}>
+                <Text style={styles.standardText}>Delete</Text>
+            </TouchableOpacity>
+        </View>
+
+        </ScrollView>
+
+
+
+            </SafeAreaView>
+            }
         </View>
     )
 
@@ -189,9 +343,28 @@ const styles = StyleSheet.create({
         margin: 10
     },
 
+    titleText: {
+        fontSize: 20,
+        margin: 10,
+        fontFamily: ""
+    },
+
     editSaveFunc: {
         fontSize: 20,
         margin: 10
+    },
+
+    categoryText: {
+        marginTop: 10,
+        marginBottom: 5,
+        marginHorizontal: 10,
+        fontSize: 20
+    },
+
+    categoryField: {
+        marginBottom: 10,
+        marginHorizontal: 10,
+        fontSize: 20
     },
 
     buttonHolder: 
@@ -199,8 +372,10 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: "row",
         justifyContent: "space-between",
-        position: 'absolute',
-        bottom: 10
+        //position: 'absolute',
+        marginTop: 20,
+        bottom: 10, 
+        marginBottom: 40,
     },
 
     actionBar: {
@@ -225,7 +400,15 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: "#ffd300",
-    }
+        
+    },
+
+    deleteBtn: {
+        borderRadius: 10,
+        backgroundColor: "red",
+        padding: 10,
+        
+    },
 });
 
 export default DetailsPage;
