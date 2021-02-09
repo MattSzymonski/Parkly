@@ -16,8 +16,8 @@ import axios from 'axios';
 const api_url = "http://parkly-env.eba-u2qumtf7.us-east-2.elasticbeanstalk.com";
 
 export default function LoginPage({navigation}) {
-  const [username, setUsername] = useState("ParklyAppTes");
-  const [password, setPassword] = useState("root");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [fetching, setFetching] = useState(false);
   //const [token, setToken] = useState("");
   const [err, setErr] = useState("");
