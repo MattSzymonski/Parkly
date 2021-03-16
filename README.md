@@ -1,6 +1,6 @@
 # Parkly
-System allowing for parking slots reservation (mobile app, web app, backend)
-Designed to be a subsystem for general booking system developed by different team allowing to book parking slots, cars and flats.
+System allowing for parking slots reservation (mobile app, web app, backend)  
+Designed to be a subsystem for a general booking system developed by different team and allowing to book parking slots, cars and flats.
 
 ## Team members:
 - Mateusz Szymoński
