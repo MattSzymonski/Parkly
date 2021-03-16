@@ -13,3 +13,12 @@ Designed to be a subsystem for general booking system developed by different tea
 * `/Backend` - backend Java + MySQL application
 * `/WebApp` - web React application
 * `/MobileAppForExpo` - mobile React Native application
+
+
+![](./media/ParklyMobileApp.gif)
+
+![](./media/ParklyWebApp.png)
+
+![](./media/ParklyAPI.png)
+
+![](./media/SchemaDB.png)
