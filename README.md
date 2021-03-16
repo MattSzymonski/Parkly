@@ -15,19 +15,15 @@ Designed to be a subsystem for general booking system developed by different tea
 * `/MobileAppForExpo` - mobile React Native application
 
 ## Screenshots
-<br>
-Mobile App
-<br>
+
+Mobile App  
 ![](./media/ParklyMobileApp.gif)
-<br>
-Web App
-<br>
+
+Web App  
 ![](./media/ParklyWebApp.png)
-<br>
-REST API
-<br>
+
+REST API  
 ![](./media/ParklyAPI.png)
-<br>
-Database Schema
-<br>
+
+Database Schema  
 ![](./media/SchemaDB.png)
